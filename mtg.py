@@ -7,8 +7,14 @@ import time
 
 DATA_PATH = Path("./data")
 
-with open(DATA_PATH / "default-cards-20240520210708.json", "r") as f:
-    default_cards = orjson.loads(f.read())
+
+def open_latest_default_cards_file():
+    def _get_timestamp(filename):
+        return filename.split(".")[0].split("-")[2]
+
+    files = DATA_PATH.glob("default-cards-*.json")
+    sorted_files = sorted(files, key=lambda file: _get_timestamp(file.name))
+    return open(sorted_files[-1], "r")
 
 
 def make_output_dir():
@@ -141,11 +147,15 @@ class ManaCostStore(Store):
 def main():
     stores = [PowerToughnessStore(), ManaCostStore()]
 
+    with open_latest_default_cards_file() as f:
+        default_cards = orjson.loads(f.read())
+
     for card in default_cards:
         for store in stores:
             store.evaluate(card)
 
     output_dir = make_output_dir()
+
     for store in stores:
         store.to_html(output_dir)
 
