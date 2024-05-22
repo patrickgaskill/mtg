@@ -5,13 +5,15 @@ import pandas as pd
 import re
 import time
 
-with open("./data/default-cards-20240520210708.json", "r") as f:
+DATA_PATH = Path("./data")
+
+with open(DATA_PATH / "default-cards-20240520210708.json", "r") as f:
     default_cards = orjson.loads(f.read())
 
 
 def make_output_dir():
     run_time = time.strftime("%Y-%m-%d-%H%M%S")
-    output_path = Path("./data/output") / run_time
+    output_path = DATA_PATH / "output" / run_time
     output_path.mkdir(parents=True, exist_ok=True)
     return output_path
 
