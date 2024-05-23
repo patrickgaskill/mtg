@@ -14,23 +14,23 @@ DATA_PATH = Path("./data")
 
 
 def fetch_scryfall_data():
-    bulk_data = orjson.loads(requests.get("https://api.scryfall.com/bulk-data").text)
-    download_uri = next(
-        item["download_uri"]
-        for item in bulk_data["data"]
-        if item["type"] == "default_cards"
-    )
-    filename = download_uri.split("/")[-1]
-    output_file = Path(DATA_PATH / filename)
-    default_cards = requests.get(download_uri).content
-    output_file.write_bytes(default_cards)
+    bulk_data = orjson.loads(requests.get("https://api.scryfall.com/bulk-data").text)[
+        "data"
+    ]
+    for item in bulk_data:
+        if item["type"] in ["default_cards", "all_cards"]:
+            download_uri = item["download_uri"]
+            filename = download_uri.split("/")[-1]
+            output_file = Path(DATA_PATH / filename)
+            default_cards = requests.get(download_uri).content
+            output_file.write_bytes(default_cards)
 
 
-def open_latest_default_cards_file():
+def open_latest_file(name):
     def _get_timestamp(filename):
         return filename.split(".")[0].split("-")[2]
 
-    files = DATA_PATH.glob("default-cards-*.json")
+    files = DATA_PATH.glob(f"{name}-*.json")
     sorted_files = sorted(files, key=lambda file: _get_timestamp(file.name))
     return open(sorted_files[-1], "r")
 
@@ -163,11 +163,18 @@ class ManaCostStore(Store):
 
 
 counters = {
-    "count_finishes_by_name": defaultdict(int),
-    "count_finishes_by_name_set": defaultdict(int),
-    "count_finishes_by_name_set_cn": defaultdict(int),
-    "count_finishes_by_name_finish": defaultdict(int),
-    "count_finishes_by_set": defaultdict(int),
+    "cards_by_name_set": defaultdict(int),
+    "cards_finishes_by_name": defaultdict(int),
+    "cards_finishes_by_name_set": defaultdict(int),
+    "cards_finishes_by_name_set_cn": defaultdict(int),
+    "cards_finishes_by_name_finish": defaultdict(int),
+    "cards_finishes_by_set": defaultdict(int),
+    "cards_langs_by_name_set": defaultdict(int),
+    "cards_langs_finishes_by_name": defaultdict(int),
+    "cards_langs_finishes_by_name_set": defaultdict(int),
+    "cards_langs_finishes_by_name_set_cn": defaultdict(int),
+    "cards_langs_finishes_by_name_finish": defaultdict(int),
+    "cards_langs_finishes_by_set": defaultdict(int),
     "max_cn_by_set": defaultdict(int),
 }
 
@@ -175,7 +182,7 @@ counters = {
 def main():
     stores = [PowerToughnessStore(), ManaCostStore()]
 
-    for card in ijson.items(open_latest_default_cards_file(), "item"):
+    for card in ijson.items(open_latest_file("default-cards"), "item"):
         for store in stores:
             store.evaluate(card)
 
@@ -192,12 +199,29 @@ def main():
             # skip non-numeric collector numbers
             pass
 
+        counters["cards_by_name_set"][(name, set_)] += 1
+
         for finish in finishes:
-            counters["count_finishes_by_name"][name] += 1
-            counters["count_finishes_by_name_set"][(name, set_)] += 1
-            counters["count_finishes_by_name_set_cn"][(name, set_, cn)] += 1
-            counters["count_finishes_by_name_finish"][(name, finish)] += 1
-            counters["count_finishes_by_set"][set_] += 1
+            counters["cards_finishes_by_name"][name] += 1
+            counters["cards_finishes_by_name_set"][(name, set_)] += 1
+            counters["cards_finishes_by_name_set_cn"][(name, set_, cn)] += 1
+            counters["cards_finishes_by_name_finish"][(name, finish)] += 1
+            counters["cards_finishes_by_set"][set_] += 1
+
+    for card in ijson.items(open_latest_file("all-cards"), "item"):
+        name = card["name"]
+        set_ = card["set"]
+        cn = card["collector_number"]
+        finishes = card["finishes"]
+
+        counters["cards_langs_by_name_set"][(name, set_)] += 1
+
+        for finish in finishes:
+            counters["cards_langs_finishes_by_name"][name] += 1
+            counters["cards_langs_finishes_by_name_set"][(name, set_)] += 1
+            counters["cards_langs_finishes_by_name_set_cn"][(name, set_, cn)] += 1
+            counters["cards_langs_finishes_by_name_finish"][(name, finish)] += 1
+            counters["cards_langs_finishes_by_set"][set_] += 1
 
     output_dir = make_output_dir()
 
