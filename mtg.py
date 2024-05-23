@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 
+import ijson
 import orjson
 import pandas as pd
 import requests
@@ -163,10 +164,7 @@ class ManaCostStore(Store):
 def main():
     stores = [PowerToughnessStore(), ManaCostStore()]
 
-    with open_latest_default_cards_file() as f:
-        default_cards = orjson.loads(f.read())
-
-    for card in default_cards:
+    for card in ijson.items(open_latest_default_cards_file(), "item"):
         for store in stores:
             store.evaluate(card)
 
