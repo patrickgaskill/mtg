@@ -128,8 +128,11 @@ class PowerToughnessStore(Store):
 
         return self.add(card, key)
 
-    def to_html(self, output_dir, columns=None):
-        columns = columns or ["power", "toughness", "name", "set_name", "released_at"]
+    def to_html(
+        self,
+        output_dir,
+        columns=["power", "toughness", "name", "set_name", "released_at"],
+    ):
         return super().to_html(output_dir, columns)
 
 
@@ -155,8 +158,9 @@ class ManaCostStore(Store):
         general_mana_cost = generalize_mana_cost(card["mana_cost"])
         return self.add(card, general_mana_cost)
 
-    def to_html(self, output_dir, columns=None):
-        columns = columns or ["mana_cost", "name", "set_name", "released_at"]
+    def to_html(
+        self, output_dir, columns=["mana_cost", "name", "set_name", "released_at"]
+    ):
         return super().to_html(output_dir, columns)
 
 
