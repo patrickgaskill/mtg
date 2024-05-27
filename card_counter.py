@@ -21,7 +21,8 @@ def update_counter(counters, counter_name, key, config, card):
                 counters[counter_name][key]["max_value"], max_value
             )
     else:
-        counters[counter_name][key]["count"] += 1
+        finishes = card.get("finishes")
+        counters[counter_name][key]["count"] += len(finishes)
 
 
 def process_card(counters, counter_configs, card):
@@ -121,9 +122,9 @@ def main():
                 "condition": lambda card: card.get("name"),
                 "column_names": ["Name", "Count"],
             },
-            "card_finishes_by_name_set": {
-                "condition": lambda card: (card.get("name"), card.get("set")),
-                "column_names": ["Name", "Set", "Count"],
+            "card_finishes_by_set_name": {
+                "condition": lambda card: (card.get("set"), card.get("name")),
+                "column_names": ["Set", "Name", "Count"],
             },
             "max_collector_number_by_set": {
                 "condition": lambda card: card.get("set"),
