@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List
 
 import ijson
+import yaml
 from jinja2 import Environment, FileSystemLoader
 from rich.console import Console
 from rich.progress import wrap_file
@@ -135,35 +136,18 @@ def main() -> None:
 
     # Count cards if the --count flag is set
     if args.count:
-        # Define counter configurations
-        counters = {
-            "card_finishes_by_name": Counter(
-                condition=lambda card: card.get("name"),
-                column_names=["Name", "Count"],
-                count_finishes=True,
-            ),
-            "card_finishes_by_set_name": Counter(
-                condition=lambda card: (card.get("set"), card.get("name")),
-                column_names=["Set", "Name", "Count"],
-                count_finishes=True,
-            ),
-            "max_collector_number_by_set": Counter(
-                condition=lambda card: card.get("set"),
-                max_field="collector_number",
-                column_names=["Set", "Max Collector Number"],
-            ),
-            "cards_by_name": Counter(
-                condition=lambda card: card.get("name"),
-                column_names=["Name", "Count"],
-                count_finishes=False,
-            ),
-            "cards_by_set_name": Counter(
-                condition=lambda card: (card.get("set"), card.get("name")),
-                column_names=["Set", "Name", "Count"],
-                count_finishes=False,
-            ),
-            # Add more counter configurations as needed
-        }
+        # Load counter configurations from YAML file
+        with open("counter_config.yaml", "r") as file:
+            config = yaml.safe_load(file)
+            counters = {
+                name: Counter(
+                    condition=eval(config["condition"]),
+                    column_names=config["column_names"],
+                    max_field=config.get("max_field", ""),
+                    count_finishes=config.get("count_finishes", True),
+                )
+                for name, config in config["counters"].items()
+            }
 
         # Create output folder with timestamp inside the data folder
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
