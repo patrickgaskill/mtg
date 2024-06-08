@@ -18,6 +18,7 @@ class Counter:
     condition: Callable[[Dict[str, Any]], Any]
     column_names: List[str]
     max_field: str = ""
+    count_finishes: bool = True
     data: Dict[Any, Dict[str, int]] = field(
         default_factory=lambda: defaultdict(lambda: defaultdict(int))
     )
@@ -32,8 +33,11 @@ def update_counter(counter: Counter, key: Any, card: Dict[str, Any]) -> None:
                 counter.data[key]["max_value"], max_value
             )
     else:
-        finishes = card.get("finishes")
-        counter.data[key]["count"] += len(finishes)
+        if counter.count_finishes:
+            finishes = card.get("finishes", [])
+            counter.data[key]["count"] += len(finishes)
+        else:
+            counter.data[key]["count"] += 1
 
 
 def process_card(counters: Dict[str, Counter], card: Dict[str, Any]) -> None:
@@ -132,25 +136,34 @@ def main() -> None:
     # Count cards if the --count flag is set
     if args.count:
         # Define counter configurations
-        counter_configs = {
+        counters = {
             "card_finishes_by_name": Counter(
                 condition=lambda card: card.get("name"),
                 column_names=["Name", "Count"],
+                count_finishes=True,
             ),
             "card_finishes_by_set_name": Counter(
                 condition=lambda card: (card.get("set"), card.get("name")),
                 column_names=["Set", "Name", "Count"],
+                count_finishes=True,
             ),
             "max_collector_number_by_set": Counter(
                 condition=lambda card: card.get("set"),
                 max_field="collector_number",
                 column_names=["Set", "Max Collector Number"],
             ),
+            "cards_by_name": Counter(
+                condition=lambda card: card.get("name"),
+                column_names=["Name", "Count"],
+                count_finishes=False,
+            ),
+            "cards_by_set_name": Counter(
+                condition=lambda card: (card.get("set"), card.get("name")),
+                column_names=["Set", "Name", "Count"],
+                count_finishes=False,
+            ),
             # Add more counter configurations as needed
         }
-
-        # Create counters from configurations
-        counters = {name: Counter(config) for name, config in counter_configs.items()}
 
         # Create output folder with timestamp inside the data folder
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
