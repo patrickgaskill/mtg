@@ -16,13 +16,14 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
         raise ValueError("Couldn't find the link to the comprehensive rules text file")
 
     txt_url = txt_link["href"]
-    rules_text = requests.get(txt_url).text
+
+    res = requests.get(txt_url)
+    res.encoding = "utf-8"
+    rules_text = res.text.replace("’", "'")
 
     # Extract creature types
     creature_types_match = re.search(
-        r"205\.3m Creatures and kindreds share their lists of subtypes; these subtypes are called creature types\.(.*?)\.",
-        rules_text,
-        re.DOTALL,
+        r"All other creature types are one word long: (.*?)\.", rules_text
     )
     if not creature_types_match:
         raise ValueError("Couldn't find creature types in the rules")
@@ -33,8 +34,9 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
     creature_types = {"Time Lord"}
 
     # Extract the rest of the types
-    other_types = re.findall(r"\b([A-Z][a-z]+)\b", creature_types_text)
-    creature_types.update(type for type in other_types if type != "and")
+    creature_types.update(
+        type.strip().replace("and ", "") for type in creature_types_text.split(",")
+    )
 
     # Extract land types
     land_types_match = re.search(
@@ -48,7 +50,8 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
     land_types_text = land_types_match.group(1)
 
     # Handle land types, preserving "Power-Plant" and "Urza's"
-    land_types = land_types_text.replace(" and ", ", ").split(", ")
-    land_types = {type.strip().replace("’", "'") for type in land_types}
+    land_types = {
+        type.strip().replace("and ", "") for type in land_types_text.split(",")
+    }
 
     return creature_types, land_types
