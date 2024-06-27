@@ -1,15 +1,20 @@
 import logging
-import re
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
 from jinja2 import Template
 
+from card_utils import (
+    BASIC_LAND_TYPES,
+    extract_types,
+    get_sort_key,
+    is_all_creature_types,
+    is_traditional_card,
+)
+
 # Constants
-BASIC_LAND_TYPES = {"Forest", "Island", "Mountain", "Plains", "Swamp"}
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
 NON_TRADITIONAL_BORDERS = {"silver", "gold"}
@@ -192,50 +197,6 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
             )
         ]
-
-
-def extract_types(card: Dict[str, Any]) -> Set[str]:
-    text = card.get("type_line", "").replace("Time Lord", "Time-Lord")
-    words = re.findall(r"\b[\w\-']+\b", text)
-    return set(word.replace("Time-Lord", "Time Lord") for word in words)
-
-
-def get_sort_key(card: Dict[str, Any]) -> Tuple[date, str, int, str]:
-    released_at = card.get("released_at")
-    release_date = (
-        date.fromisoformat(released_at) if released_at else datetime.max.date()
-    )
-
-    collector_number = card.get("collector_number", "")
-    try:
-        parsed_number = int(re.sub(r"[^\d]+", "", collector_number))
-    except ValueError:
-        parsed_number = 0
-
-    return release_date, card.get("set", ""), parsed_number, collector_number
-
-
-def is_all_creature_types(card: Dict[str, Any]) -> bool:
-    return card.get("name") == "Mistform Ultimus" or "Changeling" in card.get(
-        "keywords", []
-    )
-
-
-def is_traditional_card(
-    card: Dict[str, Any],
-    non_traditional_set_types: Set[str] = NON_TRADITIONAL_SET_TYPES,
-    non_traditional_layouts: Set[str] = NON_TRADITIONAL_LAYOUTS,
-    non_traditional_borders: Set[str] = NON_TRADITIONAL_BORDERS,
-) -> bool:
-    if card.get("set_type") in non_traditional_set_types:
-        return False
-    if card.get("layout") in non_traditional_layouts:
-        return False
-    if card.get("set") == "past":
-        return False
-    if card.get("border_color") in non_traditional_borders:
-        return False
-    return True
 
 
 class PromoTypesAggregator(Aggregator):
