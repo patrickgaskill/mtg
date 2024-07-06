@@ -1,6 +1,7 @@
 import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
@@ -18,6 +19,32 @@ from card_utils import (
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
 NON_TRADITIONAL_BORDERS = {"silver", "gold"}
+FOIL_PROMO_TYPES = {
+    "confettifoil",
+    "doublerainbow",
+    "embossed",
+    "galaxyfoil",
+    "gilded",
+    "halofoil",
+    "invisibleink",
+    "neonink",
+    "oilslick",
+    "rainbowfoil",
+    "raisedfoil",
+    "ripplefoil",
+    "silverfoil",
+    "stepandcompleat",
+    "surgefoil",
+    "textured",
+}
+MODERN_FOIL_CUTOFF_DATE = datetime(2003, 7, 28)  # Release date of 8th Edition
+SPECIAL_FOIL_SETS = {
+    "mps": "inventions",  # Kaladesh Inventions
+    "mp2": "invocations",  # Amonkhet Invocations
+    "exp": "expedition",  # Zendikar Expeditions
+    "psus": "sunburst",  # Junior Super Series promos
+    "dbl": "silverscreen",  # Innistrad Double Feature
+}
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -120,8 +147,11 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
 
     def get_sorted_data(self) -> List[Tuple[Tuple[str, str], int]]:
         return sorted(
-            [[key, len(illustrations)] for key, illustrations in self.data.items()],
-            key=lambda item: item[1],
+            [
+                [set_, name, len(illustrations)]
+                for (set_, name), illustrations in self.data.items()
+            ],
+            key=lambda item: item[2],
             reverse=True,
         )
 
@@ -273,3 +303,60 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
                 self.data.items(), key=lambda item: get_sort_key(item[1])
             )
         ]
+
+
+class FoilTypesAggregator(Aggregator):
+    def __init__(self, description: str = ""):
+        super().__init__("foil_types_by_name", description)
+        self.data: Dict[str, Set[str]] = defaultdict(set)
+        self.column_names = ["Name", "Foil Types", "Count"]
+        self.column_widths = ["16rem", "32rem", "4rem"]
+
+    def process_card(self, card: Dict[str, Any]) -> None:
+        name = card.get("name")
+        set_ = card.get("set")
+
+        # Handle special foil sets (Inventions, Invocations, Expeditions, Junior Super Series)
+        if set_ in SPECIAL_FOIL_SETS:
+            self.data[name].add(SPECIAL_FOIL_SETS[set_])
+            return  # Exit early as these cards have their own unique foil type
+
+        # Filter promo types for actual foil types
+        promo_types = card.get("promo_types", [])
+        if promo_types:
+            self.data[name].update(p for p in promo_types if p in FOIL_PROMO_TYPES)
+
+        # From the Vault have their own foil type
+        set_type = card.get("set_type")
+        if set_type == "from_the_vault":
+            self.data[name].add("from_the_vault")
+
+        # Calculate which era of traditional foil applies
+        # TODO: still need to better differentiate types of traditional foils:
+        # e.g. retro frame foils, M15 and prior cards that have spot foiling in the art
+        finishes = card.get("finishes", [])
+        if "foil" in finishes:
+            release_date_str = card.get("released_at")
+            if release_date_str:
+                release_date = datetime.strptime(release_date_str, "%Y-%m-%d")
+                if release_date < MODERN_FOIL_CUTOFF_DATE:
+                    self.data[name].add("premodern_foil")
+                else:
+                    self.data[name].add("modern_foil")
+            else:
+                # If no release date is available, assume it's modern foil
+                self.data[name].add("modern_foil")
+
+        # Check for etched finish
+        if "etched" in finishes:
+            self.data[name].add("etched")
+
+    def get_sorted_data(self) -> List[List[Any]]:
+        return sorted(
+            [
+                [name, ", ".join(sorted(foil_types)), len(foil_types)]
+                for name, foil_types in self.data.items()
+            ],
+            key=lambda x: x[2],
+            reverse=True,
+        )
