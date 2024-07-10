@@ -1,0 +1,165 @@
+{
+  "supercycles": [
+    {
+      "name": "Swords",
+      "finished": true,
+      "cards": [
+        "Sword of Fire and Ice",
+        "Sword of Light and Shadow",
+        "Sword of Feast and Famine",
+        "Sword of War and Peace",
+        "Sword of Body and Mind",
+        "Sword of Sinew and Steel",
+        "Sword of Truth and Justice",
+        "Sword of Once and Future",
+        "Sword of Forge and Frontier",
+        "Sword of Hearth and Home"
+      ]
+    },
+    {
+      "name": "Lings",
+      "finished": true,
+      "cards": ["Morphling", "Thornling", "Torchling", "Brightling", "Endling"]
+    },
+    {
+      "name": "Magus",
+      "finished": true,
+      "cards": [
+        "Magus of the Wheel",
+        "Magus of the Will",
+        "Magus of the Mind",
+        "Magus of the Balance",
+        "Magus of the Order"
+      ]
+    },
+    {
+      "name": "Omnath",
+      "finished": true,
+      "cards": [
+        "Omnath, Locus of Mana",
+        "Omnath, Locus of Rage",
+        "Omnath, Locus of the Roil",
+        "Omnath, Locus of Creation",
+        "Omnath, Locus of All"
+      ]
+    },
+    {
+      "name": "Kodamas",
+      "finished": true,
+      "cards": [
+        "Kodama of the Center Tree",
+        "Kodama of the East Tree",
+        "Kodama of the North Tree",
+        "Kodama of the South Tree",
+        "Kodama of the West Tree"
+      ]
+    },
+    {
+      "name": "Mages",
+      "finished": false,
+      "cards": ["Trinket Mage", "Trophy Mage", "Tribute Mage", "Treasure Mage"]
+    },
+    {
+      "name": "Legendary Lands",
+      "finished": true,
+      "cards": [
+        "Kor Haven",
+        "Teferi's Isle",
+        "Volrath's Stronghold",
+        "Keldon Necropolis",
+        "Yavimaya Hollow"
+      ]
+    },
+    {
+      "name": "Legendary Lands II",
+      "finished": false,
+      "cards": [
+        "Kor Haven",
+        "Academy Ruins",
+        "Volrath's Stronghold",
+        "Kher Keep"
+      ]
+    },
+    {
+      "name": "Topdeck Lands",
+      "finished": false,
+      "cards": [
+        "Hall of Heliod's Generosity",
+        "Academy Ruins",
+        "Volrath's Stronghold"
+      ]
+    },
+    {
+      "name": "Recruiters",
+      "finished": false,
+      "cards": ["Imperial Recruiter", "Recruiter of the Guard", "Spellseeker"]
+    },
+    {
+      "name": "Commander Suspend Cards",
+      "finished": false,
+      "cards": [
+        "Inspiring Refrain",
+        "Charnel Serenade",
+        "Rousing Refrain",
+        "Venture Forth"
+      ]
+    },
+    {
+      "name": "Copy Enchantments",
+      "finished": false,
+      "cards": ["Copy Artifact", "Copy Land", "Copy Enchantment"]
+    },
+    {
+      "name": "Subgames",
+      "finished": false,
+      "cards": [
+        "Enter the Dungeon",
+        "Shahrazad",
+        "The Countdown Is at One",
+        "Tug of War"
+      ]
+    },
+    {
+      "name": "Arch-Charms",
+      "finished": false,
+      "cards": ["Archmage's Charm", "Archdruid's Charm"]
+    },
+    {
+      "name": "Atogs",
+      "finished": true,
+      "cards": ["Auratog", "Chronatog", "Necratog", "Atog", "Foratog"]
+    },
+    {
+      "name": "Forces",
+      "finished": true,
+      "cards": [
+        "Celestial Force",
+        "Tidal Force",
+        "Baleful Force",
+        "Magmatic Force",
+        "Verdant Force"
+      ]
+    },
+    {
+      "name": "Player Types",
+      "finished": false,
+      "cards": [
+        "Johnny, Combo Player",
+        "Spike, Tournament Grinder",
+        "Vorthos, Steward of Myth",
+        "Timmy, Power Gamer"
+      ]
+    },
+    {
+      "name": "Praetors",
+      "finished": true,
+      "cards": [
+        "Elesh Norn, Mother of Machines",
+        "Jin-Gitaxias, Progress Tyrant",
+        "Sheoldred, the Apocalypse",
+        "Urabrask, Heretic Praetor",
+        "Vorinclex, Monstrous Raider"
+      ]
+    }
+  ]
+}

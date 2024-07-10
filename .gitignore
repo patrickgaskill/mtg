@@ -163,4 +163,8 @@ cython_debug/
 
 .DS_Store
 
-data/
+# Ignore everything in the data folder
+data/*
+
+# Except for supercycles.json
+!data/supercycles.json
