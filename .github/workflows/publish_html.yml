@@ -32,12 +32,18 @@ jobs:
       - name: Run card aggregator
         run: python card_aggregator.py run
 
+      - name: Flatten output directory
+        run: |
+          mkdir -p ./flattened_output
+          find ./data/output -type f -exec cp {} ./flattened_output \;
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           personal_token: ${{ secrets.FINE_GRAINED_PAT }}
-          publish_dir: ./data/output
-          keep_files: true
+          publish_dir: ./flattened_output
+          keep_files: false
+          cname: mtg.yourdomainhere.com # Optional: If you have a custom domain
 
       - name: Archive card data
         uses: actions/upload-artifact@v2
