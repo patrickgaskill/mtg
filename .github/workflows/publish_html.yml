@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main # or your default branch name
+  schedule:
+    - cron: "0 0 * * 0" # Run weekly on Sunday at 00:00 UTC
 
 jobs:
   build-and-publish:
@@ -21,6 +23,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Download latest card data
+        run: python card_aggregator.py download
+
+      - name: Update creature and land types
+        run: python card_aggregator.py update-types
+
       - name: Run card aggregator
         run: python card_aggregator.py run
 
@@ -30,3 +38,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./data/output
           keep_files: true
+
+      - name: Archive card data
+        uses: actions/upload-artifact@v2
+        with:
+          name: card-data
+          path: ./data/*.json
+          retention-days: 7
