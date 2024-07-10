@@ -143,23 +143,23 @@ def run():
 
     aggregators = [
         CountAggregator(
-            name="cards_by_name",
+            name="count_cards_by_name",
             key_fields=["name"],
             description="Count of unique cards by name",
         ),
         CountAggregator(
-            name="finishes_by_name",
+            name="count_finishes_by_name",
             key_fields=["name"],
             count_finishes=True,
             description="Count of card finishes by name",
         ),
         CountAggregator(
-            name="cards_by_set_name",
+            name="count_cards_by_set_name",
             key_fields=["set", "name"],
             description="Count of cards by set and name",
         ),
         CountAggregator(
-            name="finishes_by_set_name",
+            name="count_finishes_by_set_name",
             key_fields=["set", "name"],
             count_finishes=True,
             description="Count of card finishes by set and name",
