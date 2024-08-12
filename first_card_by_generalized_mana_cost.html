@@ -1,0 +1,5003 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>first_card_by_generalized_mana_cost</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin: 2rem;
+        padding-right: 220px; /* Increased to give more space for the nav */
+        line-height: 1.6;
+      }
+
+      nav {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        width: 200px;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 1rem;
+      }
+
+      nav h2 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        text-transform: uppercase;
+        color: #333;
+      }
+
+      nav ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      nav li {
+        margin-bottom: 0.75rem;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: #0066cc;
+        font-size: 0.9rem;
+        display: block;
+        padding: 0.25rem 0;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+        background-color: #e8e8e8;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      main {
+        max-width: calc(100% - 220px);
+      }
+
+      table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        table-layout: fixed;
+        max-width: calc(100% - 200px);
+      }
+
+      th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        vertical-align: bottom;
+        text-align: left;
+        padding-bottom: 0.25rem;
+        padding-top: 0;
+        color: #222;
+        border-bottom: 2px solid #222;
+      }
+
+      th:last-child {
+        text-align: right;
+      }
+
+      tbody tr {
+        border-bottom: none;
+      }
+
+      tbody tr:hover {
+        background-color: #c19c000d;
+      }
+
+      tbody td {
+        font-size: 0.75rem;
+        word-wrap: break-word;
+      }
+
+      tbody td:last-child {
+        text-align: right;
+      }
+
+      /* Add a small gap after every 5th row */
+      tbody tr:nth-child(5n) {
+        border-bottom: 1rem solid transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <h2>Navigation</h2>
+      <ul>
+        
+        <li><a href="count_cards_by_name.html">count_cards_by_name</a></li>
+        
+        <li><a href="count_finishes_by_name.html">count_finishes_by_name</a></li>
+        
+        <li><a href="count_cards_by_set_name.html">count_cards_by_set_name</a></li>
+        
+        <li><a href="count_finishes_by_set_name.html">count_finishes_by_set_name</a></li>
+        
+        <li><a href="count_card_illustrations_by_set.html">count_card_illustrations_by_set</a></li>
+        
+        <li><a href="max_collector_number_by_set.html">max_collector_number_by_set</a></li>
+        
+        <li><a href="maximal_printed_types.html">maximal_printed_types</a></li>
+        
+        <li><a href="promo_types_by_name.html">promo_types_by_name</a></li>
+        
+        <li><a href="first_card_by_power_toughness.html">first_card_by_power_toughness</a></li>
+        
+        <li><a href="foil_types_by_name.html">foil_types_by_name</a></li>
+        
+        <li><a href="supercycle_completion_time.html">supercycle_completion_time</a></li>
+        
+        <li><a href="maximal_types_with_effects.html">maximal_types_with_effects</a></li>
+        
+        <li><a href="first_card_by_generalized_mana_cost.html">first_card_by_generalized_mana_cost</a></li>
+        
+      </ul>
+    </nav>
+
+    <main>
+      <h1>first_card_by_generalized_mana_cost</h1>
+      <table>
+        <tr>
+          
+          <th style="width: 8rem;">
+            Generalized Mana Cost
+          </th>
+          
+          <th style="width: 16rem;">
+            Name
+          </th>
+          
+          <th style="width: 4rem;">
+            Set
+          </th>
+          
+          <th style="width: 8rem;">
+            Release Date
+          </th>
+          
+          <th style="width: 8rem;">
+            Original Mana Cost
+          </th>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}</td>
+          
+          <td>Animate Wall</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}</td>
+          
+          <td>Armageddon</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{3}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}</td>
+          
+          <td>Balance</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}</td>
+          
+          <td>Blessing</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}</td>
+          
+          <td>Conversion</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{2}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}</td>
+          
+          <td>Farmstead</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{W}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}</td>
+          
+          <td>Guardian Angel</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{X}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}</td>
+          
+          <td>Pearled Unicorn</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}{M}</td>
+          
+          <td>Personal Incarnation</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{3}{W}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}</td>
+          
+          <td>Reverse Damage</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{1}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}</td>
+          
+          <td>Serra Angel</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{3}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{M}</td>
+          
+          <td>Braingeyser</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{X}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M}</td>
+          
+          <td>Mahamoti Djinn</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{4}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}</td>
+          
+          <td>Pirate Ship</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{4}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}</td>
+          
+          <td>Sea Serpent</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{5}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{M}{M}</td>
+          
+          <td>Volcanic Eruption</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{X}{U}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{1}{M}</td>
+          
+          <td>Drain Life</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{X}{1}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{M}</td>
+          
+          <td>Lich</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{B}{B}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M}{M}</td>
+          
+          <td>Lord of the Pit</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{4}{B}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{M}{M}</td>
+          
+          <td>Force of Nature</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{2}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}</td>
+          
+          <td>Ankh of Mishra</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{2}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}</td>
+          
+          <td>Basalt Monolith</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{3}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{0}</td>
+          
+          <td>Black Lotus</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{0}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}</td>
+          
+          <td>Black Vise</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{1}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}</td>
+          
+          <td>Clockwork Beast</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{6}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}</td>
+          
+          <td>Conservator</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{4}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}</td>
+          
+          <td>The Hive</td>
+          
+          <td>lea</td>
+          
+          <td>1993-08-05</td>
+          
+          <td>{5}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{10}</td>
+          
+          <td>Aladdin's Lamp</td>
+          
+          <td>arn</td>
+          
+          <td>1993-12-17</td>
+          
+          <td>{10}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}</td>
+          
+          <td>Aladdin's Ring</td>
+          
+          <td>arn</td>
+          
+          <td>1993-12-17</td>
+          
+          <td>{8}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{9}</td>
+          
+          <td>Colossus of Sardia</td>
+          
+          <td>atq</td>
+          
+          <td>1994-03-04</td>
+          
+          <td>{9}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{7}</td>
+          
+          <td>Mishra's War Machine</td>
+          
+          <td>atq</td>
+          
+          <td>1994-03-04</td>
+          
+          <td>{7}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M}{M}</td>
+          
+          <td>Akron Legionnaire</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{6}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{M}</td>
+          
+          <td>Petra Sphinx</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{W}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}</td>
+          
+          <td>Part Water</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{X}{X}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M}</td>
+          
+          <td>Mold Demon</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{5}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}{M}</td>
+          
+          <td>Tempest Efreet</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{1}{R}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}{M}{M}</td>
+          
+          <td>Craw Giant</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{O}</td>
+          
+          <td>Adun Oakenshield</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{N}{N}{O}{O}</td>
+          
+          <td>Arcades Sabboth</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{G}{G}{W}{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M}{N}{N}</td>
+          
+          <td>Axelrod Gunnarson</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{4}{B}{B}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{N}{N}</td>
+          
+          <td>Ayesha Tanaka</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{W}{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{N}{N}</td>
+          
+          <td>Barktooth Warbeard</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{4}{B}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N}{O}</td>
+          
+          <td>Bartel Runeaxe</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N}</td>
+          
+          <td>Boris Devilboon</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{N}{N}{O}</td>
+          
+          <td>Dakkon Blackblade</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{W}{U}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}{N}{N}</td>
+          
+          <td>Gabriel Angelfire</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{G}{G}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{N}{O}</td>
+          
+          <td>Gwendlyn Di Corci</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{U}{B}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N}{O}</td>
+          
+          <td>Halfdane</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{1}{W}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{N}{O}</td>
+          
+          <td>Hazezon Tamar</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{4}{R}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N}{N}</td>
+          
+          <td>Hunding Gjornersen</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M}{N}</td>
+          
+          <td>Jedit Ojanen</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{4}{W}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{N}</td>
+          
+          <td>Kasimir the Lone Wolf</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{4}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{N}</td>
+          
+          <td>Kei Takahashi</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{N}</td>
+          
+          <td>Lady Orca</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{5}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{N}{N}</td>
+          
+          <td>Livonya Silone</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{R}{R}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}{N}</td>
+          
+          <td>Marhault Elsdragon</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{3}{R}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{N}{O}</td>
+          
+          <td>Rubinia Soulsinger</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{G}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{N}</td>
+          
+          <td>Tor Wauki</td>
+          
+          <td>leg</td>
+          
+          <td>1994-06-01</td>
+          
+          <td>{2}{B}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M}{M}{M}</td>
+          
+          <td>Leviathan</td>
+          
+          <td>drk</td>
+          
+          <td>1994-08-01</td>
+          
+          <td>{5}{U}{U}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}</td>
+          
+          <td>Marsh Goblins</td>
+          
+          <td>drk</td>
+          
+          <td>1994-08-01</td>
+          
+          <td>{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M}{M}</td>
+          
+          <td>Deep Spawn</td>
+          
+          <td>fem</td>
+          
+          <td>1994-11-01</td>
+          
+          <td>{5}{U}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M}</td>
+          
+          <td>Seraph</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{6}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M}{M}</td>
+          
+          <td>Polar Kraken</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{8}{U}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{7}{M}</td>
+          
+          <td>Infernal Denizen</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{7}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{3}{M}</td>
+          
+          <td>Mind Warp</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{X}{3}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{2}{M}</td>
+          
+          <td>Soul Burn</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{X}{2}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{2}{M}{M}</td>
+          
+          <td>Avalanche</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{X}{2}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N}</td>
+          
+          <td>Centaur Archer</td>
+          
+          <td>ice</td>
+          
+          <td>1995-06-03</td>
+          
+          <td>{1}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M}{M}{M}</td>
+          
+          <td>Shichifukujin Dragon</td>
+          
+          <td>pcel</td>
+          
+          <td>1996-01-01</td>
+          
+          <td>{6}{R}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{W}{U}{B}{R}{G}</td>
+          
+          <td>1996 World Champion</td>
+          
+          <td>pcel</td>
+          
+          <td>1996-08-14</td>
+          
+          <td>{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{N}</td>
+          
+          <td>Energy Bolt</td>
+          
+          <td>mir</td>
+          
+          <td>1996-10-08</td>
+          
+          <td>{X}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}</td>
+          
+          <td>Phyrexian Marauder</td>
+          
+          <td>vis</td>
+          
+          <td>1997-02-03</td>
+          
+          <td>{X}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{4}{M}</td>
+          
+          <td>Dregs of Sorrow</td>
+          
+          <td>tmp</td>
+          
+          <td>1997-10-14</td>
+          
+          <td>{X}{4}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M}{M}{M}</td>
+          
+          <td>Incoming!</td>
+          
+          <td>o90p</td>
+          
+          <td>1998-08-06</td>
+          
+          <td>{4}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}{M}</td>
+          
+          <td>B.F.M. (Big Furry Monster)</td>
+          
+          <td>ugl</td>
+          
+          <td>1998-08-11</td>
+          
+          <td>{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{Y}{Z}{M}{M}</td>
+          
+          <td>The Ultimate Nightmare of Wizards of the Coast® Customer Service</td>
+          
+          <td>ugl</td>
+          
+          <td>1998-08-11</td>
+          
+          <td>{X}{Y}{Z}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{1}{M}{M}</td>
+          
+          <td>Goblin Offensive</td>
+          
+          <td>usg</td>
+          
+          <td>1998-10-12</td>
+          
+          <td>{X}{1}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{7}{M}{M}</td>
+          
+          <td>Zodiac Dragon</td>
+          
+          <td>ptk</td>
+          
+          <td>1999-05-01</td>
+          
+          <td>{7}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{M}{M}</td>
+          
+          <td>Rushwood Elemental</td>
+          
+          <td>mmq</td>
+          
+          <td>1999-10-04</td>
+          
+          <td>{G}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}</td>
+          
+          <td>Searing Wind</td>
+          
+          <td>pcy</td>
+          
+          <td>2000-06-05</td>
+          
+          <td>{8}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{N}</td>
+          
+          <td>Absorb</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{W}{U}{B}{R}{G}</td>
+          
+          <td>Coalition Victory</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{3}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{N}</td>
+          
+          <td>Undermine</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{U}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {2}{N}</td>
+          
+          <td>Stand // Deliver</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{W} // {2}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {3}{N}</td>
+          
+          <td>Spite // Malice</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{3}{U} // {3}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {3}{N}</td>
+          
+          <td>Pain // Suffering</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{B} // {3}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {N}</td>
+          
+          <td>Wax // Wane</td>
+          
+          <td>inv</td>
+          
+          <td>2000-10-02</td>
+          
+          <td>{G} // {W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{16}</td>
+          
+          <td>Draco</td>
+          
+          <td>pls</td>
+          
+          <td>2001-02-05</td>
+          
+          <td>{16}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M}{N}</td>
+          
+          <td>Death Mutation</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{6}{B}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N}{N}</td>
+          
+          <td>Mystic Snake</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{1}{G}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}{N}</td>
+          
+          <td>Suffocating Blast</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{1}{U}{U}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{N}{N}</td>
+          
+          <td>Yavimaya's Embrace</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{5}{G}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {1}{N}</td>
+          
+          <td>Fire // Ice</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{1}{R} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {1}{N}</td>
+          
+          <td>Life // Death</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{G} // {1}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {2}{N}</td>
+          
+          <td>Order // Chaos</td>
+          
+          <td>apc</td>
+          
+          <td>2001-06-04</td>
+          
+          <td>{3}{W} // {2}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M}</td>
+          
+          <td>Time Stretch</td>
+          
+          <td>ody</td>
+          
+          <td>2001-10-01</td>
+          
+          <td>{8}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{4}</td>
+          
+          <td>Riptide Replicator</td>
+          
+          <td>ons</td>
+          
+          <td>2002-10-07</td>
+          
+          <td>{X}{4}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{7}{M}{M}{M}</td>
+          
+          <td>Krosan Cloudscraper</td>
+          
+          <td>lgn</td>
+          
+          <td>2003-02-03</td>
+          
+          <td>{7}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{2}{M}{M}</td>
+          
+          <td>Decree of Justice</td>
+          
+          <td>scg</td>
+          
+          <td>2003-05-26</td>
+          
+          <td>{X}{X}{2}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{W}{U}{B}{R}{G}</td>
+          
+          <td>Karona, False God</td>
+          
+          <td>scg</td>
+          
+          <td>2003-05-26</td>
+          
+          <td>{1}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}</td>
+          
+          <td>Chalice of the Void</td>
+          
+          <td>mrd</td>
+          
+          <td>2003-10-02</td>
+          
+          <td>{X}{X}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{11}</td>
+          
+          <td>Darksteel Colossus</td>
+          
+          <td>dst</td>
+          
+          <td>2004-02-06</td>
+          
+          <td>{11}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{12}{M}{M}</td>
+          
+          <td>Blinkmoth Infusion</td>
+          
+          <td>5dn</td>
+          
+          <td>2004-06-04</td>
+          
+          <td>{12}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{HM}</td>
+          
+          <td>Little Girl</td>
+          
+          <td>unh</td>
+          
+          <td>2004-11-19</td>
+          
+          <td>{HW}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{W} // {2}{R} // {2}{U} // {3}{B} // {1}{G}</td>
+          
+          <td>Who // What // When // Where // Why</td>
+          
+          <td>unh</td>
+          
+          <td>2004-11-19</td>
+          
+          <td>{X}{W} // {2}{R} // {2}{U} // {3}{B} // {1}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1000000}</td>
+          
+          <td>Gleemax</td>
+          
+          <td>unh</td>
+          
+          <td>2004-11-19</td>
+          
+          <td>{1000000}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{15}</td>
+          
+          <td>Mox Lotus</td>
+          
+          <td>unh</td>
+          
+          <td>2004-11-19</td>
+          
+          <td>{15}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M}{N}{N}</td>
+          
+          <td>Iname as One</td>
+          
+          <td>sok</td>
+          
+          <td>2005-06-03</td>
+          
+          <td>{8}{B}{B}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N}</td>
+          
+          <td>Dimir Guildmage</td>
+          
+          <td>psal</td>
+          
+          <td>2005-08-22</td>
+          
+          <td>{U/B}{U/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{N} // {1}{N}{O}</td>
+          
+          <td>Supply // Demand</td>
+          
+          <td>psal</td>
+          
+          <td>2005-08-22</td>
+          
+          <td>{X}{G}{W} // {1}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/N}{M/N}{M/N}</td>
+          
+          <td>Gleancrawler</td>
+          
+          <td>prav</td>
+          
+          <td>2005-09-24</td>
+          
+          <td>{3}{B/G}{B/G}{B/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{10}{M}{M}{M}{N}{N}</td>
+          
+          <td>Autochthon Wurm</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{10}{G}{G}{G}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{M}{N}{N}</td>
+          
+          <td>Brightflame</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{X}{R}{R}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{N}{N}</td>
+          
+          <td>Grave-Shell Scarab</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{2}{B}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}</td>
+          
+          <td>Boros Recruit</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{R/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}</td>
+          
+          <td>Centaur Safeguard</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{2}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/N}</td>
+          
+          <td>Gaze of the Gorgon</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{3}{B/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}</td>
+          
+          <td>Lurking Informant</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{1}{U/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}{M/N}</td>
+          
+          <td>Master Warcraft</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{2}{R/W}{R/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}{M/N}{M/N}</td>
+          
+          <td>Privileged Position</td>
+          
+          <td>rav</td>
+          
+          <td>2005-10-07</td>
+          
+          <td>{2}{G/W}{G/W}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M/N}{M/N}</td>
+          
+          <td>Djinn Illuminatus</td>
+          
+          <td>pgpt</td>
+          
+          <td>2006-01-21</td>
+          
+          <td>{5}{U/R}{U/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{O}{P}</td>
+          
+          <td>Dune-Brood Nephilim</td>
+          
+          <td>gpt</td>
+          
+          <td>2006-02-03</td>
+          
+          <td>{B}{R}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{M}{N}</td>
+          
+          <td>Invoke the Firemind</td>
+          
+          <td>gpt</td>
+          
+          <td>2006-02-03</td>
+          
+          <td>{X}{U}{U}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/N}{M/N}{M/N}</td>
+          
+          <td>Debtors' Knell</td>
+          
+          <td>gpt</td>
+          
+          <td>2006-02-03</td>
+          
+          <td>{4}{W/B}{W/B}{W/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N}{M/N}</td>
+          
+          <td>Avatar of Discord</td>
+          
+          <td>pdis</td>
+          
+          <td>2006-04-22</td>
+          
+          <td>{B/R}{B/R}{B/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}{N}{N}</td>
+          
+          <td>Isperia the Inscrutable</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{1}{W}{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N} // {N}{O}</td>
+          
+          <td>Bound // Determined</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{3}{B}{G} // {G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N} // {X}{N}{O}</td>
+          
+          <td>Crime // Punishment</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{3}{W}{B} // {X}{B}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N} // {N}{O}</td>
+          
+          <td>Hide // Seek</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{R}{W} // {W}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N} // {3}{N}{O}</td>
+          
+          <td>Hit // Run</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{1}{B}{R} // {3}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N} // {3}{N}{O}</td>
+          
+          <td>Odds // Ends</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{U}{R} // {3}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N} // {1}{N}{O}</td>
+          
+          <td>Pure // Simple</td>
+          
+          <td>dis</td>
+          
+          <td>2006-05-05</td>
+          
+          <td>{1}{R}{G} // {1}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{9}{M}</td>
+          
+          <td>Curse of the Cabal</td>
+          
+          <td>tsp</td>
+          
+          <td>2006-10-06</td>
+          
+          <td>{9}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {5}{M}</td>
+          
+          <td>Boom // Bust</td>
+          
+          <td>plc</td>
+          
+          <td>2007-02-02</td>
+          
+          <td>{1}{R} // {5}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {2}{M}</td>
+          
+          <td>Dead // Gone</td>
+          
+          <td>plc</td>
+          
+          <td>2007-02-02</td>
+          
+          <td>{R} // {2}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N}{M/N}{M/N}{M/N}</td>
+          
+          <td>Demigod of Revenge</td>
+          
+          <td>pshm</td>
+          
+          <td>2008-04-19</td>
+          
+          <td>{B/R}{B/R}{B/R}{B/R}{B/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2/M}{2/M}{2/M}</td>
+          
+          <td>Spectral Procession</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{2/W}{2/W}{2/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}{M/N}</td>
+          
+          <td>Augury Adept</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{1}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/N}{M/N}</td>
+          
+          <td>Enchanted Evening</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{3}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/N}</td>
+          
+          <td>Glamer Spinners</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{4}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}{M/N}{M/N}</td>
+          
+          <td>Thistledown Liege</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{1}{W/U}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/N}{M/N}</td>
+          
+          <td>Thoughtweft Gambit</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{4}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/N}{M/N}{M/N}{M/N}</td>
+          
+          <td>Worldpurge</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{4}{W/U}{W/U}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N}{M/N}{M/N}</td>
+          
+          <td>Memory Plunder</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{U/B}{U/B}{U/B}{U/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M/N}{M/N}{M/N}</td>
+          
+          <td>Din of the Fireherd</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{5}{B/R}{B/R}{B/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M/N}</td>
+          
+          <td>Grief Tyrant</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{5}{B/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M/N}</td>
+          
+          <td>Dawnglow Infusion</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{X}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2/W}{2/U}{2/B}{2/R}{2/G}</td>
+          
+          <td>Reaper King</td>
+          
+          <td>shm</td>
+          
+          <td>2008-05-02</td>
+          
+          <td>{2/W}{2/U}{2/B}{2/R}{2/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{M}{M}{M}</td>
+          
+          <td>Primalcrux</td>
+          
+          <td>eve</td>
+          
+          <td>2008-07-25</td>
+          
+          <td>{G}{G}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{N}{N}{O}</td>
+          
+          <td>Hellkite Overlord</td>
+          
+          <td>drb</td>
+          
+          <td>2008-08-29</td>
+          
+          <td>{4}{B}{R}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{N}{N}{N}{O}{O}</td>
+          
+          <td>Brilliant Ultimatum</td>
+          
+          <td>ala</td>
+          
+          <td>2008-10-03</td>
+          
+          <td>{W}{W}{U}{U}{U}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{W}{W}{U}{U}{B}{B}{R}{R}{G}{G}</td>
+          
+          <td>Progenitus</td>
+          
+          <td>con</td>
+          
+          <td>2009-02-06</td>
+          
+          <td>{W}{W}{U}{U}{B}{B}{R}{R}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M}{M}{N}</td>
+          
+          <td>Dragon Broodmother</td>
+          
+          <td>parb</td>
+          
+          <td>2009-04-25</td>
+          
+          <td>{2}{R}{R}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M}{N}</td>
+          
+          <td>Filigree Angel</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{5}{W}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{N}{O}</td>
+          
+          <td>Sphinx of the Steel Wind</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{5}{W}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{N}{O}</td>
+          
+          <td>Lavalanche</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{X}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}{O}</td>
+          
+          <td>Arsenal Thresher</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{2}{W/B}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{O}</td>
+          
+          <td>Esper Stormblade</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{W/B}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/N}{O}</td>
+          
+          <td>Slave of Bolas</td>
+          
+          <td>arb</td>
+          
+          <td>2009-04-30</td>
+          
+          <td>{3}{U/R}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{12}</td>
+          
+          <td>It That Betrays</td>
+          
+          <td>roe</td>
+          
+          <td>2010-04-23</td>
+          
+          <td>{12}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{M}{M}{M}{M}{M}</td>
+          
+          <td>Khalni Hydra</td>
+          
+          <td>roe</td>
+          
+          <td>2010-04-23</td>
+          
+          <td>{G}{G}{G}{G}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/P}</td>
+          
+          <td>Phyrexian Metamorph</td>
+          
+          <td>pnph</td>
+          
+          <td>2011-05-12</td>
+          
+          <td>{3}{U/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/P}</td>
+          
+          <td>Surgical Extraction</td>
+          
+          <td>pnph</td>
+          
+          <td>2011-05-12</td>
+          
+          <td>{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/P}</td>
+          
+          <td>Apostle's Blessing</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{1}{W/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M/P}{M/P}</td>
+          
+          <td>Norn's Annex</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{3}{W/P}{W/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/P}</td>
+          
+          <td>Porcelain Legionnaire</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{2}{W/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/P}{M/P}</td>
+          
+          <td>Dismember</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{1}{B/P}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/P}</td>
+          
+          <td>Pith Driller</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{4}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M/P}</td>
+          
+          <td>Postmortem Lunge</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{X}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/P}{M/P}</td>
+          
+          <td>Moltensteel Dragon</td>
+          
+          <td>nph</td>
+          
+          <td>2011-05-13</td>
+          
+          <td>{4}{R/P}{R/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}{M}{M}</td>
+          
+          <td>Entreat the Angels</td>
+          
+          <td>avr</td>
+          
+          <td>2012-05-04</td>
+          
+          <td>{X}{X}{W}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M}{M}{N}{N}{N}</td>
+          
+          <td>Krond the Dawn-Clad</td>
+          
+          <td>pc2</td>
+          
+          <td>2012-06-01</td>
+          
+          <td>{G}{G}{G}{W}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{3}{M}{M}</td>
+          
+          <td>Diabolic Revelation</td>
+          
+          <td>m13</td>
+          
+          <td>2012-07-13</td>
+          
+          <td>{X}{3}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{N}{N}</td>
+          
+          <td>Sphinx's Revelation</td>
+          
+          <td>rtr</td>
+          
+          <td>2012-10-05</td>
+          
+          <td>{X}{W}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M} // {1}{N}{N}</td>
+          
+          <td>Naughty // Nice</td>
+          
+          <td>hho</td>
+          
+          <td>2012-12-01</td>
+          
+          <td>{1}{B}{B} // {1}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M}{M}{M}</td>
+          
+          <td>Enter the Infinite</td>
+          
+          <td>gtc</td>
+          
+          <td>2013-02-01</td>
+          
+          <td>{8}{U}{U}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M/N}{M/N}</td>
+          
+          <td>Biomass Mutation</td>
+          
+          <td>gtc</td>
+          
+          <td>2013-02-01</td>
+          
+          <td>{X}{G/U}{G/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M/N}{M/N}{M/N}</td>
+          
+          <td>Immortal Servitude</td>
+          
+          <td>gtc</td>
+          
+          <td>2013-02-01</td>
+          
+          <td>{X}{W/B}{W/B}{W/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N} // {4}{N}{O}</td>
+          
+          <td>Breaking // Entering</td>
+          
+          <td>pdgm</td>
+          
+          <td>2013-04-27</td>
+          
+          <td>{U}{B} // {4}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{2}{M}{N}</td>
+          
+          <td>Reap Intellect</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{X}{2}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {N}</td>
+          
+          <td>Alive // Well</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{3}{G} // {W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {3}{N}</td>
+          
+          <td>Armed // Dangerous</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{1}{R} // {3}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N} // {4}{O}{N}</td>
+          
+          <td>Beck // Call</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{G}{U} // {4}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N} // {4}{N}{O}</td>
+          
+          <td>Catch // Release</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{1}{U}{R} // {4}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {2}{N}</td>
+          
+          <td>Far // Away</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{1}{U} // {2}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N} // {O}{N}</td>
+          
+          <td>Flesh // Blood</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{3}{B}{G} // {R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {2}{N}</td>
+          
+          <td>Give // Take</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{2}{G} // {2}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {1}{N}</td>
+          
+          <td>Protect // Serve</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{2}{W} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {N}</td>
+          
+          <td>Wear // Tear</td>
+          
+          <td>dgm</td>
+          
+          <td>2013-05-03</td>
+          
+          <td>{1}{R} // {W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{X}</td>
+          
+          <td>Astral Cornucopia</td>
+          
+          <td>bng</td>
+          
+          <td>2014-02-07</td>
+          
+          <td>{X}{X}{X}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}{M}{M}{M}</td>
+          
+          <td>Empty the Pits</td>
+          
+          <td>ktk</td>
+          
+          <td>2014-09-26</td>
+          
+          <td>{X}{X}{B}{B}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}{M}</td>
+          
+          <td>Quarantine Field</td>
+          
+          <td>bfz</td>
+          
+          <td>2015-10-02</td>
+          
+          <td>{X}{X}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{C}</td>
+          
+          <td>Spatial Contortion</td>
+          
+          <td>f16</td>
+          
+          <td>2016-01-01</td>
+          
+          <td>{1}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{C}</td>
+          
+          <td>Deceiver of Form</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{6}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{C}</td>
+          
+          <td>Endbringer</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{5}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{C}{C}</td>
+          
+          <td>Kozilek, the Great Distortion</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{8}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{C}</td>
+          
+          <td>Matter Reshaper</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{2}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{C}</td>
+          
+          <td>Reality Smasher</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{4}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{C}</td>
+          
+          <td>Thought-Knot Seer</td>
+          
+          <td>ogw</td>
+          
+          <td>2016-01-22</td>
+          
+          <td>{3}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{13}</td>
+          
+          <td>Emrakul, the Promised End</td>
+          
+          <td>emn</td>
+          
+          <td>2016-07-22</td>
+          
+          <td>{13}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{10}{M}</td>
+          
+          <td>Primeval Protector</td>
+          
+          <td>c16</td>
+          
+          <td>2016-11-11</td>
+          
+          <td>{10}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{W}{U}{B}{R}{G}</td>
+          
+          <td>The Ur-Dragon</td>
+          
+          <td>pz2</td>
+          
+          <td>2016-11-16</td>
+          
+          <td>{4}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M} // {3}{M}{M}</td>
+          
+          <td>Dusk // Dawn</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{2}{W}{W} // {3}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {4}{M}{M}</td>
+          
+          <td>Commit // Memory</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{3}{U} // {4}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M} // {3}{M}</td>
+          
+          <td>Never // Return</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{1}{B}{B} // {3}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {2}{M}</td>
+          
+          <td>Insult // Injury</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{2}{R} // {2}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {3}{M}</td>
+          
+          <td>Mouth // Feed</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{2}{G} // {3}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {4}{N}{N}</td>
+          
+          <td>Spring // Mind</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{2}{G} // {4}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M} // {5}{N}{N}</td>
+          
+          <td>Rags // Riches</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{2}{B}{B} // {5}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {X}{N}{N}</td>
+          
+          <td>Cut // Ribbons</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{1}{R} // {X}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M} // {X}{N}{N}</td>
+          
+          <td>Heaven // Earth</td>
+          
+          <td>akh</td>
+          
+          <td>2017-04-28</td>
+          
+          <td>{X}{G} // {X}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {4}{N}</td>
+          
+          <td>Consign // Oblivion</td>
+          
+          <td>hou</td>
+          
+          <td>2017-07-14</td>
+          
+          <td>{1}{U} // {4}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {4}{N}</td>
+          
+          <td>Reason // Believe</td>
+          
+          <td>hou</td>
+          
+          <td>2017-07-14</td>
+          
+          <td>{U} // {4}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/P}{M/P}</td>
+          
+          <td>Spike, Tournament Grinder</td>
+          
+          <td>ust</td>
+          
+          <td>2017-12-08</td>
+          
+          <td>{2}{B/P}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{10}{M}{M}</td>
+          
+          <td>Ghalta, Primal Hunger</td>
+          
+          <td>prix</td>
+          
+          <td>2018-01-19</td>
+          
+          <td>{10}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M}{N}{O}</td>
+          
+          <td>Zacama, Primal Calamity</td>
+          
+          <td>prix</td>
+          
+          <td>2018-01-19</td>
+          
+          <td>{6}{R}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{2/M}{2/N}</td>
+          
+          <td>Inzerva, Master of Insights</td>
+          
+          <td>ph17</td>
+          
+          <td>2018-08-01</td>
+          
+          <td>{1}{2/U}{2/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{7}{M}{N}</td>
+          
+          <td>Molderhulk</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{7}{B}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N} // {4}{M}{N}</td>
+          
+          <td>Assure // Assemble</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{G/W}{G/W} // {4}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}{M/N} // {3}{M}{N}</td>
+          
+          <td>Connive // Concoct</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{2}{U/B}{U/B} // {3}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N} // {3}{M}{N}</td>
+          
+          <td>Discovery // Dispersal</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{1}{U/B} // {3}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N} // {X}{M}{M}{N}{N}</td>
+          
+          <td>Expansion // Explosion</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{U/R}{U/R} // {X}{U}{U}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N} // {4}{M}{N}</td>
+          
+          <td>Flower // Flourish</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{G/W} // {4}{G}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N} // {2}{M}{N}</td>
+          
+          <td>Integrity // Intervention</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{R/W} // {2}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N} // {3}{M}{N}</td>
+          
+          <td>Response // Resurgence</td>
+          
+          <td>grn</td>
+          
+          <td>2018-10-05</td>
+          
+          <td>{R/W}{R/W} // {3}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N} // {M}{N}</td>
+          
+          <td>Collision // Colossus</td>
+          
+          <td>rna</td>
+          
+          <td>2019-01-25</td>
+          
+          <td>{1}{R/G} // {R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N} // {2}{M}{N}</td>
+          
+          <td>Consecrate // Consume</td>
+          
+          <td>rna</td>
+          
+          <td>2019-01-25</td>
+          
+          <td>{1}{W/B} // {2}{W}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N} // {1}{M}{N}</td>
+          
+          <td>Incubation // Incongruity</td>
+          
+          <td>rna</td>
+          
+          <td>2019-01-25</td>
+          
+          <td>{G/U} // {1}{G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N} // {1}{M}{N}</td>
+          
+          <td>Repudiate // Replicate</td>
+          
+          <td>rna</td>
+          
+          <td>2019-01-25</td>
+          
+          <td>{G/U}{G/U} // {1}{G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N} // {2}{M}{N}</td>
+          
+          <td>Thrash // Threat</td>
+          
+          <td>rna</td>
+          
+          <td>2019-01-25</td>
+          
+          <td>{R/G}{R/G} // {2}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{N}{N}{O}</td>
+          
+          <td>Nicol Bolas, Dragon-God</td>
+          
+          <td>med</td>
+          
+          <td>2019-05-03</td>
+          
+          <td>{U}{B}{B}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{S}</td>
+          
+          <td>Arcum's Astrolabe</td>
+          
+          <td>mh1</td>
+          
+          <td>2019-06-14</td>
+          
+          <td>{S}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M/P}{M/P}{M/P}</td>
+          
+          <td>K'rrik, Son of Yawgmoth</td>
+          
+          <td>c19</td>
+          
+          <td>2019-08-23</td>
+          
+          <td>{4}{B/P}{B/P}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M} // {1}{M}</td>
+          
+          <td>Ardenvale Tactician // Dizzying Swoop</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{W}{W} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {1}{M}</td>
+          
+          <td>Faerie Guidemother // Gift of the Fae</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{W} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M} // {2}{M}</td>
+          
+          <td>Lonesome Unicorn // Rider in Need</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{4}{W} // {2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M} // {3}{M}{M}</td>
+          
+          <td>Realm-Cloaked Giant // Cast Off</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{5}{W}{W} // {3}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {M}</td>
+          
+          <td>Shepherd of the Flock // Usher to Safety</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{W} // {W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {2}{M}</td>
+          
+          <td>Silverflame Squire // On Alert</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{W} // {2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {3}{M}</td>
+          
+          <td>Fae of Wishes // Granted</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{U} // {3}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M} // {2}{M}</td>
+          
+          <td>Hypnotic Sprite // Mesmeric Glare</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{U}{U} // {2}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {M}</td>
+          
+          <td>Merfolk Secretkeeper // Venture Deeper</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{U} // {U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {1}{M}</td>
+          
+          <td>Queen of Ice // Rage of Winter</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{2}{U} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M} // {1}{M}{M}</td>
+          
+          <td>Murderous Rider // Swift End</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{B}{B} // {1}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {1}{M}</td>
+          
+          <td>Order of Midnight // Alter Fate</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{1}{B} // {1}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M} // {3}{M}</td>
+          
+          <td>Reaper of Night // Harvest Fear</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{5}{B}{B} // {3}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {M}</td>
+          
+          <td>Merchant of the Vale // Haggle</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{2}{R} // {R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M} // {2}{M}</td>
+          
+          <td>Beanstalk Giant // Fertile Footsteps</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{6}{G} // {2}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {5}{M}{M}</td>
+          
+          <td>Flaxen Intruder // Welcome Home</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{G} // {5}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {1}{M}</td>
+          
+          <td>Garenbrig Carver // Shield's Might</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{3}{G} // {1}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M} // {3}{M}</td>
+          
+          <td>Tuinvale Treefolk // Oaken Boon</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{5}{G} // {3}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{M/N}{M/N}{M/N} // {M/N}{M/N}{M/N}{M/N}</td>
+          
+          <td>Oakhame Ranger // Bring Back</td>
+          
+          <td>eld</td>
+          
+          <td>2019-10-04</td>
+          
+          <td>{G/W}{G/W}{G/W}{G/W} // {G/W}{G/W}{G/W}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{O/M}</td>
+          
+          <td>Evil Boros Charm</td>
+          
+          <td>cmb1</td>
+          
+          <td>2019-11-07</td>
+          
+          <td>{B/R}{W/B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {5}{N} // {1}{O}</td>
+          
+          <td>Smelt // Herd // Saw</td>
+          
+          <td>cmb1</td>
+          
+          <td>2019-11-07</td>
+          
+          <td>{R} // {5}{G} // {1}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{C}{W}{U}{B}{R}{G}</td>
+          
+          <td>Slivdrazi Monstrosity</td>
+          
+          <td>cmb1</td>
+          
+          <td>2019-11-07</td>
+          
+          <td>{C}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {2}{M}</td>
+          
+          <td>Decorated Knight // Present Arms</td>
+          
+          <td>hho</td>
+          
+          <td>2019-12-01</td>
+          
+          <td>{3}{U} // {2}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N}{O}{P}</td>
+          
+          <td>A-Omnath, Locus of Creation</td>
+          
+          <td>znr</td>
+          
+          <td>2020-09-25</td>
+          
+          <td>{1}{R}{G}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{X}{M}{M}</td>
+          
+          <td>Crackle with Power</td>
+          
+          <td>pstx</td>
+          
+          <td>2021-04-23</td>
+          
+          <td>{X}{X}{X}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}{M}{N}{N}{N}</td>
+          
+          <td>Harness Infinity</td>
+          
+          <td>pstx</td>
+          
+          <td>2021-04-23</td>
+          
+          <td>{1}{B}{B}{B}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M/N}{N}</td>
+          
+          <td>Daemogoth Woe-Eater</td>
+          
+          <td>stx</td>
+          
+          <td>2021-04-23</td>
+          
+          <td>{1}{B}{B/G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{M/N}{N}</td>
+          
+          <td>A-Maelstrom Muse</td>
+          
+          <td>stx</td>
+          
+          <td>2021-04-23</td>
+          
+          <td>{U}{U/R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M/N}{N}</td>
+          
+          <td>Returned Pastcaller</td>
+          
+          <td>stx</td>
+          
+          <td>2021-04-23</td>
+          
+          <td>{3}{R}{R/W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {3}{M}{M}</td>
+          
+          <td>Fast // Furious</td>
+          
+          <td>mh2</td>
+          
+          <td>2021-06-18</td>
+          
+          <td>{2}{R} // {3}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {1}{N}{N}</td>
+          
+          <td>Road // Ruin</td>
+          
+          <td>mh2</td>
+          
+          <td>2021-06-18</td>
+          
+          <td>{2}{G} // {1}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{W}{U}{B}{R}{G}</td>
+          
+          <td>Tiamat</td>
+          
+          <td>afr</td>
+          
+          <td>2021-07-23</td>
+          
+          <td>{2}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M}{M}{M}</td>
+          
+          <td>Unnatural Growth</td>
+          
+          <td>mid</td>
+          
+          <td>2021-09-24</td>
+          
+          <td>{1}{G}{G}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M/N/P}{N}</td>
+          
+          <td>Tamiyo, Compleated Sage</td>
+          
+          <td>neo</td>
+          
+          <td>2022-02-18</td>
+          
+          <td>{2}{G}{G/U/P}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{13}{M}{M}</td>
+          
+          <td>Shadow of Mortality</td>
+          
+          <td>psnc</td>
+          
+          <td>2022-04-29</td>
+          
+          <td>{13}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N}{N}{N/O}</td>
+          
+          <td>Evelyn, the Covetous</td>
+          
+          <td>psnc</td>
+          
+          <td>2022-04-29</td>
+          
+          <td>{2}{U/B}{B}{B/R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{N}{N/O}</td>
+          
+          <td>Jinnie Fay, Jetmir's Second</td>
+          
+          <td>psnc</td>
+          
+          <td>2022-04-29</td>
+          
+          <td>{R/G}{G}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}{N}{N/O}</td>
+          
+          <td>Ognis, the Dragon's Lash</td>
+          
+          <td>psnc</td>
+          
+          <td>2022-04-29</td>
+          
+          <td>{1}{B/R}{R}{R/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {M}</td>
+          
+          <td>Blessed Hippogriff // Tyr's Blessing</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{3}{W} // {W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M} // {1}{M}</td>
+          
+          <td>Crystal Dragon // Rob the Hoard</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{4}{W}{W} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M} // {2}{M}</td>
+          
+          <td>Guardian Naga // Banishing Coils</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{5}{W}{W} // {2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {X}{M}{M}</td>
+          
+          <td>Horn of Valhalla // Ysgard's Call</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{1}{W} // {X}{W}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M} // {1}{M}</td>
+          
+          <td>Pegasus Guardian // Rescue the Foal</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{5}{W} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M} // {X}{M}{M}</td>
+          
+          <td>Illithid Harvester // Plant Tadpoles</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{4}{U} // {X}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M} // {1}{M}</td>
+          
+          <td>Sword Coast Serpent // Capsizing Wave</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{5}{U}{U} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M} // {1}{M}</td>
+          
+          <td>Young Blue Dragon // Sand Augury</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{4}{U} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{M}{M} // {M}</td>
+          
+          <td>Hezrou // Demonic Stench</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{5}{B}{B} // {B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M} // {4}{M}</td>
+          
+          <td>Amethyst Dragon // Explosive Crystal</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{4}{R}{R} // {4}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{M} // {3}{M}</td>
+          
+          <td>Dread Linnorm // Scale Deflection</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{6}{G} // {3}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{14}{M}</td>
+          
+          <td>Earthquake Dragon</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{14}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M} // {2}{M}</td>
+          
+          <td>Emerald Dragon // Dissonant Wave</td>
+          
+          <td>clb</td>
+          
+          <td>2022-06-10</td>
+          
+          <td>{4}{G}{G} // {2}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{W}{U}{B}{R}{G}</td>
+          
+          <td>Primeval Spawn</td>
+          
+          <td>dmc</td>
+          
+          <td>2022-09-09</td>
+          
+          <td>{5}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{M/N/P}{N}</td>
+          
+          <td>Ajani, Sleeper Agent</td>
+          
+          <td>dmu</td>
+          
+          <td>2022-09-09</td>
+          
+          <td>{1}{G}{G/W/P}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{M}{M}{M}{M}</td>
+          
+          <td>Their Number Is Legion</td>
+          
+          <td>40k</td>
+          
+          <td>2022-10-07</td>
+          
+          <td>{X}{B}{B}{B}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{5}{M}</td>
+          
+          <td>Let the Galaxy Burn</td>
+          
+          <td>40k</td>
+          
+          <td>2022-10-07</td>
+          
+          <td>{X}{5}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M}{N}</td>
+          
+          <td>Blood for the Blood God!</td>
+          
+          <td>40k</td>
+          
+          <td>2022-10-07</td>
+          
+          <td>{8}{B}{B}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{M} // {3}{M}{M}</td>
+          
+          <td>Omniclown Colossus // Pie-roclasm</td>
+          
+          <td>unf</td>
+          
+          <td>2022-10-07</td>
+          
+          <td>{8}{R}{R} // {3}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}{N}</td>
+          
+          <td>It Came from Planet Glurg</td>
+          
+          <td>unf</td>
+          
+          <td>2022-10-07</td>
+          
+          <td>{X}{X}{G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{6}</td>
+          
+          <td>Bladecoil Serpent</td>
+          
+          <td>bro</td>
+          
+          <td>2022-11-18</td>
+          
+          <td>{X}{6}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M/P}</td>
+          
+          <td>Jace, the Perfected Mind</td>
+          
+          <td>one</td>
+          
+          <td>2023-02-03</td>
+          
+          <td>{2}{U}{U/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M/P}</td>
+          
+          <td>Vraska, Betrayal's Sting</td>
+          
+          <td>one</td>
+          
+          <td>2023-02-03</td>
+          
+          <td>{4}{B}{B/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M}{M/P}{M/P}</td>
+          
+          <td>Nissa, Ascended Animist</td>
+          
+          <td>one</td>
+          
+          <td>2023-02-03</td>
+          
+          <td>{3}{G}{G}{G/P}{G/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{N}{O}{P}</td>
+          
+          <td>Atraxa, Grand Unifier</td>
+          
+          <td>one</td>
+          
+          <td>2023-02-03</td>
+          
+          <td>{3}{G}{W}{U}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{1}{M}{N}</td>
+          
+          <td>Wildfire Awakener</td>
+          
+          <td>moc</td>
+          
+          <td>2023-04-21</td>
+          
+          <td>{X}{1}{R}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{W}{U}{B}{R}{G}</td>
+          
+          <td>Begin the Invasion</td>
+          
+          <td>moc</td>
+          
+          <td>2023-04-21</td>
+          
+          <td>{X}{W}{U}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{W}{U}{B/P}{R}{G}</td>
+          
+          <td>Omnath, Locus of All</td>
+          
+          <td>mom</td>
+          
+          <td>2023-04-21</td>
+          
+          <td>{W}{U}{B/P}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{C}{C}</td>
+          
+          <td>Calamity of the Titans</td>
+          
+          <td>cmm</td>
+          
+          <td>2023-08-04</td>
+          
+          <td>{4}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{9}{C}{C}{C}</td>
+          
+          <td>Rise of the Eldrazi</td>
+          
+          <td>cmm</td>
+          
+          <td>2023-08-04</td>
+          
+          <td>{9}{C}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M}{M} // {1}{M}</td>
+          
+          <td>Virtue of Loyalty // Ardenvale Fealty</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{3}{W}{W} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {5}{M}{M}</td>
+          
+          <td>Bramble Familiar // Fetch Quest</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{1}{G} // {5}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M}{N}{O} // {2}{M}{N}{O}</td>
+          
+          <td>Beluna Grandsquall // Seek Thrills</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{G}{U}{R} // {2}{G}{U}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M} // {2}{N}</td>
+          
+          <td>Decadent Dragon // Expensive Taste</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{2}{R}{R} // {2}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{M} // {1}{N}</td>
+          
+          <td>Devouring Sugarmaw // Have for Dinner</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{2}{B}{B} // {1}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M} // {X}{N}</td>
+          
+          <td>Elusive Otter // Grove's Bounty</td>
+          
+          <td>pwoe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{U} // {X}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {5}{M}{M}</td>
+          
+          <td>Galvanic Giant // Storm Reading</td>
+          
+          <td>woe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{3}{U} // {5}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {N}</td>
+          
+          <td>Frolicking Familiar // Blow Off Steam</td>
+          
+          <td>woe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{2}{U} // {R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M} // {2}{N}</td>
+          
+          <td>Gingerbread Hunter // Puny Snack</td>
+          
+          <td>woe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{4}{G} // {2}{B}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {4}{N}</td>
+          
+          <td>Imodane's Recruiter // Train Troops</td>
+          
+          <td>woe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{2}{R} // {4}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{M} // {1}{N}</td>
+          
+          <td>Tempest Hart // Scan the Clouds</td>
+          
+          <td>woe</td>
+          
+          <td>2023-09-08</td>
+          
+          <td>{3}{G} // {1}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M} // {N}</td>
+          
+          <td>Steady Tortoise // Harried Dash</td>
+          
+          <td>ywoe</td>
+          
+          <td>2023-10-10</td>
+          
+          <td>{4}{G} // {R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M} // {X}{N}{N}</td>
+          
+          <td>Stormkeld Curator // Giant Secrets</td>
+          
+          <td>ywoe</td>
+          
+          <td>2023-10-10</td>
+          
+          <td>{4}{W}{W} // {X}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M} // {2}{M}{M}</td>
+          
+          <td>Coward // Killer</td>
+          
+          <td>who</td>
+          
+          <td>2023-10-13</td>
+          
+          <td>{1}{R} // {2}{R}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{4}{M}{M} // {2}{N}</td>
+          
+          <td>Gallifrey Falls // No More</td>
+          
+          <td>who</td>
+          
+          <td>2023-10-13</td>
+          
+          <td>{4}{R}{R} // {2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}{M/N}{O}{O}</td>
+          
+          <td>Indominus Rex, Alpha</td>
+          
+          <td>rex</td>
+          
+          <td>2023-11-17</td>
+          
+          <td>{1}{U/B}{U/B}{G}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N}{O}</td>
+          
+          <td>Indoraptor, the Perfect Hybrid</td>
+          
+          <td>rex</td>
+          
+          <td>2023-11-17</td>
+          
+          <td>{1}{B/G}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{O}{P}</td>
+          
+          <td>The Fourteenth Doctor</td>
+          
+          <td>sld</td>
+          
+          <td>2023-12-11</td>
+          
+          <td>{R/G}{W}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{X}{M}{N}</td>
+          
+          <td>Doppelgang</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{X}{X}{X}{G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{N} // {M}{N}</td>
+          
+          <td>Kellan, Inquisitive Prodigy // Tail the Suspect</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{2}{G}{U} // {G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{G/W}{G/U}{B/G}{R/G}</td>
+          
+          <td>Leyline of the Guildpact</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{G/W}{G/U}{B/G}{R/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M/N} // {4}{N/O}{N/O}</td>
+          
+          <td>Cease // Desist</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{1}{B/G} // {4}{G/W}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M/N} // {4}{N/O}{N/O}</td>
+          
+          <td>Fuss // Bother</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{2}{R/W} // {4}{W/U}{W/U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N} // {4}{N/O}{N/O}</td>
+          
+          <td>Hustle // Bustle</td>
+          
+          <td>mkm</td>
+          
+          <td>2024-02-09</td>
+          
+          <td>{U/R} // {4}{R/G}{R/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M} // {X}{M}{M}</td>
+          
+          <td>James, Wandering Dad // Follow Him</td>
+          
+          <td>pip</td>
+          
+          <td>2024-03-08</td>
+          
+          <td>{2}{U} // {X}{U}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{M}{N}</td>
+          
+          <td>Eris, Roar of the Storm</td>
+          
+          <td>otc</td>
+          
+          <td>2024-04-19</td>
+          
+          <td>{8}{U}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{2}{M}</td>
+          
+          <td>Another Round</td>
+          
+          <td>otj</td>
+          
+          <td>2024-04-19</td>
+          
+          <td>{X}{X}{2}{W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{N} // {M}{N}</td>
+          
+          <td>Albiorix, Goose Tyrant // Wild Goose Chase</td>
+          
+          <td>yotj</td>
+          
+          <td>2024-05-07</td>
+          
+          <td>{1}{G}{U} // {G}{U}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{C/W}{C/U}{C/B}{C/R}{C/G}</td>
+          
+          <td>Ulalek, Fused Atrocity</td>
+          
+          <td>m3c</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{C/W}{C/U}{C/B}{C/R}{C/G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{C}{C}</td>
+          
+          <td>Eldrazi Confluence</td>
+          
+          <td>m3c</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{2}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{C}</td>
+          
+          <td>Eldritch Immunity</td>
+          
+          <td>m3c</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{C}{C}</td>
+          
+          <td>Selective Obliteration</td>
+          
+          <td>m3c</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{3}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{X}{M}{N}{O}</td>
+          
+          <td>Gluttonous Hellkite</td>
+          
+          <td>m3c</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{X}{X}{B}{R}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{6}{C}{C}</td>
+          
+          <td>Breaker of Creation</td>
+          
+          <td>mh3</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{6}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{5}{C}{C}</td>
+          
+          <td>Devourer of Destiny</td>
+          
+          <td>mh3</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{5}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{3}{C}{C}{C}</td>
+          
+          <td>Echoes of Eternity</td>
+          
+          <td>mh3</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{3}{C}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{X}{C}{C}</td>
+          
+          <td>Kozilek's Command</td>
+          
+          <td>mh3</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{X}{C}{C}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{C}{M}</td>
+          
+          <td>Eldrazi Linebreaker</td>
+          
+          <td>mh3</td>
+          
+          <td>2024-06-14</td>
+          
+          <td>{1}{C}{R}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{M}{D}</td>
+          
+          <td>Boulder Jockey</td>
+          
+          <td>mb2</td>
+          
+          <td>2024-08-02</td>
+          
+          <td>{2}{R}{D}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{8}{C/P}{C/P}</td>
+          
+          <td>Kozilek, Compleated</td>
+          
+          <td>mb2</td>
+          
+          <td>2024-08-02</td>
+          
+          <td>{8}{C/P}{C/P}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{2}{L} // {2}{M}</td>
+          
+          <td>Keeper of the Crown // Coronation of the Wilds</td>
+          
+          <td>mb2</td>
+          
+          <td>2024-08-02</td>
+          
+          <td>{2}{L} // {2}{G}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{M/N}{N/O}</td>
+          
+          <td>Rin and Seri, Inseparabler</td>
+          
+          <td>mb2</td>
+          
+          <td>2024-08-02</td>
+          
+          <td>{R/G}{G/W}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{C}{W}{U}{B}{R}{G}{S}</td>
+          
+          <td>Wowzer, the Aspirational</td>
+          
+          <td>mb2</td>
+          
+          <td>2024-08-02</td>
+          
+          <td>{C}{W}{U}{B}{R}{G}{S}</td>
+          
+        </tr>
+        
+        <tr>
+          
+          <td>{1}{M}{2/N}{2/O}</td>
+          
+          <td>Convention Maro</td>
+          
+          <td>slp</td>
+          
+          <td>2024-08-19</td>
+          
+          <td>{1}{G}{2/U}{2/R}</td>
+          
+        </tr>
+        
+      </table>
+    </main>
+  </body>
+</html>
