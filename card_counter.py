@@ -1,7 +1,9 @@
 import argparse
 from collections import defaultdict
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Callable, Dict, List
 
 import ijson
 from jinja2 import Environment, FileSystemLoader
@@ -11,46 +13,61 @@ from rich.progress import wrap_file
 from file_utils import download_default_cards, find_latest_default_cards
 
 
-def update_counter(counters, counter_name, key, config, card):
-    if config.get("max_field"):
-        max_field = config["max_field"]
-        max_value = card.get(max_field)
+@dataclass
+class CounterConfig:
+    condition: Callable[[Dict[str, Any]], Any]
+    column_names: List[str]
+    max_field: str = ""
+
+
+@dataclass
+class Counter:
+    config: CounterConfig
+    data: Dict[Any, Dict[str, int]] = field(
+        default_factory=lambda: defaultdict(lambda: defaultdict(int))
+    )
+
+
+def update_counter(counter: Counter, key: Any, card: Dict[str, Any]) -> None:
+    if counter.config.max_field:
+        max_value = card.get(counter.config.max_field)
         if max_value is not None and max_value.isdigit():
             max_value = int(max_value)
-            counters[counter_name][key]["max_value"] = max(
-                counters[counter_name][key]["max_value"], max_value
+            counter.data[key]["max_value"] = max(
+                counter.data[key]["max_value"], max_value
             )
     else:
         finishes = card.get("finishes")
-        counters[counter_name][key]["count"] += len(finishes)
+        counter.data[key]["count"] += len(finishes)
 
 
-def process_card(counters, counter_configs, card):
-    for counter_name, config in counter_configs.items():
-        key = config["condition"](card)
+def process_card(counters: Dict[str, Counter], card: Dict[str, Any]) -> None:
+    for counter_name, counter in counters.items():
+        key = counter.config.condition(card)
         if key:
-            update_counter(counters, counter_name, key, config, card)
+            update_counter(counter, key, card)
 
 
-def generate_html_files(counters, counter_configs, output_folder, template_env):
+def generate_html_files(
+    counters: Dict[str, Counter], output_folder: Path, template_env: Environment
+) -> None:
     template = template_env.get_template("counter_template.html")
     for counter_name, counter in counters.items():
-        config = counter_configs[counter_name]
         output_file = output_folder / f"{counter_name}.html"
 
         sorted_items = sorted(
-            counter.items(),
-            key=lambda x, config=config: x[1]["max_value"]
-            if config.get("max_field")
+            counter.data.items(),
+            key=lambda x, counter=counter: x[1]["max_value"]
+            if counter.config.max_field
             else x[1]["count"],
             reverse=True,
         )
 
         html_content = template.render(
             counter_name=counter_name,
-            column_names=config["column_names"],
+            column_names=counter.config.column_names,
             sorted_items=sorted_items,
-            max_field=config.get("max_field"),
+            max_field=counter.config.max_field,
             counters=counters,
         )
 
@@ -58,21 +75,24 @@ def generate_html_files(counters, counter_configs, output_folder, template_env):
             file.write(html_content)
 
 
-def count_cards(counter_configs, input_file, output_folder, template_env):
-    counters = {name: defaultdict(lambda: defaultdict(int)) for name in counter_configs}
-
+def count_cards(
+    counters: Dict[str, Counter],
+    input_file: Path,
+    output_folder: Path,
+    template_env: Environment,
+) -> None:
     with wrap_file(
         input_file.open("rb"),
         total=input_file.stat().st_size,
         description="Counting cards",
     ) as file:
         for card in ijson.items(file, "item"):
-            process_card(counters, counter_configs, card)
+            process_card(counters, card)
 
-    generate_html_files(counters, counter_configs, output_folder, template_env)
+    generate_html_files(counters, output_folder, template_env)
 
 
-def main():
+def main() -> None:
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Download and process card data.")
     parser.add_argument(
@@ -118,21 +138,24 @@ def main():
     if args.count:
         # Define counter configurations
         counter_configs = {
-            "card_finishes_by_name": {
-                "condition": lambda card: card.get("name"),
-                "column_names": ["Name", "Count"],
-            },
-            "card_finishes_by_set_name": {
-                "condition": lambda card: (card.get("set"), card.get("name")),
-                "column_names": ["Set", "Name", "Count"],
-            },
-            "max_collector_number_by_set": {
-                "condition": lambda card: card.get("set"),
-                "max_field": "collector_number",
-                "column_names": ["Set", "Max Collector Number"],
-            },
+            "card_finishes_by_name": CounterConfig(
+                condition=lambda card: card.get("name"),
+                column_names=["Name", "Count"],
+            ),
+            "card_finishes_by_set_name": CounterConfig(
+                condition=lambda card: (card.get("set"), card.get("name")),
+                column_names=["Set", "Name", "Count"],
+            ),
+            "max_collector_number_by_set": CounterConfig(
+                condition=lambda card: card.get("set"),
+                max_field="collector_number",
+                column_names=["Set", "Max Collector Number"],
+            ),
             # Add more counter configurations as needed
         }
+
+        # Create counters from configurations
+        counters = {name: Counter(config) for name, config in counter_configs.items()}
 
         # Create output folder with timestamp inside the data folder
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -140,7 +163,7 @@ def main():
         output_folder.mkdir(parents=True, exist_ok=True)
 
         # Count cards and populate counters
-        count_cards(counter_configs, input_file, output_folder, template_env)
+        count_cards(counters, input_file, output_folder, template_env)
         console.print(
             "[green]Card counting complete. HTML files generated in the output folder.[/green]"
         )
