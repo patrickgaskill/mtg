@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 9 * * *'  # This will run at 09:00 UTC every day (5:00 AM ET or 4:00 AM EST)
+    - cron: "0 9 * * *" # This will run at 09:00 UTC every day (5:00 AM ET or 4:00 AM EST)
 
 jobs:
   build-and-publish:
@@ -48,5 +48,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: card-data
-          path: ./data/*.json
+          path: ./data/downloads/*.json
           retention-days: 7
