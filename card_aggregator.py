@@ -13,6 +13,7 @@ from aggregators import (
     Aggregator,
     CountAggregator,
     CountCardIllustrationsBySetAggregator,
+    FirstCardByGeneralizedManaCostAggregator,
     FirstCardByPowerToughnessAggregator,
     FoilTypesAggregator,
     MaxCollectorNumberBySetAggregator,
@@ -189,6 +190,9 @@ def run():
             all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
             description="Cards with maximal types, considering global effects",
+        ),
+        FirstCardByGeneralizedManaCostAggregator(
+            description="First card for each generalized mana cost"
         ),
     ]
 

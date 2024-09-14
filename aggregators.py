@@ -11,6 +11,7 @@ from jinja2 import Template
 from card_utils import (
     BASIC_LAND_TYPES,
     extract_types,
+    generalize_mana_cost,
     get_sort_key,
     is_all_creature_types,
     is_permanent,
@@ -546,3 +547,40 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
             for key in keys_to_remove:
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
+
+
+class FirstCardByGeneralizedManaCostAggregator(Aggregator):
+    def __init__(self, description: str = ""):
+        super().__init__("first_card_by_generalized_mana_cost", description)
+        self.data: Dict[str, Dict[str, Any]] = {}
+        self.column_names = [
+            "Generalized Mana Cost",
+            "Name",
+            "Set",
+            "Release Date",
+            "Original Mana Cost",
+        ]
+        self.column_widths = ["8rem", "16rem", "4rem", "8rem", "8rem"]
+
+    def process_card(self, card: Dict[str, Any]) -> None:
+        mana_cost = card.get("mana_cost")
+        if mana_cost:
+            generalized_cost = generalize_mana_cost(mana_cost)
+            if generalized_cost not in self.data or get_sort_key(card) < get_sort_key(
+                self.data[generalized_cost]
+            ):
+                self.data[generalized_cost] = card
+
+    def get_sorted_data(self) -> List[List[Any]]:
+        return [
+            [
+                generalized_cost,
+                card.get("name", ""),
+                card.get("set", ""),
+                card.get("released_at", ""),
+                card.get("mana_cost", ""),
+            ]
+            for generalized_cost, card in sorted(
+                self.data.items(), key=lambda item: get_sort_key(item[1])
+            )
+        ]
