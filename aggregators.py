@@ -239,3 +239,37 @@ class PromoTypesAggregator(Aggregator):
             key=lambda x: x[2],
             reverse=True,
         )
+
+
+class FirstCardByPowerToughnessAggregator(Aggregator):
+    def __init__(self, description: str = ""):
+        super().__init__("first_card_by_power_toughness", description)
+        self.data: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        self.column_names = ["Power", "Toughness", "Name", "Set", "Release Date"]
+        self.column_widths = ["4rem", "4rem", "16rem", "4rem", "8rem"]
+
+    def process_card(self, card: Dict[str, Any]) -> None:
+        power = card.get("power", "")
+        toughness = card.get("toughness", "")
+
+        if power == "" or toughness == "":
+            return
+
+        key = (power, toughness)
+
+        if key not in self.data or get_sort_key(card) < get_sort_key(self.data[key]):
+            self.data[key] = card
+
+    def get_sorted_data(self) -> List[List[Any]]:
+        return [
+            [
+                power,
+                toughness,
+                card.get("name", ""),
+                card.get("set", ""),
+                card.get("released_at", ""),
+            ]
+            for (power, toughness), card in sorted(
+                self.data.items(), key=lambda item: get_sort_key(item[1])
+            )
+        ]
