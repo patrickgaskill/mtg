@@ -1,11 +1,26 @@
+from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 import orjson
 import pandas as pd
 import re
+import requests
 import time
 
 DATA_PATH = Path("./data")
+
+
+def fetch_scryfall_data():
+    bulk_data = orjson.loads(requests.get("https://api.scryfall.com/bulk-data").text)
+    download_uri = next(
+        item["download_uri"]
+        for item in bulk_data["data"]
+        if item["type"] == "default_cards"
+    )
+    filename = download_uri.split("/")[-1]
+    output_file = Path(DATA_PATH / filename)
+    default_cards = requests.get(download_uri).content
+    output_file.write_bytes(default_cards)
 
 
 def open_latest_default_cards_file():
@@ -161,4 +176,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = ArgumentParser()
+    parser.add_argument("command", choices=["run", "update"])
+
+    args = parser.parse_args()
+
+    if args.command == "run":
+        main()
+    elif args.command == "update":
+        fetch_scryfall_data()
