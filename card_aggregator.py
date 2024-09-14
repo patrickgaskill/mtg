@@ -14,6 +14,7 @@ from aggregators import (
     CountCardIllustrationsBySetAggregator,
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
+    PromoTypesAggregator,
 )
 from type_updater import fetch_and_parse_types
 
@@ -142,6 +143,7 @@ def run():
             all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
         ),
+        PromoTypesAggregator(),
     ]
 
     with wrap_file(

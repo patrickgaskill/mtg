@@ -24,7 +24,7 @@ class Aggregator(ABC):
         pass
 
     @abstractmethod
-    def get_sorted_data(self) -> List[Tuple[Any, Any]]:
+    def get_sorted_data(self) -> List[List[Any]]:
         pass
 
     def generate_html_file(self, output_folder: Path, template: Template) -> None:
@@ -59,8 +59,12 @@ class CountAggregator(Aggregator):
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
 
-    def get_sorted_data(self) -> List[Tuple[Tuple, int]]:
-        return sorted(self.data.items(), key=lambda item: item[1], reverse=True)
+    def get_sorted_data(self) -> List[List[Any]]:
+        return sorted(
+            [list(key) + [count] for key, count in self.data.items()],
+            key=lambda x: x[-1],
+            reverse=True,
+        )
 
 
 class MaxCollectorNumberBySetAggregator(Aggregator):
@@ -77,8 +81,12 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
             collector_number = int(collector_number)
             self.data[key] = max(self.data[key], collector_number)
 
-    def get_sorted_data(self) -> List[Tuple[str, int]]:
-        return sorted(self.data.items(), key=lambda item: item[1], reverse=True)
+    def get_sorted_data(self) -> List[List[Any]]:
+        return sorted(
+            [[key, value] for key, value in self.data.items()],
+            key=lambda x: x[1],
+            reverse=True,
+        )
 
 
 class CountCardIllustrationsBySetAggregator(Aggregator):
@@ -94,7 +102,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
 
     def get_sorted_data(self) -> List[Tuple[Tuple[str, str], int]]:
         return sorted(
-            ((key, len(illustrations)) for key, illustrations in self.data.items()),
+            [[key, len(illustrations)] for key, illustrations in self.data.items()],
             key=lambda item: item[1],
             reverse=True,
         )
@@ -174,14 +182,12 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
     def get_sorted_data(self) -> List[Tuple[Tuple[str, str, str], str]]:
         return [
-            (
-                (
-                    card.get("type_line", ""),
-                    card.get("name", ""),
-                    card.get("set", ""),
-                ),
+            [
+                card.get("type_line", ""),
+                card.get("name", ""),
+                card.get("set", ""),
                 card.get("released_at", ""),
-            )
+            ]
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
             )
@@ -230,3 +236,27 @@ def is_traditional_card(
     if card.get("border_color") in non_traditional_borders:
         return False
     return True
+
+
+class PromoTypesAggregator(Aggregator):
+    def __init__(self):
+        self.data: Dict[str, Set[str]] = defaultdict(set)
+        self.name = "promo_types_by_name"
+        self.column_names = ["Name", "Promo Types", "Count"]
+        self.column_widths = ["16rem", "32rem", "4rem"]
+
+    def process_card(self, card: Dict[str, Any]) -> None:
+        name = card.get("name")
+        promo_types = card.get("promo_types", [])
+        if promo_types:
+            self.data[name].update(promo_types)
+
+    def get_sorted_data(self) -> List[List[Any]]:
+        return sorted(
+            [
+                [name, ", ".join(sorted(promo_types)), len(promo_types)]
+                for name, promo_types in self.data.items()
+            ],
+            key=lambda x: x[2],
+            reverse=True,
+        )
