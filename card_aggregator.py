@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -234,6 +235,17 @@ def run():
         except Exception as e:
             console.print(
                 f"[red]Error generating HTML for {aggregator.name}: {e}[/red]"
+            )
+
+        # Save sorted data from each aggregator to a JSON file
+        try:
+            json_filename = f"{aggregator.name.lower().replace(' ', '_')}.json"
+            json_filepath = output_folder / json_filename
+            with json_filepath.open("w", encoding="utf-8") as json_file:
+                json.dump(aggregator.get_sorted_data(), json_file)
+        except Exception as e:
+            console.print(
+                f"[red]Error saving JSON data for {aggregator.name}: {e}[/red]"
             )
 
     console.print(
