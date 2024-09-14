@@ -1,13 +1,12 @@
 from pathlib import Path
+from typing import Optional
 
 import requests
-from rich.progress import (
-    DownloadColumn,
-    Progress,
-)
+from rich.console import Console
+from rich.progress import DownloadColumn, Progress
 
 
-def find_latest_default_cards(data_folder):
+def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
     """
     Find the latest "default-cards" file in the specified data folder based on the timestamp in the filename.
 
@@ -24,13 +23,13 @@ def find_latest_default_cards(data_folder):
     return None
 
 
-def download_default_cards(data_folder, console):
+def download_default_cards(data_folder: Path, console: Console) -> Path:
     """
     Download the "default-cards" file from Scryfall and save it to the specified data folder.
 
     Args:
         data_folder (Path): The path to the data folder where the file will be saved.
-        console (rich.console.Console): The rich console instance for output.
+        console (Console): The rich console instance for output.
 
     Returns:
         Path: The path to the downloaded "default-cards" file.
@@ -55,7 +54,7 @@ def download_default_cards(data_folder, console):
 
     with Progress(*Progress.get_default_columns(), DownloadColumn()) as progress:
         task = progress.add_task(
-            f"Downloading {default_cards_file["name"]}",
+            f"Downloading {default_cards_file['name']}",
             filename=default_cards_file["name"],
             total=int(default_cards_file["size"]),
         )
