@@ -1,11 +1,12 @@
+import re
+import time
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
+
 import orjson
 import pandas as pd
-import re
 import requests
-import time
 
 DATA_PATH = Path("./data")
 
