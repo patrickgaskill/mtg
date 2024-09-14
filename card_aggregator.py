@@ -25,6 +25,9 @@ from aggregators import (
 from type_updater import fetch_and_parse_types
 
 DATA_FOLDER = Path("data").resolve()
+DOWNLOADED_DATA_FOLDER = DATA_FOLDER / "downloads"
+MANUAL_DATA_FOLDER = DATA_FOLDER / "manual"
+OUTPUT_DATA_FOLDER = DATA_FOLDER / "output"
 ALL_CREATURE_TYPES_FILE = "all_creature_types.txt"
 ALL_LAND_TYPES_FILE = "all_land_types.txt"
 
@@ -42,7 +45,7 @@ def update_types():
         raise typer.Exit(1)
 
     # Update creature types file
-    creature_types_file = DATA_FOLDER / ALL_CREATURE_TYPES_FILE
+    creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
     try:
         with creature_types_file.open("w") as f:
             for creature_type in sorted(creature_types):
@@ -54,7 +57,7 @@ def update_types():
         console.print(f"[red]Error writing to {ALL_CREATURE_TYPES_FILE}: {e}[/red]")
 
     # Update land types file
-    land_types_file = DATA_FOLDER / ALL_LAND_TYPES_FILE
+    land_types_file = DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE
     try:
         with land_types_file.open("w") as f:
             for land_type in sorted(land_types):
@@ -77,8 +80,8 @@ def download():
     )
     download_url = default_cards_file["download_uri"]
     file_name = Path(download_url).name
-    DATA_FOLDER.mkdir(parents=True, exist_ok=True)
-    file_path = DATA_FOLDER / file_name
+    DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
+    file_path = DOWNLOADED_DATA_FOLDER / file_name
 
     response = requests.get(download_url, stream=True)
 
@@ -140,7 +143,7 @@ def run():
         raise typer.Exit()
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_folder = DATA_FOLDER / "output" / timestamp
+    output_folder = OUTPUT_DATA_FOLDER / timestamp
     output_folder.mkdir(parents=True, exist_ok=True)
 
     aggregators = [
@@ -173,8 +176,8 @@ def run():
             description="Maximum collector number by set"
         ),
         MaximalPrintedTypesAggregator(
-            all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
-            all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
+            all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
+            all_land_types_file=DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE,
             description="Cards with maximal printed types",
         ),
         PromoTypesAggregator(description="Promo types by card name"),
@@ -183,12 +186,12 @@ def run():
         ),
         FoilTypesAggregator(description="Foil types by card name"),
         SupercycleTimeAggregator(
-            supercycles_file=DATA_FOLDER / "supercycles.json",
+            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.json",
             description="Time to complete supercycles",
         ),
         MaximalTypesWithEffectsAggregator(
-            all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
-            all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
+            all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
+            all_land_types_file=DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE,
             description="Cards with maximal types, considering global effects",
         ),
         FirstCardByGeneralizedManaCostAggregator(
