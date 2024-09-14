@@ -1,4 +1,3 @@
-import argparse
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -6,6 +5,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List
 
 import ijson
+import typer
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from rich.console import Console
@@ -92,34 +92,27 @@ def count_cards(
     generate_html_files(counters, output_folder, template_env)
 
 
-def main() -> None:
-    # Parse command-line arguments
-    parser = argparse.ArgumentParser(description="Download and process card data.")
-    parser.add_argument(
-        "--download",
-        action="store_true",
-        help='Download the "default-cards" file from Scryfall.',
-    )
-    parser.add_argument(
-        "--data-folder",
-        type=str,
-        default="data",
+app = typer.Typer()
+
+
+@app.command()
+def main(
+    download: bool = typer.Option(
+        False, help='Download the "default-cards" file from Scryfall.'
+    ),
+    data_folder: Path = typer.Option(
+        Path("data"),
         help='The data folder where the "default-cards" file will be saved.',
-    )
-    parser.add_argument(
-        "--count",
-        action="store_true",
-        help="Count cards based on the specified configurations.",
-    )
-    args = parser.parse_args()
-
-    data_folder = Path(args.data_folder)
-
+    ),
+    count: bool = typer.Option(
+        False, help="Count cards based on the specified configurations."
+    ),
+):
     # Set up rich console
     console = Console()
 
     # Download the "default-cards" file if the --download flag is set
-    if args.download:
+    if download:
         input_file = download_default_cards(data_folder, console)
     else:
         input_file = find_latest_default_cards(data_folder)
@@ -128,14 +121,14 @@ def main() -> None:
         console.print(
             "[red]No 'default-cards' file found. Please download the file using the --download flag.[/red]"
         )
-        return
+        raise typer.Exit()
 
     # Set up Jinja template environment
     template_loader = FileSystemLoader(searchpath="./templates")
     template_env = Environment(loader=template_loader)
 
     # Count cards if the --count flag is set
-    if args.count:
+    if count:
         # Load counter configurations from YAML file
         with open("counter_config.yaml", "r") as file:
             config = yaml.safe_load(file)
@@ -162,4 +155,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    app()
