@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from time import perf_counter
 
 import ijson
 import pandas as pd
@@ -30,7 +31,7 @@ def open_latest_file(name):
 
     files = DATA_PATH.glob(f"{name}-*.json")
     sorted_files = sorted(files, key=lambda file: _get_timestamp(file.name))
-    return open(sorted_files[-1], "r")
+    return open(sorted_files[-1], "rb")
 
 
 def make_output_dir():
@@ -243,6 +244,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.command == "run":
+        _start = perf_counter()
         main()
+        elapsed = perf_counter() - _start
+        print(f"Done in {elapsed:0.4f}s.")
     elif args.command == "update":
         fetch_scryfall_data()
