@@ -32,7 +32,9 @@ class Aggregator(ABC):
     def get_sorted_data(self) -> List[List[Any]]:
         pass
 
-    def generate_html_file(self, output_folder: Path, template: Template) -> None:
+    def generate_html_file(
+        self, output_folder: Path, template: Template, nav_links: List[Dict[str, str]]
+    ) -> None:
         output_file = output_folder / f"{self.name}.html"
 
         sorted_data = self.get_sorted_data()
@@ -42,6 +44,7 @@ class Aggregator(ABC):
             column_names=self.column_names,
             column_widths=self.column_widths,
             items=sorted_data,
+            nav_links=nav_links,
         )
 
         try:

@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import Dict, List, Optional
 
 import ijson
 import requests
@@ -10,6 +10,7 @@ from rich.console import Console
 from rich.progress import DownloadColumn, Progress, wrap_file
 
 from aggregators import (
+    Aggregator,
     CountAggregator,
     CountCardIllustrationsBySetAggregator,
     MaxCollectorNumberBySetAggregator,
@@ -112,6 +113,10 @@ def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
     )
 
 
+def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
+    return [{"name": agg.name, "url": f"{agg.name}.html"} for agg in aggregators]
+
+
 @app.command()
 def run():
     input_file = find_latest_default_cards(DATA_FOLDER)
@@ -160,13 +165,15 @@ def run():
                         f"[red]Error processing card {card.get('name', 'Unknown')}: {e}[/red]"
                     )
 
+    nav_links = generate_nav_links(aggregators)
+
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template_env.globals.update(zip=zip)
     template = template_env.get_template("counter_template.html")
 
     for aggregator in aggregators:
         try:
-            aggregator.generate_html_file(output_folder, template)
+            aggregator.generate_html_file(output_folder, template, nav_links)
         except Exception as e:
             console.print(
                 f"[red]Error generating HTML for {aggregator.name}: {e}[/red]"
