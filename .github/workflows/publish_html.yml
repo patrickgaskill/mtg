@@ -43,7 +43,6 @@ jobs:
           personal_token: ${{ secrets.FINE_GRAINED_PAT }}
           publish_dir: ./flattened_output
           keep_files: false
-          cname: mtg.yourdomainhere.com # Optional: If you have a custom domain
 
       - name: Archive card data
         uses: actions/upload-artifact@v2
