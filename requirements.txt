@@ -1,0 +1,6 @@
+typer
+rich
+ijson
+requests
+beautifulsoup4
+jinja2
