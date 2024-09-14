@@ -1,6 +1,7 @@
 import re
 import time
 from argparse import ArgumentParser
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -161,6 +162,16 @@ class ManaCostStore(Store):
         return super().to_html(output_dir, columns)
 
 
+counters = {
+    "count_finishes_by_name": defaultdict(int),
+    "count_finishes_by_name_set": defaultdict(int),
+    "count_finishes_by_name_set_cn": defaultdict(int),
+    "count_finishes_by_name_finish": defaultdict(int),
+    "count_finishes_by_set": defaultdict(int),
+    "max_cn_by_set": defaultdict(int),
+}
+
+
 def main():
     stores = [PowerToughnessStore(), ManaCostStore()]
 
@@ -168,10 +179,35 @@ def main():
         for store in stores:
             store.evaluate(card)
 
+        name = card["name"]
+        set_ = card["set"]
+        cn = card["collector_number"]
+        finishes = card["finishes"]
+
+        try:
+            cn_ = int(cn)
+            if cn_ > counters["max_cn_by_set"][set_]:
+                counters["max_cn_by_set"][set_] = cn_
+        except ValueError:
+            # skip non-numeric collector numbers
+            pass
+
+        for finish in finishes:
+            counters["count_finishes_by_name"][name] += 1
+            counters["count_finishes_by_name_set"][(name, set_)] += 1
+            counters["count_finishes_by_name_set_cn"][(name, set_, cn)] += 1
+            counters["count_finishes_by_name_finish"][(name, finish)] += 1
+            counters["count_finishes_by_set"][set_] += 1
+
     output_dir = make_output_dir()
 
     for store in stores:
         store.to_html(output_dir)
+
+    for k, v in counters.items():
+        df = pd.DataFrame.from_dict(v, orient="index")
+        with open(output_dir / f"{k}.html", "w") as f:
+            df.sort_values(0, ascending=False).to_html(f)
 
 
 if __name__ == "__main__":
