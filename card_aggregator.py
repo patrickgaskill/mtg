@@ -159,6 +159,7 @@ def run():
                     )
 
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
+    template_env.globals.update(zip=zip)
     template = template_env.get_template("counter_template.html")
 
     for aggregator in aggregators:

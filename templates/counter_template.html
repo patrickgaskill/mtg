@@ -64,8 +64,9 @@
     <table>
       <thead>
         <tr>
-          {% for column_name in column_names %}
-          <th>{{ column_name }}</th>
+          {% for column_name, column_width in zip(column_names, column_widths)
+          %}
+          <th style="width: {{ column_width }};">{{ column_name }}</th>
           {% endfor %}
         </tr>
       </thead>

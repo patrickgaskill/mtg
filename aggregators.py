@@ -35,6 +35,7 @@ class Aggregator(ABC):
         html_content = template.render(
             name=self.name,
             column_names=self.column_names,
+            column_widths=self.column_widths,
             items=sorted_data,
         )
 
@@ -52,6 +53,7 @@ class CountAggregator(Aggregator):
         self.key_fields = key_fields
         self.count_finishes = count_finishes
         self.column_names = key_fields + ["Count"]
+        self.column_widths = ["50%"] * len(key_fields) + ["20%"]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         key = tuple(card.get(field) for field in self.key_fields)
@@ -66,6 +68,7 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
         self.data: Dict[str, int] = defaultdict(int)
         self.name = "max_collector_number_by_set"
         self.column_names = ["Set", "Max Collector Number"]
+        self.column_widths = ["70%", "30%"]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         collector_number = card.get("collector_number")
@@ -83,6 +86,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         self.data: Dict[Tuple[str, str], Set[str]] = defaultdict(set)
         self.name = "count_card_illustrations_by_set"
         self.column_names = ["Set", "Name", "Count"]
+        self.column_widths = ["30%", "50%", "20%"]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         key = (card.get("set"), card.get("name"))
@@ -101,6 +105,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.name = "maximal_printed_types"
         self.column_names = ["Types", "Name", "Set", "Release Date"]
+        self.column_widths = ["40%", "30%", "15%", "15%"]
         self.all_creature_types = self.load_types(all_creature_types_file)
         self.all_land_types = self.load_types(all_land_types_file)
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
