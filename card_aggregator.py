@@ -14,6 +14,7 @@ from aggregators import (
     CountAggregator,
     CountCardIllustrationsBySetAggregator,
     FirstCardByPowerToughnessAggregator,
+    FoilTypesAggregator,
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
     PromoTypesAggregator,
@@ -177,6 +178,7 @@ def run():
         FirstCardByPowerToughnessAggregator(
             description="First card for each unique power/toughness combination"
         ),
+        FoilTypesAggregator(description="Foil types by card name"),
     ]
 
     with wrap_file(
