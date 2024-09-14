@@ -14,23 +14,18 @@ from file_utils import download_default_cards, find_latest_default_cards
 
 
 @dataclass
-class CounterConfig:
+class Counter:
     condition: Callable[[Dict[str, Any]], Any]
     column_names: List[str]
     max_field: str = ""
-
-
-@dataclass
-class Counter:
-    config: CounterConfig
     data: Dict[Any, Dict[str, int]] = field(
         default_factory=lambda: defaultdict(lambda: defaultdict(int))
     )
 
 
 def update_counter(counter: Counter, key: Any, card: Dict[str, Any]) -> None:
-    if counter.config.max_field:
-        max_value = card.get(counter.config.max_field)
+    if counter.max_field:
+        max_value = card.get(counter.max_field)
         if max_value is not None and max_value.isdigit():
             max_value = int(max_value)
             counter.data[key]["max_value"] = max(
@@ -43,7 +38,7 @@ def update_counter(counter: Counter, key: Any, card: Dict[str, Any]) -> None:
 
 def process_card(counters: Dict[str, Counter], card: Dict[str, Any]) -> None:
     for counter_name, counter in counters.items():
-        key = counter.config.condition(card)
+        key = counter.condition(card)
         if key:
             update_counter(counter, key, card)
 
@@ -58,16 +53,16 @@ def generate_html_files(
         sorted_items = sorted(
             counter.data.items(),
             key=lambda x, counter=counter: x[1]["max_value"]
-            if counter.config.max_field
+            if counter.max_field
             else x[1]["count"],
             reverse=True,
         )
 
         html_content = template.render(
             counter_name=counter_name,
-            column_names=counter.config.column_names,
+            column_names=counter.column_names,
             sorted_items=sorted_items,
-            max_field=counter.config.max_field,
+            max_field=counter.max_field,
             counters=counters,
         )
 
@@ -138,15 +133,15 @@ def main() -> None:
     if args.count:
         # Define counter configurations
         counter_configs = {
-            "card_finishes_by_name": CounterConfig(
+            "card_finishes_by_name": Counter(
                 condition=lambda card: card.get("name"),
                 column_names=["Name", "Count"],
             ),
-            "card_finishes_by_set_name": CounterConfig(
+            "card_finishes_by_set_name": Counter(
                 condition=lambda card: (card.get("set"), card.get("name")),
                 column_names=["Set", "Name", "Count"],
             ),
-            "max_collector_number_by_set": CounterConfig(
+            "max_collector_number_by_set": Counter(
                 condition=lambda card: card.get("set"),
                 max_field="collector_number",
                 column_names=["Set", "Max Collector Number"],
