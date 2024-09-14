@@ -553,19 +553,22 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("first_card_by_generalized_mana_cost", description)
         self.data: Dict[str, Dict[str, Any]] = {}
+        self.count: Dict[str, int] = defaultdict(int)
         self.column_names = [
             "Generalized Mana Cost",
             "Name",
             "Set",
             "Release Date",
             "Original Mana Cost",
+            "Count",
         ]
-        self.column_widths = ["8rem", "16rem", "4rem", "8rem", "8rem"]
+        self.column_widths = ["8rem", "16rem", "4rem", "8rem", "8rem", "4rem"]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         mana_cost = card.get("mana_cost")
         if mana_cost:
             generalized_cost = generalize_mana_cost(mana_cost)
+            self.count[generalized_cost] += 1
             if generalized_cost not in self.data or get_sort_key(card) < get_sort_key(
                 self.data[generalized_cost]
             ):
@@ -579,6 +582,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 card.get("set", ""),
                 card.get("released_at", ""),
                 card.get("mana_cost", ""),
+                self.count[generalized_cost],
             ]
             for generalized_cost, card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
