@@ -64,6 +64,28 @@ def is_all_creature_types(card: Dict[str, Any]) -> bool:
     )
 
 
+def is_permanent(card: Dict[str, Any]) -> bool:
+    """
+    Determine if a card is a permanent.
+
+    Args:
+        card (Dict[str, Any]): A dictionary representing a card.
+
+    Returns:
+        bool: True if the card is a permanent, False otherwise.
+    """
+    permanent_types = {
+        "Artifact",
+        "Battle",
+        "Creature",
+        "Enchantment",
+        "Land",
+        "Planeswalker",
+    }
+    card_types = extract_types(card)
+    return any(ptype in card_types for ptype in permanent_types)
+
+
 def is_traditional_card(
     card: Dict[str, Any],
     non_traditional_set_types: Set[str] = NON_TRADITIONAL_SET_TYPES,

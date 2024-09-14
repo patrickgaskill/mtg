@@ -17,6 +17,7 @@ from aggregators import (
     FoilTypesAggregator,
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
+    MaximalTypesWithEffectsAggregator,
     PromoTypesAggregator,
     SupercycleTimeAggregator,
 )
@@ -183,6 +184,11 @@ def run():
         SupercycleTimeAggregator(
             supercycles_file=DATA_FOLDER / "supercycles.json",
             description="Time to complete supercycles",
+        ),
+        MaximalTypesWithEffectsAggregator(
+            all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
+            all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
+            description="Cards with maximal types, considering global effects",
         ),
     ]
 

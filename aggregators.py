@@ -13,6 +13,7 @@ from card_utils import (
     extract_types,
     get_sort_key,
     is_all_creature_types,
+    is_permanent,
     is_traditional_card,
 )
 
@@ -440,3 +441,108 @@ class SupercycleTimeAggregator(Aggregator):
             )
 
         return sorted(result, key=lambda x: int(x[2].split()[0]), reverse=True)
+
+
+class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
+    def __init__(
+        self,
+        all_creature_types_file: Path,
+        all_land_types_file: Path,
+        description: str = "",
+    ):
+        super().__init__(all_creature_types_file, all_land_types_file, description)
+        self.name = "maximal_types_with_effects"
+        self.description = "Cards with maximal types, considering global effects"
+        self.global_effects = self.define_global_effects()
+        self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
+        self.column_names = [
+            "Original Types",
+            "Name",
+            "Set",
+            "Release Date",
+        ]
+        self.column_widths = ["24rem", "16rem", "4rem", "4rem"]
+
+    def define_global_effects(self):
+        return {
+            "In Bolas's Clutches": lambda card_types: card_types.union({"Legendary"})
+            if is_permanent({"type_line": " ".join(card_types)})
+            else card_types,
+            "Rimefeather Owl": lambda card_types: card_types.union({"Snow"})
+            if is_permanent({"type_line": " ".join(card_types)})
+            else card_types,
+            "Enchanted Evening": lambda card_types: card_types.union({"Enchantment"})
+            if is_permanent({"type_line": " ".join(card_types)})
+            else card_types,
+            "Mycosynth Lattice": lambda card_types: card_types.union({"Artifact"})
+            if is_permanent({"type_line": " ".join(card_types)})
+            else card_types,
+            "March of the Machines": lambda card_types: card_types.union({"Creature"})
+            if "Artifact" in card_types and "Creature" not in card_types
+            else card_types,
+            "Maskwood Nexus": lambda card_types: card_types.union(
+                self.all_creature_types
+            )
+            if "Creature" in card_types
+            else card_types,
+            "Life and Limb": lambda card_types: card_types.union(
+                {"Creature", "Land", "Saproling", "Forest"}
+            )
+            if "Forest" in card_types or "Saproling" in card_types
+            else card_types,
+            "Prismatic Omen": lambda card_types: card_types.union(BASIC_LAND_TYPES)
+            if "Land" in card_types
+            else card_types,
+            "Omo, Queen of Vesuva": lambda card_types: card_types.union(
+                BASIC_LAND_TYPES, self.nonbasic_land_types
+            )
+            if "Land" in card_types
+            else card_types.union(self.all_creature_types)
+            if "Creature" in card_types
+            else card_types,
+        }
+
+    def apply_global_effects(self, card_types: Set[str]) -> Set[str]:
+        for effect in self.global_effects.values():
+            card_types = effect(card_types)
+        return card_types
+
+    def process_single_face(
+        self, face: Dict[str, Any], parent_card: Dict[str, Any]
+    ) -> None:
+        card_types = extract_types(face)
+
+        if "Token" in card_types or "Emblem" in card_types:
+            return
+
+        if is_all_creature_types(face):
+            card_types |= self.all_creature_types
+
+        if face.get("name") == "Planar Nexus":
+            card_types |= self.nonbasic_land_types
+
+        # Apply global effects
+        card_types = self.apply_global_effects(card_types)
+
+        type_key = tuple(sorted(card_types))
+
+        if type_key in self.maximal_types:
+            existing_card = self.maximal_types[type_key]
+            if get_sort_key(parent_card) < get_sort_key(existing_card):
+                self.maximal_types[type_key] = parent_card
+            return
+
+        is_maximal = all(
+            not set(type_key).issubset(set(existing_key))
+            for existing_key in self.maximal_types.keys()
+        )
+
+        if is_maximal:
+            keys_to_remove = [
+                existing_key
+                for existing_key in self.maximal_types.keys()
+                if set(existing_key).issubset(set(type_key))
+            ]
+            for key in keys_to_remove:
+                del self.maximal_types[key]
+            self.maximal_types[type_key] = parent_card
