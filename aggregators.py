@@ -108,7 +108,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
     def load_types(self, file_path: Path) -> Set[str]:
         try:
             with file_path.resolve().open("r") as f:
-                return set(type.strip() for type in f.read().split(","))
+                return set(line.strip() for line in f if line.strip())
         except IOError as e:
             logger.error(f"Failed to load types from {file_path}: {e}")
             return set()

@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -16,6 +15,7 @@ from aggregators import (
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
 )
+from type_updater import fetch_and_parse_types
 
 DATA_FOLDER = Path("data").resolve()
 ALL_CREATURE_TYPES_FILE = "all_creature_types.txt"
@@ -23,6 +23,40 @@ ALL_LAND_TYPES_FILE = "all_land_types.txt"
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
+
+
+@app.command()
+def update_types():
+    console.print("Fetching the latest comprehensive rules...")
+    try:
+        creature_types, land_types = fetch_and_parse_types()
+    except Exception as e:
+        console.print(f"[red]Error fetching types: {e}[/red]")
+        raise typer.Exit(1)
+
+    # Update creature types file
+    creature_types_file = DATA_FOLDER / ALL_CREATURE_TYPES_FILE
+    try:
+        with creature_types_file.open("w") as f:
+            for creature_type in sorted(creature_types):
+                f.write(f"{creature_type}\n")
+        console.print(
+            f"[green]Updated {ALL_CREATURE_TYPES_FILE} with {len(creature_types)} types.[/green]"
+        )
+    except IOError as e:
+        console.print(f"[red]Error writing to {ALL_CREATURE_TYPES_FILE}: {e}[/red]")
+
+    # Update land types file
+    land_types_file = DATA_FOLDER / ALL_LAND_TYPES_FILE
+    try:
+        with land_types_file.open("w") as f:
+            for land_type in sorted(land_types):
+                f.write(f"{land_type}\n")
+        console.print(
+            f"[green]Updated {ALL_LAND_TYPES_FILE} with {len(land_types)} types.[/green]"
+        )
+    except IOError as e:
+        console.print(f"[red]Error writing to {ALL_LAND_TYPES_FILE}: {e}[/red]")
 
 
 @app.command()
