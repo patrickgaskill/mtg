@@ -1,6 +1,7 @@
+import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import ijson
 import requests
@@ -11,10 +12,14 @@ from rich.progress import DownloadColumn, Progress, wrap_file
 
 from aggregators import (
     CountAggregator,
+    CountCardIllustrationsBySetAggregator,
     MaxCollectorNumberBySetAggregator,
+    MaximalPrintedTypesAggregator,
 )
 
-DATA_FOLDER = Path("data")
+DATA_FOLDER = Path("data").resolve()
+ALL_CREATURE_TYPES_FILE = "all_creature_types.txt"
+ALL_LAND_TYPES_FILE = "all_land_types.txt"
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
@@ -22,12 +27,10 @@ console = Console()
 
 @app.command()
 def download():
-    # Download the list of bulk data files from Scryfall
     console.print("Downloading bulk data files from Scryfall...")
     response = requests.get("https://api.scryfall.com/bulk-data")
     bulk_data_files = response.json()["data"]
 
-    # Find the "default-cards" file
     default_cards_file = next(
         file for file in bulk_data_files if file["type"] == "default_cards"
     )
@@ -36,12 +39,11 @@ def download():
     DATA_FOLDER.mkdir(parents=True, exist_ok=True)
     file_path = DATA_FOLDER / file_name
 
-    # Download the "default-cards" file with progress bar
     response = requests.get(download_url, stream=True)
 
     with Progress(*Progress.get_default_columns(), DownloadColumn()) as progress:
         task = progress.add_task(
-            f"Downloading {default_cards_file["name"]}",
+            f"Downloading {default_cards_file['name']}",
             filename=default_cards_file["name"],
             total=int(default_cards_file["size"]),
         )
@@ -59,19 +61,20 @@ def download():
 
 def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
     """
-    Find the latest "default-cards" file in the specified data folder based on the timestamp in the filename.
+    Find the latest "default-cards" file in the specified data folder.
 
     Args:
         data_folder (Path): The path to the data folder.
 
     Returns:
-        Path: The path to the latest "default-cards" file, or None if not found.
+        Optional[Path]: The path to the latest "default-cards" file, or None if not found.
     """
     default_cards_files = list(data_folder.glob("default-cards-*.json"))
-    if default_cards_files:
-        latest_file = max(default_cards_files, key=lambda f: f.stem.split("-")[-1])
-        return latest_file
-    return None
+    return (
+        max(default_cards_files, key=lambda f: f.stem.split("-")[-1])
+        if default_cards_files
+        else None
+    )
 
 
 @app.command()
@@ -84,7 +87,6 @@ def run():
         )
         raise typer.Exit()
 
-    # Create output folder with timestamp inside the data folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_folder = DATA_FOLDER / "output" / timestamp
     output_folder.mkdir(parents=True, exist_ok=True)
@@ -100,7 +102,12 @@ def run():
             key_fields=["set", "name"],
             count_finishes=True,
         ),
+        CountCardIllustrationsBySetAggregator(),
         MaxCollectorNumberBySetAggregator(),
+        MaximalPrintedTypesAggregator(
+            all_creature_types_file=DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
+            all_land_types_file=DATA_FOLDER / ALL_LAND_TYPES_FILE,
+        ),
     ]
 
     with wrap_file(
@@ -110,18 +117,26 @@ def run():
     ) as file:
         for card in ijson.items(file, "item"):
             for aggregator in aggregators:
-                aggregator.process_card(card)
+                try:
+                    aggregator.process_card(card)
+                except Exception as e:
+                    console.print(
+                        f"[red]Error processing card {card.get('name', 'Unknown')}: {e}[/red]"
+                    )
 
-    # Set up Jinja template environment
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template = template_env.get_template("counter_template.html")
 
-    # Generate HTML files for each aggregator
     for aggregator in aggregators:
-        aggregator.generate_html_file(output_folder, template)
+        try:
+            aggregator.generate_html_file(output_folder, template)
+        except Exception as e:
+            console.print(
+                f"[red]Error generating HTML for {aggregator.name}: {e}[/red]"
+            )
 
     console.print(
-        "[green]Card processing complete. HTML files generated in the output folder.[/green]"
+        f"[green]Card processing complete. HTML files generated in {output_folder}.[/green]"
     )
 
 
