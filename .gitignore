@@ -166,5 +166,5 @@ cython_debug/
 # Ignore everything in the data folder
 data/*
 
-# Except for supercycles.json
-!data/supercycles.json
+# Except for manually created data
+!data/manual/
