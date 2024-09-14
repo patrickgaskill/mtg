@@ -190,7 +190,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
 def extract_types(card: Dict[str, Any]) -> Set[str]:
     text = card.get("type_line", "").replace("Time Lord", "Time-Lord")
-    words = re.findall(r"\b\w+\b", text)
+    words = re.findall(r"\b[\w\-']+\b", text)
     return set(word.replace("Time-Lord", "Time Lord") for word in words)
 
 
