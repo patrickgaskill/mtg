@@ -18,6 +18,7 @@ from aggregators import (
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
     PromoTypesAggregator,
+    SupercycleTimeAggregator,
 )
 from type_updater import fetch_and_parse_types
 
@@ -179,6 +180,10 @@ def run():
             description="First card for each unique power/toughness combination"
         ),
         FoilTypesAggregator(description="Foil types by card name"),
+        SupercycleTimeAggregator(
+            supercycles_file=DATA_FOLDER / "supercycles.json",
+            description="Time to complete supercycles",
+        ),
     ]
 
     with wrap_file(

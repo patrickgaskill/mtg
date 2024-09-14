@@ -1,7 +1,8 @@
+import json
 import logging
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
@@ -362,3 +363,80 @@ class FoilTypesAggregator(Aggregator):
             key=lambda x: x[2],
             reverse=True,
         )
+
+
+def format_time_difference(days: int) -> str:
+    years, remaining_days = divmod(days, 365)
+    months, days = divmod(remaining_days, 30)
+
+    parts = []
+    if years > 0:
+        parts.append(f"{years} year{'s' if years != 1 else ''}")
+    if months > 0:
+        parts.append(f"{months} month{'s' if months != 1 else ''}")
+    if days > 0:
+        parts.append(f"{days} day{'s' if days != 1 else ''}")
+
+    return ", ".join(parts)
+
+
+class SupercycleTimeAggregator(Aggregator):
+    def __init__(self, supercycles_file: Path, description: str = ""):
+        super().__init__("supercycle_completion_time", description)
+        self.supercycles = self.load_supercycles(supercycles_file)
+        self.card_dates: Dict[str, date] = {}
+        self.column_names = ["Supercycle", "Status", "Time", "Start Date", "End Date"]
+        self.column_widths = ["16rem", "8rem", "16rem", "10rem", "10rem"]
+
+    def load_supercycles(self, file_path: Path) -> Dict[str, Dict[str, Any]]:
+        try:
+            with file_path.open("r") as f:
+                data = json.load(f)
+                return {cycle["name"]: cycle for cycle in data["supercycles"]}
+        except IOError as e:
+            logger.error(f"Failed to load supercycles from {file_path}: {e}")
+            return {}
+
+    def process_card(self, card: Dict[str, Any]) -> None:
+        name = card.get("name")
+        released_at = card.get("released_at")
+        if name and released_at:
+            card_date = date.fromisoformat(released_at)
+            if name not in self.card_dates or card_date < self.card_dates[name]:
+                self.card_dates[name] = card_date
+
+    def get_sorted_data(self) -> List[List[Any]]:
+        today = date.today()
+        result = []
+
+        for name, cycle in self.supercycles.items():
+            card_dates = [
+                self.card_dates.get(card)
+                for card in cycle["cards"]
+                if card in self.card_dates
+            ]
+            if not card_dates:
+                continue
+
+            earliest_date = min(card_dates)
+            if cycle["finished"]:
+                latest_date = max(card_dates)
+            else:
+                latest_date = today
+
+            days = (latest_date - earliest_date).days
+            status = "Finished" if cycle["finished"] else "Unfinished"
+            formatted_time = format_time_difference(days)
+            result.append(
+                [
+                    name,
+                    status,
+                    formatted_time,
+                    earliest_date.strftime("%B %d, %Y"),
+                    latest_date.strftime("%B %d, %Y")
+                    if cycle["finished"]
+                    else "Ongoing",
+                ]
+            )
+
+        return sorted(result, key=lambda x: int(x[2].split()[0]), reverse=True)
