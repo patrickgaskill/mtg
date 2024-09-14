@@ -331,6 +331,8 @@ class FoilTypesAggregator(Aggregator):
         if set_type == "from_the_vault":
             self.data[name].add("from_the_vault")
 
+        # TODO: handle SDCC planeswalkers
+
         # Calculate which era of traditional foil applies
         # TODO: still need to better differentiate types of traditional foils:
         # e.g. retro frame foils, M15 and prior cards that have spot foiling in the art
