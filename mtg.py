@@ -6,7 +6,6 @@ from datetime import datetime
 from pathlib import Path
 
 import ijson
-import orjson
 import pandas as pd
 import requests
 
@@ -14,10 +13,9 @@ DATA_PATH = Path("./data")
 
 
 def fetch_scryfall_data():
-    bulk_data = orjson.loads(requests.get("https://api.scryfall.com/bulk-data").text)[
-        "data"
-    ]
-    for item in bulk_data:
+    for item in ijson.items(
+        requests.get("https://api.scryfall.com/bulk-data").text, "data.item"
+    ):
         if item["type"] in ["default_cards", "all_cards"]:
             download_uri = item["download_uri"]
             filename = download_uri.split("/")[-1]
