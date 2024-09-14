@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>{{ name }}</title>
+    <title>Magic: The Gathering Card Data Reports</title>
     <style>
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -60,50 +60,6 @@
       main {
         max-width: calc(100% - 220px);
       }
-
-      table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        table-layout: fixed;
-        max-width: calc(100% - 200px);
-      }
-
-      th {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        vertical-align: bottom;
-        text-align: left;
-        padding-bottom: 0.25rem;
-        padding-top: 0;
-        color: #222;
-        border-bottom: 2px solid #222;
-      }
-
-      th:last-child {
-        text-align: right;
-      }
-
-      tbody tr {
-        border-bottom: none;
-      }
-
-      tbody tr:hover {
-        background-color: #c19c000d;
-      }
-
-      tbody td {
-        font-size: 0.75rem;
-        word-wrap: break-word;
-      }
-
-      tbody td:last-child {
-        text-align: right;
-      }
-
-      /* Add a small gap after every 5th row */
-      tbody tr:nth-child(5n) {
-        border-bottom: 1rem solid transparent;
-      }
     </style>
   </head>
   <body>
@@ -117,23 +73,22 @@
     </nav>
 
     <main>
-      <h1>{{ name }}</h1>
-      <table>
-        <tr>
-          {% for column_name in column_names %}
-          <th style="width: {{ column_widths[loop.index0] }};">
-            {{ column_name }}
-          </th>
-          {% endfor %}
-        </tr>
-        {% for item in items %}
-        <tr>
-          {% for value in item %}
-          <td>{{ value }}</td>
-          {% endfor %}
-        </tr>
+      <h1>Magic: The Gathering Card Data Reports</h1>
+      <p>
+        Welcome to the Magic: The Gathering card data reports. This page
+        provides access to various aggregated data reports about Magic: The
+        Gathering cards.
+      </p>
+      <p>Use the navigation menu on the right to explore different reports:</p>
+      <ul>
+        {% for link in nav_links %}
+        <li><strong>{{ link.name }}</strong>: {{ link.description }}</li>
         {% endfor %}
-      </table>
+      </ul>
+      <p>
+        The data used in these reports is based on the Scryfall database as of
+        {{ generation_date }}.
+      </p>
     </main>
   </body>
 </html>
