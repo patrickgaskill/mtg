@@ -135,7 +135,7 @@ def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
 
 @app.command()
 def run():
-    input_file = find_latest_default_cards(DATA_FOLDER)
+    input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
 
     if input_file is None:
         console.print(
