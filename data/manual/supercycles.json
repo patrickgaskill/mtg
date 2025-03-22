@@ -55,9 +55,15 @@
       ]
     },
     {
-      "name": "Mages",
-      "finished": false,
-      "cards": ["Trinket Mage", "Trophy Mage", "Tribute Mage", "Treasure Mage"]
+      "name": "T-Mages",
+      "finished": true,
+      "cards": [
+        "Trinket Mage",
+        "Trophy Mage",
+        "Tribute Mage",
+        "Treasure Mage",
+        "Transit Mage"
+      ]
     },
     {
       "name": "Legendary Lands",
