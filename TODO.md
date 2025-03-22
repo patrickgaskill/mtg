@@ -2,6 +2,7 @@
 
 ### Todo
 
+- [ ] migrate to uv
 - [ ] add display name to each aggregator
 - [ ] create new html template with ag-grid, with name, description
 - [ ] restructure sorted data for ag-grid
