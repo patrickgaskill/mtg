@@ -57,35 +57,38 @@ class Aggregator(ABC):
     def __init__(self, name: str, description: str):
         self.name = name
         self.description = description
+        self.column_defs = []  # Will be set by subclasses
 
     @abstractmethod
     def process_card(self, card: Dict[str, Any]) -> None:
         pass
 
     @abstractmethod
-    def get_sorted_data(self) -> List[List[Any]]:
+    def get_sorted_data(
+        self,
+    ) -> List[Dict[str, Any]]:  # Changed to return dict for ag-grid
         pass
 
     def generate_html_file(
         self, output_folder: Path, template: Template, nav_links: List[Dict[str, str]]
     ) -> None:
-        output_file = output_folder / f"{self.name}.html"
+        # Generate JSON file
+        json_filename = f"{self.name}.json"
+        json_filepath = output_folder / json_filename
+        with json_filepath.open("w", encoding="utf-8") as json_file:
+            json.dump(self.get_sorted_data(), json_file)
 
-        sorted_data = self.get_sorted_data()
-
+        # Generate HTML file using template
         html_content = template.render(
-            name=self.name,
-            column_names=self.column_names,
-            column_widths=self.column_widths,
-            items=sorted_data,
+            title=self.name,
             nav_links=nav_links,
+            data_file=json_filename,
+            column_defs=self.column_defs,
         )
 
-        try:
-            with output_file.open("w", encoding="utf-8") as f:
-                f.write(html_content)
-        except IOError as e:
-            logger.error(f"Failed to write HTML file {output_file}: {e}")
+        output_file = output_folder / f"{self.name}.html"
+        with output_file.open("w", encoding="utf-8") as f:
+            f.write(html_content)
 
 
 class CountAggregator(Aggregator):
@@ -100,17 +103,27 @@ class CountAggregator(Aggregator):
         self.data: Dict[Tuple, int] = defaultdict(int)
         self.key_fields = key_fields
         self.count_finishes = count_finishes
-        self.column_names = key_fields + ["Count"]
-        self.column_widths = ["8rem"] * len(key_fields) + ["4rem"]
+
+        # Define column definitions for ag-grid
+        self.column_defs = [
+            {"field": field, "headerName": field.title()} for field in key_fields
+        ]
+        self.column_defs.append(
+            {"field": "count", "headerName": "Count", "type": "numericColumn"}
+        )
 
     def process_card(self, card: Dict[str, Any]) -> None:
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
 
-    def get_sorted_data(self) -> List[List[Any]]:
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Return data in format suitable for ag-grid
         return sorted(
-            [list(key) + [count] for key, count in self.data.items()],
-            key=lambda x: x[-1],
+            [
+                {**dict(zip(self.key_fields, key)), "count": count}
+                for key, count in self.data.items()
+            ],
+            key=lambda x: x["count"],
             reverse=True,
         )
 
@@ -119,8 +132,15 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("max_collector_number_by_set", description)
         self.data: Dict[str, int] = defaultdict(int)
-        self.column_names = ["Set", "Max Collector Number"]
-        self.column_widths = ["4rem", "10rem"]
+        self.column_defs = [
+            {"field": "set", "headerName": "Set", "width": 100},
+            {
+                "field": "maxNumber",
+                "headerName": "Max Collector Number",
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         collector_number = card.get("collector_number")
@@ -129,34 +149,39 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
             collector_number = int(collector_number)
             self.data[key] = max(self.data[key], collector_number)
 
-    def get_sorted_data(self) -> List[List[Any]]:
-        return sorted(
-            [[key, value] for key, value in self.data.items()],
-            key=lambda x: x[1],
-            reverse=True,
-        )
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        return [
+            {"set": key, "maxNumber": value}
+            for key, value in sorted(
+                self.data.items(), key=lambda x: x[1], reverse=True
+            )
+        ]
 
 
 class CountCardIllustrationsBySetAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("count_card_illustrations_by_set", description)
         self.data: Dict[Tuple[str, str], Set[str]] = defaultdict(set)
-        self.column_names = ["Set", "Name", "Count"]
-        self.column_widths = ["4rem", "8rem", "4rem"]
+        self.column_defs = [
+            {"field": "set", "headerName": "Set"},
+            {"field": "name", "headerName": "Name"},
+            {
+                "field": "count",
+                "headerName": "Count",
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         key = (card.get("set"), card.get("name"))
         self.data[key].add(card.get("illustration_id"))
 
-    def get_sorted_data(self) -> List[Tuple[Tuple[str, str], int]]:
-        return sorted(
-            [
-                [set_, name, len(illustrations)]
-                for (set_, name), illustrations in self.data.items()
-            ],
-            key=lambda item: item[2],
-            reverse=True,
-        )
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        return [
+            {"set": set_, "name": name, "count": len(illustrations)}
+            for (set_, name), illustrations in self.data.items()
+        ]
 
 
 class MaximalPrintedTypesAggregator(Aggregator):
@@ -168,8 +193,12 @@ class MaximalPrintedTypesAggregator(Aggregator):
     ):
         super().__init__("maximal_printed_types", description)
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
-        self.column_names = ["Types", "Name", "Set", "Release Date"]
-        self.column_widths = ["24rem", "16rem", "4rem", "4rem"]
+        self.column_defs = [
+            {"field": "types", "headerName": "Types", "width": 240},
+            {"field": "name", "headerName": "Name", "width": 160},
+            {"field": "set", "headerName": "Set", "width": 100},
+            {"field": "releaseDate", "headerName": "Release Date"},
+        ]
         self.all_creature_types = self.load_types(all_creature_types_file)
         self.all_land_types = self.load_types(all_land_types_file)
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
@@ -236,14 +265,14 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
 
-    def get_sorted_data(self) -> List[Tuple[Tuple[str, str, str], str]]:
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
         return [
-            [
-                card.get("type_line", ""),
-                card.get("name", ""),
-                card.get("set", ""),
-                card.get("released_at", ""),
-            ]
+            {
+                "types": card.get("type_line", ""),
+                "name": card.get("name", ""),
+                "set": card.get("set", ""),
+                "releaseDate": card.get("released_at", ""),
+            }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
             )
@@ -254,8 +283,16 @@ class PromoTypesAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("promo_types_by_name", description)
         self.data: Dict[str, Set[str]] = defaultdict(set)
-        self.column_names = ["Name", "Promo Types", "Count"]
-        self.column_widths = ["16rem", "32rem", "4rem"]
+        self.column_defs = [
+            {"field": "name", "headerName": "Name", "width": 160},
+            {"field": "promoTypes", "headerName": "Promo Types", "width": 320},
+            {
+                "field": "count",
+                "headerName": "Count",
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         name = card.get("name")
@@ -263,23 +300,28 @@ class PromoTypesAggregator(Aggregator):
         if promo_types:
             self.data[name].update(promo_types)
 
-    def get_sorted_data(self) -> List[List[Any]]:
-        return sorted(
-            [
-                [name, ", ".join(sorted(promo_types)), len(promo_types)]
-                for name, promo_types in self.data.items()
-            ],
-            key=lambda x: x[2],
-            reverse=True,
-        )
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "name": name,
+                "promoTypes": ", ".join(sorted(promo_types)),
+                "count": len(promo_types),
+            }
+            for name, promo_types in self.data.items()
+        ]
 
 
 class FirstCardByPowerToughnessAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("first_card_by_power_toughness", description)
         self.data: Dict[Tuple[str, str], Dict[str, Any]] = {}
-        self.column_names = ["Power", "Toughness", "Name", "Set", "Release Date"]
-        self.column_widths = ["4rem", "4rem", "16rem", "4rem", "8rem"]
+        self.column_defs = [
+            {"field": "power", "headerName": "Power", "width": 100},
+            {"field": "toughness", "headerName": "Toughness", "width": 100},
+            {"field": "name", "headerName": "Name", "width": 200},
+            {"field": "set", "headerName": "Set", "width": 100},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 150},
+        ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         power = card.get("power", "")
@@ -293,15 +335,15 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
         if key not in self.data or get_sort_key(card) < get_sort_key(self.data[key]):
             self.data[key] = card
 
-    def get_sorted_data(self) -> List[List[Any]]:
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
         return [
-            [
-                power,
-                toughness,
-                card.get("name", ""),
-                card.get("set", ""),
-                card.get("released_at", ""),
-            ]
+            {
+                "power": power,
+                "toughness": toughness,
+                "name": card.get("name", ""),
+                "set": card.get("set", ""),
+                "releaseDate": card.get("released_at", ""),
+            }
             for (power, toughness), card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
             )
@@ -312,8 +354,16 @@ class FoilTypesAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("foil_types_by_name", description)
         self.data: Dict[str, Set[str]] = defaultdict(set)
-        self.column_names = ["Name", "Foil Types", "Count"]
-        self.column_widths = ["16rem", "32rem", "4rem"]
+        self.column_defs = [
+            {"field": "name", "headerName": "Name", "width": 200},
+            {"field": "foilTypes", "headerName": "Foil Types", "width": 400},
+            {
+                "field": "count",
+                "headerName": "Count",
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         name = card.get("name")
@@ -356,15 +406,15 @@ class FoilTypesAggregator(Aggregator):
         if "etched" in finishes:
             self.data[name].add("etched")
 
-    def get_sorted_data(self) -> List[List[Any]]:
-        return sorted(
-            [
-                [name, ", ".join(sorted(foil_types)), len(foil_types)]
-                for name, foil_types in self.data.items()
-            ],
-            key=lambda x: x[2],
-            reverse=True,
-        )
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "name": name,
+                "foilTypes": ", ".join(sorted(foil_types)),
+                "count": len(foil_types),
+            }
+            for name, foil_types in self.data.items()
+        ]
 
 
 def format_time_difference(days: int) -> str:
@@ -387,8 +437,13 @@ class SupercycleTimeAggregator(Aggregator):
         super().__init__("supercycle_completion_time", description)
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: Dict[str, date] = {}
-        self.column_names = ["Supercycle", "Status", "Time", "Start Date", "End Date"]
-        self.column_widths = ["16rem", "8rem", "16rem", "10rem", "10rem"]
+        self.column_defs = [
+            {"field": "supercycle", "headerName": "Supercycle", "width": 200},
+            {"field": "status", "headerName": "Status", "width": 120},
+            {"field": "time", "headerName": "Time", "width": 200},
+            {"field": "startDate", "headerName": "Start Date", "width": 150},
+            {"field": "endDate", "headerName": "End Date", "width": 150},
+        ]
 
     def load_supercycles(self, file_path: Path) -> Dict[str, Dict[str, Any]]:
         try:
@@ -407,7 +462,7 @@ class SupercycleTimeAggregator(Aggregator):
             if name not in self.card_dates or card_date < self.card_dates[name]:
                 self.card_dates[name] = card_date
 
-    def get_sorted_data(self) -> List[List[Any]]:
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
         today = date.today()
         result = []
 
@@ -430,18 +485,18 @@ class SupercycleTimeAggregator(Aggregator):
             status = "Finished" if cycle["finished"] else "Unfinished"
             formatted_time = format_time_difference(days)
             result.append(
-                [
-                    name,
-                    status,
-                    formatted_time,
-                    earliest_date.strftime("%B %d, %Y"),
-                    latest_date.strftime("%B %d, %Y")
+                {
+                    "supercycle": name,
+                    "status": status,
+                    "time": formatted_time,
+                    "startDate": earliest_date.strftime("%B %d, %Y"),
+                    "endDate": latest_date.strftime("%B %d, %Y")
                     if cycle["finished"]
                     else "Ongoing",
-                ]
+                }
             )
 
-        return sorted(result, key=lambda x: int(x[2].split()[0]), reverse=True)
+        return sorted(result, key=lambda x: int(x["time"].split()[0]), reverse=True)
 
 
 class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
@@ -456,13 +511,12 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         self.description = "Cards with maximal types, considering global effects"
         self.global_effects = self.define_global_effects()
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
-        self.column_names = [
-            "Original Types",
-            "Name",
-            "Set",
-            "Release Date",
+        self.column_defs = [
+            {"field": "originalTypes", "headerName": "Original Types", "width": 240},
+            {"field": "name", "headerName": "Name", "width": 160},
+            {"field": "set", "headerName": "Set", "width": 100},
+            {"field": "releaseDate", "headerName": "Release Date"},
         ]
-        self.column_widths = ["24rem", "16rem", "4rem", "4rem"]
 
     def define_global_effects(self):
         return {
@@ -548,21 +602,41 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
 
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "originalTypes": card.get("type_line", ""),
+                "name": card.get("name", ""),
+                "set": card.get("set", ""),
+                "releaseDate": card.get("released_at", ""),
+            }
+            for key, card in sorted(
+                self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
+            )
+        ]
+
 
 class FirstCardByGeneralizedManaCostAggregator(Aggregator):
     def __init__(self, description: str = ""):
         super().__init__("first_card_by_generalized_mana_cost", description)
         self.data: Dict[str, Dict[str, Any]] = {}
         self.count: Dict[str, int] = defaultdict(int)
-        self.column_names = [
-            "Generalized Mana Cost",
-            "Name",
-            "Set",
-            "Release Date",
-            "Original Mana Cost",
-            "Count",
+        self.column_defs = [
+            {
+                "field": "generalizedManaCost",
+                "headerName": "Generalized Mana Cost",
+                "width": 120,
+            },
+            {"field": "name", "headerName": "Name", "width": 200},
+            {"field": "set", "headerName": "Set", "width": 100},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 150},
+            {
+                "field": "originalManaCost",
+                "headerName": "Original Mana Cost",
+                "width": 150,
+            },
+            {"field": "count", "headerName": "Count", "type": "numericColumn"},
         ]
-        self.column_widths = ["8rem", "16rem", "4rem", "8rem", "8rem", "4rem"]
 
     def process_card(self, card: Dict[str, Any]) -> None:
         mana_cost = card.get("mana_cost")
@@ -574,16 +648,16 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             ):
                 self.data[generalized_cost] = card
 
-    def get_sorted_data(self) -> List[List[Any]]:
+    def get_sorted_data(self) -> List[Dict[str, Any]]:
         return [
-            [
-                generalized_cost,
-                card.get("name", ""),
-                card.get("set", ""),
-                card.get("released_at", ""),
-                card.get("mana_cost", ""),
-                self.count[generalized_cost],
-            ]
+            {
+                "generalizedManaCost": generalized_cost,
+                "name": card.get("name", ""),
+                "set": card.get("set", ""),
+                "releaseDate": card.get("released_at", ""),
+                "originalManaCost": card.get("mana_cost", ""),
+                "count": self.count[generalized_cost],
+            }
             for generalized_cost, card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
             )

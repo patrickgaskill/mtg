@@ -218,7 +218,7 @@ def run():
 
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template_env.globals.update(zip=zip)
-    counter_template = template_env.get_template("counter_template.html")
+    base_template = template_env.get_template("base_template.html")
     index_template = template_env.get_template("index_template.html")
 
     # Generate index.html
@@ -231,10 +231,10 @@ def run():
 
     for aggregator in aggregators:
         try:
-            aggregator.generate_html_file(output_folder, counter_template, nav_links)
+            aggregator.generate_html_file(output_folder, base_template, nav_links)
         except Exception as e:
             console.print(
-                f"[red]Error generating HTML for {aggregator.name}: {e}[/red]"
+                f"[red]Error generating files for {aggregator.name}: {e}[/red]"
             )
 
         # Save sorted data from each aggregator to a JSON file
