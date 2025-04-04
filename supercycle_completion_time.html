@@ -2,11 +2,21 @@
 <html lang="en">
   <head>
     <title>supercycle_completion_time</title>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-grid.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
+    />
     <style>
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 2rem;
-        padding-right: 220px; /* Increased to give more space for the nav */
+        padding-right: 220px;
         line-height: 1.6;
       }
 
@@ -21,88 +31,9 @@
         padding: 1rem;
       }
 
-      nav h2 {
-        margin-top: 0;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-        text-transform: uppercase;
-        color: #333;
-      }
-
-      nav ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      nav li {
-        margin-bottom: 0.75rem;
-      }
-
-      nav a {
-        text-decoration: none;
-        color: #0066cc;
-        font-size: 0.9rem;
-        display: block;
-        padding: 0.25rem 0;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-        background-color: #e8e8e8;
-      }
-
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-      }
-
-      main {
-        max-width: calc(100% - 220px);
-      }
-
-      table {
-        border-collapse: collapse;
-        border-spacing: 0;
-        table-layout: fixed;
-        max-width: calc(100% - 200px);
-      }
-
-      th {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        vertical-align: bottom;
-        text-align: left;
-        padding-bottom: 0.25rem;
-        padding-top: 0;
-        color: #222;
-        border-bottom: 2px solid #222;
-      }
-
-      th:last-child {
-        text-align: right;
-      }
-
-      tbody tr {
-        border-bottom: none;
-      }
-
-      tbody tr:hover {
-        background-color: #c19c000d;
-      }
-
-      tbody td {
-        font-size: 0.75rem;
-        word-wrap: break-word;
-      }
-
-      tbody td:last-child {
-        text-align: right;
-      }
-
-      /* Add a small gap after every 5th row */
-      tbody tr:nth-child(5n) {
-        border-bottom: 1rem solid transparent;
+      #myGrid {
+        height: 600px;
+        width: 100%;
       }
     </style>
   </head>
@@ -142,284 +73,31 @@
 
     <main>
       <h1>supercycle_completion_time</h1>
-      <table>
-        <tr>
-          
-          <th style="width: 16rem;">
-            Supercycle
-          </th>
-          
-          <th style="width: 8rem;">
-            Status
-          </th>
-          
-          <th style="width: 16rem;">
-            Time
-          </th>
-          
-          <th style="width: 10rem;">
-            Start Date
-          </th>
-          
-          <th style="width: 10rem;">
-            End Date
-          </th>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Copy Enchantments</td>
-          
-          <td>Unfinished</td>
-          
-          <td>31 years, 8 months, 10 days</td>
-          
-          <td>August 05, 1993</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Subgames</td>
-          
-          <td>Unfinished</td>
-          
-          <td>31 years, 3 months, 26 days</td>
-          
-          <td>December 17, 1993</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Legendary Lands II</td>
-          
-          <td>Unfinished</td>
-          
-          <td>27 years, 1 month, 10 days</td>
-          
-          <td>March 02, 1998</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Topdeck Lands</td>
-          
-          <td>Unfinished</td>
-          
-          <td>27 years, 1 month, 10 days</td>
-          
-          <td>March 02, 1998</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Player Types</td>
-          
-          <td>Unfinished</td>
-          
-          <td>26 years, 8 months, 3 days</td>
-          
-          <td>August 11, 1998</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Recruiters</td>
-          
-          <td>Unfinished</td>
-          
-          <td>25 years, 11 months, 15 days</td>
-          
-          <td>May 01, 1999</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Lings</td>
-          
-          <td>Finished</td>
-          
-          <td>20 years, 8 months, 10 days</td>
-          
-          <td>October 12, 1998</td>
-          
-          <td>June 14, 2019</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>T-Mages</td>
-          
-          <td>Finished</td>
-          
-          <td>20 years, 8 months, 20 days</td>
-          
-          <td>June 04, 2004</td>
-          
-          <td>February 14, 2025</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Swords</td>
-          
-          <td>Finished</td>
-          
-          <td>19 years, 2 months, 19 days</td>
-          
-          <td>February 06, 2004</td>
-          
-          <td>April 21, 2023</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Kodamas</td>
-          
-          <td>Finished</td>
-          
-          <td>17 years, 4 months, 24 days</td>
-          
-          <td>October 01, 2004</td>
-          
-          <td>February 18, 2022</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Forces</td>
-          
-          <td>Finished</td>
-          
-          <td>16 years, 22 days</td>
-          
-          <td>October 14, 1997</td>
-          
-          <td>November 01, 2013</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Omnath</td>
-          
-          <td>Finished</td>
-          
-          <td>13 years, 2 months, 18 days</td>
-          
-          <td>February 05, 2010</td>
-          
-          <td>April 21, 2023</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Magus</td>
-          
-          <td>Finished</td>
-          
-          <td>5 years, 9 days</td>
-          
-          <td>November 13, 2015</td>
-          
-          <td>November 20, 2020</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Arch-Charms</td>
-          
-          <td>Unfinished</td>
-          
-          <td>5 years, 9 months, 26 days</td>
-          
-          <td>June 14, 2019</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Legendary Lands</td>
-          
-          <td>Finished</td>
-          
-          <td>3 years, 12 months</td>
-          
-          <td>October 08, 1996</td>
-          
-          <td>October 02, 2000</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Commander Suspend Cards</td>
-          
-          <td>Unfinished</td>
-          
-          <td>3 years, 11 months, 17 days</td>
-          
-          <td>April 23, 2021</td>
-          
-          <td>Ongoing</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Atogs</td>
-          
-          <td>Finished</td>
-          
-          <td>3 years, 7 months, 15 days</td>
-          
-          <td>March 04, 1994</td>
-          
-          <td>October 14, 1997</td>
-          
-        </tr>
-        
-        <tr>
-          
-          <td>Praetors</td>
-          
-          <td>Finished</td>
-          
-          <td>1 year, 12 months, 3 days</td>
-          
-          <td>February 05, 2021</td>
-          
-          <td>February 03, 2023</td>
-          
-        </tr>
-        
-      </table>
+      <div id="myGrid" class="ag-theme-quartz-auto-dark"></div>
     </main>
+
+    <script>
+      fetch('supercycle_completion_time.json')
+        .then(response => response.json())
+        .then(data => {
+          const columnDefs = [{"field": "supercycle", "headerName": "Supercycle", "width": 200}, {"field": "status", "headerName": "Status", "width": 120}, {"field": "time", "headerName": "Time", "width": 200}, {"field": "startDate", "headerName": "Start Date", "width": 150}, {"field": "endDate", "headerName": "End Date", "width": 150}];
+
+            const gridOptions = {
+              theme: "legacy",
+              columnDefs: columnDefs,
+              rowData: data,
+              defaultColDef: {
+                  sortable: true,
+                  filter: true,
+                  resizable: true
+              },
+              pagination: true,
+              paginationPageSize: 100
+            };
+
+            const gridDiv = document.querySelector('#myGrid');
+            new agGrid.createGrid(gridDiv, gridOptions);
+        });
+    </script>
   </body>
 </html>
