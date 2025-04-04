@@ -7,7 +7,6 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-grid.css"
     />
-
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
@@ -16,19 +15,17 @@
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 2rem;
-        padding-right: 220px;
         line-height: 1.6;
       }
 
-      nav {
-        position: fixed;
-        top: 2rem;
-        right: 2rem;
-        width: 200px;
-        background-color: #f8f8f8;
+      .nav-select {
+        padding: 8px;
+        font-size: 16px;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 1rem;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        min-width: 200px;
+        margin-bottom: 2rem;
       }
 
       #myGrid {
@@ -38,41 +35,40 @@
     </style>
   </head>
   <body>
-    <nav>
-      <h2>Navigation</h2>
-      <ul>
-        
-        <li><a href="count_cards_by_name.html">count_cards_by_name</a></li>
-        
-        <li><a href="count_finishes_by_name.html">count_finishes_by_name</a></li>
-        
-        <li><a href="count_cards_by_set_name.html">count_cards_by_set_name</a></li>
-        
-        <li><a href="count_finishes_by_set_name.html">count_finishes_by_set_name</a></li>
-        
-        <li><a href="count_card_illustrations_by_set.html">count_card_illustrations_by_set</a></li>
-        
-        <li><a href="max_collector_number_by_set.html">max_collector_number_by_set</a></li>
-        
-        <li><a href="maximal_printed_types.html">maximal_printed_types</a></li>
-        
-        <li><a href="promo_types_by_name.html">promo_types_by_name</a></li>
-        
-        <li><a href="first_card_by_power_toughness.html">first_card_by_power_toughness</a></li>
-        
-        <li><a href="foil_types_by_name.html">foil_types_by_name</a></li>
-        
-        <li><a href="supercycle_completion_time.html">supercycle_completion_time</a></li>
-        
-        <li><a href="maximal_types_with_effects.html">maximal_types_with_effects</a></li>
-        
-        <li><a href="first_card_by_generalized_mana_cost.html">first_card_by_generalized_mana_cost</a></li>
-        
-      </ul>
-    </nav>
-
     <main>
       <h1>promo_types_by_name</h1>
+      
+      <select class="nav-select" onchange="window.location.href=this.value">
+        <option value="">Select a view...</option>
+        
+        <option value="count_cards_by_name.html" >count_cards_by_name</option>
+        
+        <option value="count_finishes_by_name.html" >count_finishes_by_name</option>
+        
+        <option value="count_cards_by_set_name.html" >count_cards_by_set_name</option>
+        
+        <option value="count_finishes_by_set_name.html" >count_finishes_by_set_name</option>
+        
+        <option value="count_card_illustrations_by_set.html" >count_card_illustrations_by_set</option>
+        
+        <option value="max_collector_number_by_set.html" >max_collector_number_by_set</option>
+        
+        <option value="maximal_printed_types.html" >maximal_printed_types</option>
+        
+        <option value="promo_types_by_name.html" >promo_types_by_name</option>
+        
+        <option value="first_card_by_power_toughness.html" >first_card_by_power_toughness</option>
+        
+        <option value="foil_types_by_name.html" >foil_types_by_name</option>
+        
+        <option value="supercycle_completion_time.html" >supercycle_completion_time</option>
+        
+        <option value="maximal_types_with_effects.html" >maximal_types_with_effects</option>
+        
+        <option value="first_card_by_generalized_mana_cost.html" >first_card_by_generalized_mana_cost</option>
+        
+      </select>
+
       <div id="myGrid" class="ag-theme-quartz-auto-dark"></div>
     </main>
 
@@ -82,21 +78,21 @@
         .then(data => {
           const columnDefs = [{"field": "name", "headerName": "Name", "width": 160}, {"field": "promoTypes", "headerName": "Promo Types", "width": 320}, {"field": "count", "headerName": "Count", "sort": "desc", "type": "numericColumn"}];
 
-            const gridOptions = {
-              theme: "legacy",
-              columnDefs: columnDefs,
-              rowData: data,
-              defaultColDef: {
-                  sortable: true,
-                  filter: true,
-                  resizable: true
-              },
-              pagination: true,
-              paginationPageSize: 100
-            };
+          const gridOptions = {
+            theme: "legacy",
+            columnDefs: columnDefs,
+            rowData: data,
+            defaultColDef: {
+              sortable: true,
+              filter: true,
+              resizable: true
+            },
+            pagination: true,
+            paginationPageSize: 100
+          };
 
-            const gridDiv = document.querySelector('#myGrid');
-            new agGrid.createGrid(gridDiv, gridOptions);
+          const gridDiv = document.querySelector('#myGrid');
+          new agGrid.createGrid(gridDiv, gridOptions);
         });
     </script>
   </body>
