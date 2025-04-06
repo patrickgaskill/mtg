@@ -132,9 +132,10 @@ def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
 def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
     return [
         {
-            "name": agg.name,
             "url": f"{agg.name}.html",
-            "description": agg.description,  # Add a description attribute to each Aggregator
+            "name": agg.name,
+            "display_name": agg.display_name,
+            "description": agg.description,  # Include description here
         }
         for agg in aggregators
     ]
@@ -239,21 +240,18 @@ def run(
                         f"[red]Error processing card {card.get('name', 'Unknown')}: {e}[/red]"
                     )
 
-    nav_links = [
-        {"url": f"{aggregator.name}.html", "display_name": aggregator.display_name}
-        for aggregator in aggregators
-    ]
-
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template_env.globals.update(zip=zip)
     base_template = template_env.get_template("base_template.html")
     index_template = template_env.get_template("index_template.html")
 
     # Generate index.html
+    nav_links = generate_nav_links(aggregators)
     index_html = index_template.render(
         nav_links=nav_links,
         generation_date=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     )
+
     with (output_folder / "index.html").open("w", encoding="utf-8") as f:
         f.write(index_html)
 

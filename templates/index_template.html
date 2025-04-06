@@ -6,50 +6,17 @@
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 2rem;
-        padding-right: 220px; /* Increased to give more space for the nav */
         line-height: 1.6;
       }
 
-      nav {
-        position: fixed;
-        top: 2rem;
-        right: 2rem;
-        width: 200px;
-        background-color: #f8f8f8;
+      .nav-select {
+        padding: 8px;
+        font-size: 16px;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 1rem;
-      }
-
-      nav h2 {
-        margin-top: 0;
-        margin-bottom: 1rem;
-        font-size: 1rem;
-        text-transform: uppercase;
-        color: #333;
-      }
-
-      nav ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-      }
-
-      nav li {
-        margin-bottom: 0.75rem;
-      }
-
-      nav a {
-        text-decoration: none;
-        color: #0066cc;
-        font-size: 0.9rem;
-        display: block;
-        padding: 0.25rem 0;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-        background-color: #e8e8e8;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        min-width: 200px;
+        margin-bottom: 2rem;
       }
 
       h1 {
@@ -57,38 +24,84 @@
         margin-bottom: 1rem;
       }
 
-      main {
-        max-width: calc(100% - 220px);
+      .reports-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 2rem 0;
+      }
+
+      .report-item {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        transition: transform 0.1s ease-in-out;
+      }
+
+      .report-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .report-item a {
+        color: #0066cc;
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 1.2rem;
+      }
+
+      .report-item a:hover {
+        text-decoration: underline;
+      }
+
+      .report-description {
+        color: #444;
+        margin-top: 0.5rem;
+      }
+
+      .generation-info {
+        margin-top: 3rem;
+        color: #666;
+        font-style: italic;
+        border-top: 1px solid #eee;
+        padding-top: 1rem;
       }
     </style>
   </head>
   <body>
-    <nav>
-      <h2>Navigation</h2>
-      <ul>
-        {% for link in nav_links %}
-        <li><a href="{{ link.url }}">{{ link.name }}</a></li>
-        {% endfor %}
-      </ul>
-    </nav>
-
     <main>
       <h1>Magic: The Gathering Card Data Reports</h1>
-      <p>
-        Welcome to the Magic: The Gathering card data reports. This page
-        provides access to various aggregated data reports about Magic: The
-        Gathering cards.
-      </p>
-      <p>Use the navigation menu on the right to explore different reports:</p>
-      <ul>
+
+      <select class="nav-select" onchange="window.location.href=this.value">
+        <option value="">Select a report...</option>
         {% for link in nav_links %}
-        <li><strong>{{ link.name }}</strong>: {{ link.description }}</li>
+        <option value="{{ link.url }}">{{ link.display_name }}</option>
+        {% endfor %}
+      </select>
+
+      <p>
+        Welcome to the Magic: The Gathering card data reports. This site
+        provides various aggregated data reports about Magic: The Gathering
+        cards.
+      </p>
+
+      <h2>Available Reports</h2>
+      <ul class="reports-list">
+        {% for link in nav_links %}
+        <li class="report-item">
+          <a href="{{ link.url }}">{{ link.display_name }}</a>
+          <p class="report-description">{{ link.description }}</p>
+        </li>
         {% endfor %}
       </ul>
-      <p>
-        The data used in these reports is based on the Scryfall database as of
-        {{ generation_date }}.
-      </p>
+
+      <div class="generation-info">
+        <p>
+          The data used in these reports is based on the Scryfall database as of
+          {{ generation_date }}.
+        </p>
+      </div>
     </main>
   </body>
 </html>
