@@ -3,9 +3,9 @@
 ### Todo
 
 - [ ] migrate to uv
-- [ ] add display name to each aggregator
-- [ ] create new html template with ag-grid, with name, description
-- [ ] restructure sorted data for ag-grid
+- [x] add display name to each aggregator
+- [x] create new html template with ag-grid, with name, description
+- [x] restructure sorted data for ag-grid
 - [ ] update github actions to new github pages strategy
 - [ ] add scryfall links for card names, supercycles
 - [ ] add note about creature types that exist on new cards but not in comp rules yet

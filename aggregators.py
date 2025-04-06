@@ -54,10 +54,11 @@ logger = logging.getLogger(__name__)
 
 
 class Aggregator(ABC):
-    def __init__(self, name: str, description: str):
+    def __init__(self, name: str, display_name: str, description: str = ""):
         self.name = name
+        self.display_name = display_name
         self.description = description
-        self.column_defs = []  # Will be set by subclasses
+        self.column_defs = []
 
     @abstractmethod
     def process_card(self, card: Dict[str, Any]) -> None:
@@ -80,7 +81,9 @@ class Aggregator(ABC):
 
         # Generate HTML file using template
         html_content = template.render(
-            title=self.name,
+            title=self.display_name,
+            display_name=self.display_name,
+            description=self.description,
             nav_links=nav_links,
             data_file=json_filename,
             column_defs=self.column_defs,
@@ -95,11 +98,12 @@ class CountAggregator(Aggregator):
     def __init__(
         self,
         name: str,
+        display_name: str,
         key_fields: List[str],
         count_finishes: bool = False,
         description: str = "",
     ):
-        super().__init__(name, description)
+        super().__init__(name, display_name, description)
         self.data: Dict[Tuple, int] = defaultdict(int)
         self.key_fields = key_fields
         self.count_finishes = count_finishes
@@ -130,7 +134,11 @@ class CountAggregator(Aggregator):
 
 class MaxCollectorNumberBySetAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("max_collector_number_by_set", description)
+        super().__init__(
+            "max_collector_number_by_set",
+            "Maximum Collector Number by Set",
+            description,
+        )
         self.data: Dict[str, int] = defaultdict(int)
         self.column_defs = [
             {"field": "set", "headerName": "Set", "width": 100},
@@ -160,7 +168,11 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
 
 class CountCardIllustrationsBySetAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("count_card_illustrations_by_set", description)
+        super().__init__(
+            "count_card_illustrations_by_set",
+            "Card Illustrations Count by Set",
+            description,
+        )
         self.data: Dict[Tuple[str, str], Set[str]] = defaultdict(set)
         self.column_defs = [
             {"field": "set", "headerName": "Set"},
@@ -191,7 +203,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
         all_land_types_file: Path,
         description: str = "",
     ):
-        super().__init__("maximal_printed_types", description)
+        super().__init__("maximal_printed_types", "Maximal Printed Types", description)
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 240},
@@ -281,7 +293,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
 class PromoTypesAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("promo_types_by_name", description)
+        super().__init__("promo_types_by_name", "Promo Types by Card Name", description)
         self.data: Dict[str, Set[str]] = defaultdict(set)
         self.column_defs = [
             {"field": "name", "headerName": "Name", "width": 160},
@@ -313,7 +325,11 @@ class PromoTypesAggregator(Aggregator):
 
 class FirstCardByPowerToughnessAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("first_card_by_power_toughness", description)
+        super().__init__(
+            "first_card_by_power_toughness",
+            "First Cards by Power and Toughness",
+            description,
+        )
         self.data: Dict[Tuple[str, str], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "power", "headerName": "Power", "width": 100},
@@ -352,7 +368,7 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
 
 class FoilTypesAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("foil_types_by_name", description)
+        super().__init__("foil_types_by_name", "Foil Types by Card Name", description)
         self.data: Dict[str, Set[str]] = defaultdict(set)
         self.column_defs = [
             {"field": "name", "headerName": "Name", "width": 200},
@@ -434,7 +450,9 @@ def format_time_difference(days: int) -> str:
 
 class SupercycleTimeAggregator(Aggregator):
     def __init__(self, supercycles_file: Path, description: str = ""):
-        super().__init__("supercycle_completion_time", description)
+        super().__init__(
+            "supercycle_completion_time", "Supercycle Completion Times", description
+        )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: Dict[str, date] = {}
         self.column_defs = [
@@ -508,6 +526,7 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
     ):
         super().__init__(all_creature_types_file, all_land_types_file, description)
         self.name = "maximal_types_with_effects"
+        self.display_name = "Maximal Types with Global Effects"
         self.description = "Cards with maximal types, considering global effects"
         self.global_effects = self.define_global_effects()
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
@@ -618,7 +637,11 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
 
 class FirstCardByGeneralizedManaCostAggregator(Aggregator):
     def __init__(self, description: str = ""):
-        super().__init__("first_card_by_generalized_mana_cost", description)
+        super().__init__(
+            "first_card_by_generalized_mana_cost",
+            "First Cards by Generalized Mana Cost",
+            description,
+        )
         self.data: Dict[str, Dict[str, Any]] = {}
         self.count: Dict[str, int] = defaultdict(int)
         self.column_defs = [

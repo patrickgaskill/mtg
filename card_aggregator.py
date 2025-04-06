@@ -150,22 +150,26 @@ def run():
     aggregators = [
         CountAggregator(
             name="count_cards_by_name",
+            display_name="Cards by Name",
             key_fields=["name"],
             description="Count of unique cards by name",
         ),
         CountAggregator(
             name="count_finishes_by_name",
+            display_name="Card Finishes by Name",
             key_fields=["name"],
             count_finishes=True,
             description="Count of card finishes by name",
         ),
         CountAggregator(
             name="count_cards_by_set_name",
+            display_name="Cards by Set and Name",
             key_fields=["set", "name"],
             description="Count of cards by set and name",
         ),
         CountAggregator(
             name="count_finishes_by_set_name",
+            display_name="Card Finishes by Set and Name",
             key_fields=["set", "name"],
             count_finishes=True,
             description="Count of card finishes by set and name",
@@ -214,7 +218,10 @@ def run():
                         f"[red]Error processing card {card.get('name', 'Unknown')}: {e}[/red]"
                     )
 
-    nav_links = generate_nav_links(aggregators)
+    nav_links = [
+        {"url": f"{aggregator.name}.html", "display_name": aggregator.display_name}
+        for aggregator in aggregators
+    ]
 
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template_env.globals.update(zip=zip)
