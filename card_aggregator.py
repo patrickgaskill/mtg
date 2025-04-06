@@ -1,4 +1,9 @@
+import http.server
 import json
+import os
+import socketserver
+import threading
+import webbrowser
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -31,6 +36,8 @@ MANUAL_DATA_FOLDER = DATA_FOLDER / "manual"
 OUTPUT_DATA_FOLDER = DATA_FOLDER / "output"
 ALL_CREATURE_TYPES_FILE = "all_creature_types.txt"
 ALL_LAND_TYPES_FILE = "all_land_types.txt"
+DEFAULT_INPUT_FILE = DOWNLOADED_DATA_FOLDER / "default-cards.json"
+DEFAULT_OUTPUT_FOLDER = OUTPUT_DATA_FOLDER
 
 app = typer.Typer(no_args_is_help=True)
 console = Console()
@@ -134,18 +141,32 @@ def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
 
 
 @app.command()
-def run():
-    input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
-
+def run(
+    input_file: Path = typer.Option(None, help="Path to the Scryfall JSON file"),
+    output_folder: Path = typer.Option(None, help="Folder to output HTML files"),
+    serve: bool = typer.Option(
+        False, help="Start HTTP server and open browser after generating files"
+    ),
+):
+    # Use the provided input_file if specified, otherwise find the latest
     if input_file is None:
-        console.print(
-            "[red]No 'default-cards' file found. Please download the file using the download command.[/red]"
-        )
-        raise typer.Exit()
+        input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
+        if input_file is None:
+            console.print(
+                "[red]No 'default-cards' file found. Please download the file using the download command.[/red]"
+            )
+            raise typer.Exit()
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_folder = OUTPUT_DATA_FOLDER / timestamp
+    # Use the provided output_folder if specified, otherwise create a timestamped folder
+    if output_folder is None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_folder = OUTPUT_DATA_FOLDER / timestamp
+
+    # Ensure the output folder exists
     output_folder.mkdir(parents=True, exist_ok=True)
+
+    console.print(f"Using input file: [blue]{input_file}[/blue]")
+    console.print(f"Writing output to: [blue]{output_folder}[/blue]")
 
     aggregators = [
         CountAggregator(
@@ -258,6 +279,39 @@ def run():
     console.print(
         f"[green]Card processing complete. HTML files generated in {output_folder}.[/green]"
     )
+    console.print(f"[green]Output written to {output_folder.resolve()}[/green]")
+
+    # Start HTTP server if requested
+    if serve:
+        serve_and_open_browser(output_folder)
+
+
+def serve_and_open_browser(directory: Path):
+    """Start an HTTP server in the given directory and open the browser."""
+    port = 8000
+    handler = http.server.SimpleHTTPRequestHandler
+
+    # Change to the output directory
+    os.chdir(directory.resolve())
+
+    # Create server
+    httpd = socketserver.TCPServer(("", port), handler)
+
+    console.print(f"[green]Starting HTTP server at http://localhost:{port}/[/green]")
+    console.print("[yellow]Press Ctrl+C to stop the server[/yellow]")
+
+    # Open browser in a separate thread
+    threading.Timer(
+        1.0, lambda: webbrowser.open(f"http://localhost:{port}/index.html")
+    ).start()
+
+    try:
+        # Start server
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        console.print("[yellow]Server stopped[/yellow]")
+    finally:
+        httpd.server_close()
 
 
 if __name__ == "__main__":
