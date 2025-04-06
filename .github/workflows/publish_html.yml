@@ -21,19 +21,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version-file: "pyproject.toml"
+          python-version-file: ".python-version"
 
       - name: Install the project
         run: uv sync --all-extras --dev
 
       - name: Download latest card data
-        run: python card_aggregator.py download
+        run: uv run card_aggregator.py download
 
       - name: Update creature and land types
-        run: python card_aggregator.py update-types
+        run: uv run card_aggregator.py update-types
 
       - name: Run card aggregator
-        run: python card_aggregator.py run --output-folder ./flattened_output
+        run: uv run card_aggregator.py run --output-folder ./flattened_output
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
