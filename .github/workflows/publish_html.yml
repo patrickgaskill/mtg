@@ -5,13 +5,30 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 9 * * *" # This will run at 09:00 UTC every day (5:00 AM ET or 4:00 AM EST)
+    - cron: "0 9 * * *" # This will run at 09:00 UTC every day
+
+# Limit to one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Define permissions explicitly
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  OUTPUT_FOLDER: ./flattened_output
+  DOWNLOAD_FOLDER: ./data/downloads
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    environment: github-pages
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -33,18 +50,23 @@ jobs:
         run: uv run card_aggregator.py update-types
 
       - name: Run card aggregator
-        run: uv run card_aggregator.py run --output-folder ./flattened_output
+        run: uv run card_aggregator.py run --output-folder ${{ env.OUTPUT_FOLDER }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.OUTPUT_FOLDER }}
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          personal_token: ${{ secrets.FINE_GRAINED_PAT }}
-          publish_dir: ./flattened_output
-          keep_files: false
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Archive card data
         uses: actions/upload-artifact@v4
         with:
           name: card-data
-          path: ./data/downloads/*.json
+          path: ${{ env.DOWNLOAD_FOLDER }}/*.json
           retention-days: 7
