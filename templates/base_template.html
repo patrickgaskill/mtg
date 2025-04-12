@@ -36,14 +36,14 @@
   </head>
   <body>
     <main>
-      <h1>{{ display_name }}</h1>
-      
       <select class="nav-select" onchange="window.location.href=this.value">
         <option value="">Select a view...</option>
         {% for link in nav_links %}
         <option value="{{ link.url }}" {% if link.url == data_file %}selected{% endif %}>{{ link.display_name }}</option>
         {% endfor %}
       </select>
+      
+      <h1>{{ display_name }}</h1>
 
       <div id="myGrid" class="ag-theme-quartz-auto-dark"></div>
     </main>
