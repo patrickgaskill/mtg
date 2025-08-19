@@ -17,7 +17,7 @@
 - [x] update docs for uv
 - [ ] fix sorting on supercycle times
 - [ ] add loading indicator for ag-grid
-- [ ] evaluate changing supercycles.json to yaml
+- [x] evaluate changing supercycles.json to yaml
 - [ ] warn if cards in supercycles aren't found
 - [x] handle bad internet during download
 - [x] verify update-types handling

@@ -6,6 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple
 
+import yaml
 from jinja2 import Template
 
 from card_utils import (
@@ -455,6 +456,7 @@ class SupercycleTimeAggregator(Aggregator):
         )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: Dict[str, date] = {}
+        self.found_cards: Set[str] = set()
         self.column_defs = [
             {"field": "supercycle", "headerName": "Supercycle", "width": 200},
             {"field": "status", "headerName": "Status", "width": 120},
@@ -465,11 +467,21 @@ class SupercycleTimeAggregator(Aggregator):
 
     def load_supercycles(self, file_path: Path) -> Dict[str, Dict[str, Any]]:
         try:
-            with file_path.open("r") as f:
-                data = json.load(f)
+            with file_path.open("r", encoding="utf-8") as f:
+                if (
+                    file_path.suffix.lower() == ".yaml"
+                    or file_path.suffix.lower() == ".yml"
+                ):
+                    data = yaml.safe_load(f)
+                else:
+                    # Fallback to JSON for backward compatibility
+                    data = json.load(f)
                 return {cycle["name"]: cycle for cycle in data["supercycles"]}
         except IOError as e:
             logger.error(f"Failed to load supercycles from {file_path}: {e}")
+            return {}
+        except (yaml.YAMLError, json.JSONDecodeError) as e:
+            logger.error(f"Failed to parse supercycles file {file_path}: {e}")
             return {}
 
     def process_card(self, card: Dict[str, Any]) -> None:

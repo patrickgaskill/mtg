@@ -310,7 +310,7 @@ def run(
         ),
         FoilTypesAggregator(description="Foil types by card name"),
         SupercycleTimeAggregator(
-            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.json",
+            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.yaml",
             description="Time to complete supercycles",
         ),
         MaximalTypesWithEffectsAggregator(

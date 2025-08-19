@@ -1,0 +1,235 @@
+# Magic: The Gathering Supercycles Tracking
+# A supercycle is a cycle that spans multiple sets/blocks
+# finished: true means all expected cards in the cycle have been printed
+
+supercycles:
+  - name: Swords
+    finished: true # Completed with Sword of Hearth and Home
+    cards:
+      - Sword of Fire and Ice
+      - Sword of Light and Shadow
+      - Sword of Feast and Famine
+      - Sword of War and Peace
+      - Sword of Body and Mind
+      - Sword of Sinew and Steel
+      - Sword of Truth and Justice
+      - Sword of Once and Future
+      - Sword of Forge and Frontier
+      - Sword of Hearth and Home
+
+  - name: Lings
+    finished: true # Classic -ling creatures with activated abilities
+    cards:
+      - Morphling
+      - Thornling
+      - Torchling
+      - Brightling
+      - Endling
+
+  - name: Magus
+    finished: true # Creatures with effects from famous spells
+    cards:
+      - Magus of the Wheel
+      - Magus of the Will
+      - Magus of the Mind
+      - Magus of the Balance
+      - Magus of the Order
+
+  - name: Omnath
+    finished: true # Completed with all 5 colors
+    cards:
+      - Omnath, Locus of Mana
+      - Omnath, Locus of Rage
+      - Omnath, Locus of the Roil
+      - Omnath, Locus of Creation
+      - Omnath, Locus of All
+
+  - name: Kodamas
+    finished: true # Directional tree spirits
+    cards:
+      - Kodama of the Center Tree
+      - Kodama of the East Tree
+      - Kodama of the North Tree
+      - Kodama of the South Tree
+      - Kodama of the West Tree
+
+  - name: T-Mages
+    finished: true # Tutoring mages that start with 'T'
+    cards:
+      - Trinket Mage
+      - Trophy Mage
+      - Tribute Mage
+      - Treasure Mage
+      - Transit Mage
+
+  - name: Legendary Lands
+    finished: true # Original cycle from Weatherlight block
+    cards:
+      - Kor Haven
+      - Teferi's Isle
+      - Volrath's Stronghold
+      - Keldon Necropolis
+      - Yavimaya Hollow
+
+  - name: Legendary Lands II
+    finished: false # Needs a green land to complete
+    cards:
+      - Kor Haven
+      - Academy Ruins
+      - Volrath's Stronghold
+      - Kher Keep
+
+  - name: Topdeck Lands
+    finished: false # Lands that put cards from graveyard on top of library
+    cards:
+      - Hall of Heliod's Generosity # White - enchantments
+      - Academy Ruins # Blue - artifacts
+      - Volrath's Stronghold # Black - creatures
+
+  - name: Recruiters
+    finished: false # Creatures that tutor for creatures with restrictions
+    cards:
+      - Imperial Recruiter # Red creatures with power ≤ 2
+      - Recruiter of the Guard # White creatures with power ≤ 2
+      - Spellseeker # Blue instant/sorcery with mana cost ≤ 2
+
+  - name: Commander Suspend Cards
+    finished: false # Suspend spells from Commander products
+    cards:
+      - Inspiring Refrain
+      - Charnel Serenade
+      - Rousing Refrain
+      - Venture Forth
+
+  - name: Copy Enchantments
+    finished: false # Enchantments that copy other permanent types
+    cards:
+      - Copy Artifact
+      - Copy Land
+      - Copy Enchantment
+
+  - name: Subgames
+    finished: false # Cards that create subgames
+    cards:
+      - Enter the Dungeon
+      - Shahrazad
+      - The Countdown Is at One
+      - Tug of War
+
+  - name: Arch-Charms
+    finished: false # Charms with "Arch-" prefix
+    cards:
+      - Archmage's Charm
+      - Archdruid's Charm
+      - Archenemy's Charm
+
+  - name: Atogs
+    finished: true # Original Atog cycle
+    cards:
+      - Auratog
+      - Chronatog
+      - Necratog
+      - Atog
+      - Foratog
+
+  - name: Forces
+    finished: true # Creatures with "Force" in name from Time Spiral
+    cards:
+      - Celestial Force
+      - Tidal Force
+      - Baleful Force
+      - Magmatic Force
+      - Verdant Force
+
+  - name: Player Types
+    finished: false # Un-set characters representing player psychographics
+    cards:
+      - Johnny, Combo Player
+      - Spike, Tournament Grinder
+      - Vorthos, Steward of Myth
+      - Timmy, Power Gamer
+
+  - name: Praetors
+    finished: true # New Capenna versions completed the cycle
+    cards:
+      - Elesh Norn, Mother of Machines
+      - Jin-Gitaxias, Progress Tyrant
+      - Sheoldred, the Apocalypse
+      - Urabrask, Heretic Praetor
+      - Vorinclex, Monstrous Raider
+
+  - name: Paladins
+    finished: true # No center/colorless paladin expected
+    cards:
+      - Northern Paladin
+      - Southern Paladin
+      - Eastern Paladin
+      - Western Paladin
+
+  - name: Elder Titans
+    finished: false # Needs a white titan to complete
+    cards:
+      - Phlage, Titan of Fire's Fury # Red/White
+      - Skotha, Titan of Eternal Dark # Blue/Black
+      - Kroxa, Titan of Death's Hunger # Black/Red
+      - Uro, Titan of Nature's Wrath # Blue/Green
+
+  - name: Tripled Creatures
+    finished: false # Creatures that are three of the same thing
+    cards:
+      - Healer's Flock # Three healers
+      - Mogg Mob # Three goblins
+      - Llanowar Tribe # Three elves
+
+  - name: Nemeses
+    finished: false # Creatures with "Nemesis" in name
+    cards:
+      - True-Name Nemesis
+      - Sewer Nemesis
+      - Sawhorn Nemesis
+
+  - name: Tarkir Turtles
+    finished: false # Turtles from Tarkir with -shell suffix
+    cards:
+      - Ambling Stormshell
+      - Wandering Tombshell
+      - Meandering Towershell
+
+  - name: Spellshaped Creatures
+    finished: true # Basic creatures that became spellshapers
+    cards:
+      - Goldmeadow Harrier
+      - Cloud Sprite
+      - Festering Goblin
+      - Spark Elemental
+      - Llanowar Elves
+      - Metallic Sliver
+
+  - name: Infinity Stones
+    finished: false # Marvel crossover stones
+    cards:
+      - The Soul Stone
+
+  - name: Elder Dragons
+    finished: false # Original Elder Dragons plus modern versions
+    cards:
+      - Arcades Sabboth
+      - Chromium
+      - Nicol Bolas
+      - Vaevictus Asmadi
+      - Palladia-Mors
+      - Piru, the Volatile
+
+  - name: Ultimatums
+    finished: true # Three-color ultimatum spells
+    cards:
+      - Clarion Ultimatum
+      - Brilliant Ultimatum
+      - Cruel Ultimatum
+      - Violent Ultimatum
+      - Titanic Ultimatum
+      - Ruinous Ultimatum
+      - Genesis Ultimatum
+      - Eerie Ultimatum
+      - Inspired Ultimatum
+      - Emergent Ultimatum
