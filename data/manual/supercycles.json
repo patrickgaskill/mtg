@@ -128,7 +128,7 @@
     {
       "name": "Arch-Charms",
       "finished": false,
-      "cards": ["Archmage's Charm", "Archdruid's Charm"]
+      "cards": ["Archmage's Charm", "Archdruid's Charm", "Archenemy's Charm"]
     },
     {
       "name": "Atogs",
@@ -165,6 +165,90 @@
         "Sheoldred, the Apocalypse",
         "Urabrask, Heretic Praetor",
         "Vorinclex, Monstrous Raider"
+      ]
+    },
+    {
+      "name": "Paladins",
+      "finished": true,
+      "cards": [
+        "Northern Paladin",
+        "Southern Paladin",
+        "Eastern Paladin",
+        "Western Paladin"
+      ]
+    },
+    {
+      "name": "Elder Titans",
+      "finished": false,
+      "cards": [
+        "Phlage, Titan of Fire's Fury",
+        "Skotha, Titan of Eternal Dark",
+        "Kroxa, Titan of Death's Hunger",
+        "Uro, Titan of Nature's Wrath"
+      ]
+    },
+    {
+      "name": "Tripled Creatures",
+      "finished": false,
+      "cards": ["Healer's Flock", "Mogg Mob", "Llanowar Tribe"]
+    },
+    {
+      "name": "Nemeses",
+      "finished": false,
+      "cards": ["True-Name Nemesis", "Sewer Nemesis", "Sawhorn Nemesis"]
+    },
+    {
+      "name": "Tarkir Turtles",
+      "finished": false,
+      "cards": [
+        "Ambling Stormshell",
+        "Wandering Tombshell",
+        "Meandering Towershell"
+      ]
+    },
+    {
+      "name": "Spellshaped Creatures",
+      "finished": true,
+      "cards": [
+        "Goldmeadow Harrier",
+        "Cloud Sprite",
+        "Festering Goblin",
+        "Spark Elemental",
+        "Llanowar Elves",
+        "Metallic Sliver"
+      ]
+    },
+    {
+      "name": "Infinity Stones",
+      "finished": false,
+      "cards": ["The Soul Stone"]
+    },
+    {
+      "name": "Elder Dragons",
+      "finished": false,
+      "cards": [
+        "Arcades Sabboth",
+        "Chromium",
+        "Nicol Bolas",
+        "Vaevictus Asmadi",
+        "Palladia-Mors",
+        "Piru, the Volatile"
+      ]
+    },
+    {
+      "name": "Ultimatums",
+      "finished": true,
+      "cards": [
+        "Clarion Ultimatum",
+        "Brilliant Ultimatum",
+        "Cruel Ultimatum",
+        "Violent Ultimatum",
+        "Titanic Ultimatum",
+        "Ruinous Ultimatum",
+        "Genesis Ultimatum",
+        "Eerie Ultimatum",
+        "Inspired Ultimatum",
+        "Emergent Ultimatum"
       ]
     }
   ]
