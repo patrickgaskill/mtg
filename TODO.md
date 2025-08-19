@@ -16,4 +16,6 @@
 - [ ] fix grid column widths
 - [ ] update docs for uv
 - [ ] fix sorting on supercycle times
-- [ ] add loading indicator for ag-grid 
+- [ ] add loading indicator for ag-grid
+- [ ] evaluate changing supercycles.json to yaml
+- [ ] warn if cards in supercycles aren't found
