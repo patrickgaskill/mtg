@@ -12,6 +12,13 @@ import ijson
 import requests
 import typer
 from jinja2 import Environment, FileSystemLoader
+from requests.exceptions import (
+    ChunkedEncodingError,
+    ConnectionError,
+    HTTPError,
+    RequestException,
+    Timeout,
+)
 from rich.console import Console
 from rich.progress import DownloadColumn, Progress, wrap_file
 
@@ -48,8 +55,20 @@ def update_types():
     console.print("Fetching the latest comprehensive rules...")
     try:
         creature_types, land_types = fetch_and_parse_types()
-    except Exception as e:
+    except ValueError as e:
+        # fetch_and_parse_types raises ValueError for network and parsing errors
         console.print(f"[red]Error fetching types: {e}[/red]")
+        if "Network error" in str(e) or "timeout" in str(e).lower():
+            console.print(
+                "[yellow]Please check your internet connection and try again.[/yellow]"
+            )
+        elif "HTTP error" in str(e):
+            console.print(
+                "[yellow]The Magic rules website may be temporarily unavailable.[/yellow]"
+            )
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Unexpected error fetching types: {e}[/red]")
         raise typer.Exit(1)
 
     # Update creature types file
@@ -80,30 +99,108 @@ def update_types():
 @app.command()
 def download():
     console.print("Downloading bulk data files from Scryfall...")
-    response = requests.get("https://api.scryfall.com/bulk-data")
-    bulk_data_files = response.json()["data"]
 
-    default_cards_file = next(
-        file for file in bulk_data_files if file["type"] == "default_cards"
-    )
+    try:
+        response = requests.get("https://api.scryfall.com/bulk-data", timeout=30)
+        response.raise_for_status()
+        bulk_data_files = response.json()["data"]
+    except (ConnectionError, Timeout) as e:
+        console.print(f"[red]Network error while fetching bulk data list: {e}[/red]")
+        console.print(
+            "[yellow]Please check your internet connection and try again.[/yellow]"
+        )
+        raise typer.Exit(1)
+    except HTTPError as e:
+        console.print(f"[red]HTTP error while fetching bulk data list: {e}[/red]")
+        console.print(
+            "[yellow]The Scryfall API may be temporarily unavailable.[/yellow]"
+        )
+        raise typer.Exit(1)
+    except RequestException as e:
+        console.print(f"[red]Request error while fetching bulk data list: {e}[/red]")
+        raise typer.Exit(1)
+    except (KeyError, json.JSONDecodeError) as e:
+        console.print(f"[red]Error parsing bulk data response: {e}[/red]")
+        console.print(
+            "[yellow]The Scryfall API response format may have changed.[/yellow]"
+        )
+        raise typer.Exit(1)
+
+    try:
+        default_cards_file = next(
+            file for file in bulk_data_files if file["type"] == "default_cards"
+        )
+    except StopIteration:
+        console.print("[red]Could not find default_cards file in bulk data list[/red]")
+        raise typer.Exit(1)
+
     download_url = default_cards_file["download_uri"]
     file_name = Path(download_url).name
     DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
     file_path = DOWNLOADED_DATA_FOLDER / file_name
 
-    response = requests.get(download_url, stream=True)
-
-    with Progress(*Progress.get_default_columns(), DownloadColumn()) as progress:
-        task = progress.add_task(
-            f"Downloading {default_cards_file['name']}",
-            filename=default_cards_file["name"],
-            total=int(default_cards_file["size"]),
+    try:
+        response = requests.get(download_url, stream=True, timeout=30)
+        response.raise_for_status()
+    except (ConnectionError, Timeout) as e:
+        console.print(f"[red]Network error while downloading file: {e}[/red]")
+        console.print(
+            "[yellow]Please check your internet connection and try again.[/yellow]"
         )
+        raise typer.Exit(1)
+    except HTTPError as e:
+        console.print(f"[red]HTTP error while downloading file: {e}[/red]")
+        console.print(
+            "[yellow]The download URL may be invalid or the file may be temporarily unavailable.[/yellow]"
+        )
+        raise typer.Exit(1)
+    except RequestException as e:
+        console.print(f"[red]Request error while downloading file: {e}[/red]")
+        raise typer.Exit(1)
 
-        with file_path.open("wb") as file:
-            for data in response.iter_content(chunk_size=1024):
-                size = file.write(data)
-                progress.update(task, advance=size)
+    try:
+        with Progress(*Progress.get_default_columns(), DownloadColumn()) as progress:
+            task = progress.add_task(
+                f"Downloading {default_cards_file['name']}",
+                filename=default_cards_file["name"],
+                total=int(default_cards_file["size"]),
+            )
+
+            with file_path.open("wb") as file:
+                for data in response.iter_content(chunk_size=1024):
+                    size = file.write(data)
+                    progress.update(task, advance=size)
+    except ChunkedEncodingError as e:
+        console.print(f"[red]Connection lost during download: {e}[/red]")
+        console.print(
+            "[yellow]The download was interrupted. Please try again.[/yellow]"
+        )
+        # Clean up partially downloaded file
+        if file_path.exists():
+            file_path.unlink()
+        raise typer.Exit(1)
+    except (ConnectionError, Timeout) as e:
+        console.print(f"[red]Network error during download: {e}[/red]")
+        console.print(
+            "[yellow]The connection was lost during download. Please try again.[/yellow]"
+        )
+        # Clean up partially downloaded file
+        if file_path.exists():
+            file_path.unlink()
+        raise typer.Exit(1)
+    except IOError as e:
+        console.print(f"[red]Error writing file to disk: {e}[/red]")
+        console.print("[yellow]Please check disk space and write permissions.[/yellow]")
+        # Clean up partially downloaded file
+        if file_path.exists():
+            file_path.unlink()
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Unexpected error during download: {e}[/red]")
+        # Clean up partially downloaded file
+        if file_path.exists():
+            file_path.unlink()
+        raise typer.Exit(1)
 
     console.print(
         f"[green]Download complete:[/green] [bold]{file_path}[/bold]", highlight=False

@@ -3,12 +3,26 @@ from typing import Set, Tuple
 
 import requests
 from bs4 import BeautifulSoup
+from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
 
 def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
     url = "https://magic.wizards.com/en/rules"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, "html.parser")
+
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+    except (ConnectionError, Timeout) as e:
+        raise ValueError(f"Network error while fetching rules page: {e}")
+    except HTTPError as e:
+        raise ValueError(f"HTTP error while fetching rules page: {e}")
+    except RequestException as e:
+        raise ValueError(f"Request error while fetching rules page: {e}")
+
+    try:
+        soup = BeautifulSoup(response.text, "html.parser")
+    except Exception as e:
+        raise ValueError(f"Error parsing rules page HTML: {e}")
 
     # Find the link to the txt version of the rules
     txt_link = soup.find("a", href=re.compile(r".*CompRules.*\.txt$"))
@@ -17,9 +31,17 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
 
     txt_url = txt_link["href"]
 
-    res = requests.get(txt_url)
-    res.encoding = "utf-8"
-    rules_text = res.text.replace("’", "'")
+    try:
+        res = requests.get(txt_url, timeout=60)  # Longer timeout for large file
+        res.raise_for_status()
+        res.encoding = "utf-8"
+        rules_text = res.text.replace("’", "'")
+    except (ConnectionError, Timeout) as e:
+        raise ValueError(f"Network error while downloading comprehensive rules: {e}")
+    except HTTPError as e:
+        raise ValueError(f"HTTP error while downloading comprehensive rules: {e}")
+    except RequestException as e:
+        raise ValueError(f"Request error while downloading comprehensive rules: {e}")
 
     # Extract creature types
     creature_types_match = re.search(
