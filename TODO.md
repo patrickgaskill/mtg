@@ -14,3 +14,6 @@
 - [ ] show card images on hover?
 - [ ] update page styles and colors
 - [ ] fix grid column widths
+- [ ] update docs for uv
+- [ ] fix sorting on supercycle times
+- [ ] add loading indicator for ag-grid 
