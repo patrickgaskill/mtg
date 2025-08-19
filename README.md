@@ -26,10 +26,16 @@ This project fetches Magic: The Gathering card data from Scryfall, processes it,
 ## Setup
 
 1. Clone this repository
-2. Install the required Python packages:
+2. Install uv if you haven't already:
 
 ```
-pip install -r requirements.txt
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+3. Install the project dependencies:
+
+```
+uv sync
 ```
 
 ## Usage
@@ -41,19 +47,19 @@ To run the aggregator locally:
 1. Download the latest card data:
 
 ```
-python card_aggregator.py download
+uv run python card_aggregator.py download
 ```
 
 2. Update the creature and land types:
 
 ```
-python card_aggregator.py update-types
+uv run python card_aggregator.py update-types
 ```
 
 3. Generate the reports:
 
 ```
-python card_aggregator.py run
+uv run python card_aggregator.py run
 ```
 
 The generated HTML and JSON files will be in the `./data/output/[timestamp]` directory.
@@ -63,7 +69,7 @@ The generated HTML and JSON files will be in the `./data/output/[timestamp]` dir
 The `run` command supports several options:
 
 ```
-python card_aggregator.py run --help
+uv run python card_aggregator.py run --help
 ```
 
 - `--input-file PATH`: Specify a custom Scryfall JSON file to use
@@ -73,7 +79,7 @@ python card_aggregator.py run --help
 Example with options:
 
 ```
-python card_aggregator.py run --serve
+uv run python card_aggregator.py run --serve
 ```
 
 This will generate the reports and then start a local web server to view them in your browser.
@@ -95,6 +101,7 @@ The generated reports are available at: https://patrickgaskill.github.io/mtg/
 ## Technology Stack
 
 - Python for data processing
+- uv for dependency management
 - AG Grid for interactive tables
 - JSON for data storage
 - HTML/CSS for presentation
