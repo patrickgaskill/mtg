@@ -227,6 +227,15 @@ def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
 
 
 def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
+    """
+    Generate navigation links for aggregator HTML pages.
+
+    Args:
+        aggregators: List of aggregator instances.
+
+    Returns:
+        List of dictionaries containing url, name, display_name, and description.
+    """
     return [
         {
             "url": f"{agg.name}.html",

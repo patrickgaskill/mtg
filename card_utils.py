@@ -2,11 +2,14 @@ import re
 from datetime import date, datetime
 from typing import Any, Dict, Set, Tuple
 
+from aggregators.constants import (
+    NON_TRADITIONAL_BORDERS,
+    NON_TRADITIONAL_LAYOUTS,
+    NON_TRADITIONAL_SET_TYPES,
+)
+
 # Constants
 BASIC_LAND_TYPES = {"Forest", "Island", "Mountain", "Plains", "Swamp"}
-NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
-NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
-NON_TRADITIONAL_BORDERS = {"silver", "gold"}
 
 
 def extract_types(card: Dict[str, Any]) -> Set[str]:

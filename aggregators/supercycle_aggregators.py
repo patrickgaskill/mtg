@@ -103,7 +103,9 @@ class SupercycleTimeAggregator(Aggregator):
                     "endDate": latest_date.strftime("%B %d, %Y")
                     if cycle["finished"]
                     else "Ongoing",
+                    "days": days,  # Store for sorting
                 }
             )
 
-        return sorted(result, key=lambda x: int(x["time"].split()[0]), reverse=True)
+        # Sort by actual day count in descending order
+        return sorted(result, key=lambda x: x["days"], reverse=True)
