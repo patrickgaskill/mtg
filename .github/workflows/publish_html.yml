@@ -53,16 +53,16 @@ jobs:
         run: uv run card_aggregator.py run --output-folder ${{ env.OUTPUT_FOLDER }}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ env.OUTPUT_FOLDER }}
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4.0.5
 
       - name: Archive card data
         uses: actions/upload-artifact@v4
