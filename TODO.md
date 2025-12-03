@@ -1,5 +1,7 @@
 # TODO List
 
+> **Note:** Open TODO items have been migrated to [GitHub Issues](https://github.com/patrickgaskill/mtg/issues) for better tracking.
+
 ### Todo
 
 - [x] migrate to uv
@@ -15,7 +17,7 @@
 - [ ] update page styles and colors
 - [ ] fix grid column widths
 - [x] update docs for uv
-- [ ] fix sorting on supercycle times
+- [x] fix sorting on supercycle times
 - [ ] add loading indicator for ag-grid
 - [x] evaluate changing supercycles.json to yaml
 - [ ] warn if cards in supercycles aren't found

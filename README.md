@@ -40,49 +40,137 @@ uv sync
 
 ## Usage
 
-### Local Usage
+### Quick Start
 
-To run the aggregator locally:
+The easiest way to run the complete workflow is:
 
-1. Download the latest card data:
-
+```bash
+uv run python card_aggregator.py all
 ```
+
+This single command will:
+1. Download the latest card data from Scryfall
+2. Update creature and land types from MTG comprehensive rules
+3. Process the data and generate all reports
+4. Start a local web server and open your browser
+
+### Available Commands
+
+**📊 Check Status**
+```bash
+uv run python card_aggregator.py status
+```
+Shows information about downloaded data, type files, and available aggregators.
+
+**📋 List Aggregators**
+```bash
+uv run python card_aggregator.py list
+```
+Displays all available aggregators in a formatted table.
+
+**📥 Download Data**
+```bash
 uv run python card_aggregator.py download
 ```
+Downloads the latest Scryfall bulk data file.
 
-2. Update the creature and land types:
-
-```
+**🏷️ Update Types**
+```bash
 uv run python card_aggregator.py update-types
 ```
+Updates creature and land type lists from MTG comprehensive rules.
 
-3. Generate the reports:
-
+**⚙️ Generate Reports**
+```bash
+uv run python card_aggregator.py run [OPTIONS]
 ```
-uv run python card_aggregator.py run
-```
+Processes card data and generates HTML reports.
 
-The generated HTML and JSON files will be in the `./data/output/[timestamp]` directory.
+**🚀 Complete Workflow**
+```bash
+uv run python card_aggregator.py all [OPTIONS]
+```
+Runs the complete workflow: download → update-types → process → serve.
 
 ### Command Options
 
-The `run` command supports several options:
+#### `run` Command
 
-```
+```bash
 uv run python card_aggregator.py run --help
 ```
 
-- `--input-file PATH`: Specify a custom Scryfall JSON file to use
-- `--output-folder PATH`: Specify a custom output folder
-- `--serve`: Start an HTTP server and open browser to view reports
+**Basic Options:**
+- `--input-file PATH`: Specify a custom Scryfall JSON file (auto-detects latest if not specified)
+- `-o, --output PATH`: Specify output directory (default: timestamped folder in `data/output/`)
+- `-s, --serve`: Start HTTP server and open browser after generating files
 
-Example with options:
+**Filtering Options:**
+- `--only <name>`: Run only specific aggregators (can specify multiple times)
+- `--exclude <name>`: Exclude specific aggregators (can specify multiple times)
+- `--dry-run`: Preview what would be generated without actually processing
 
-```
+**Examples:**
+
+```bash
+# Generate all reports and serve
 uv run python card_aggregator.py run --serve
+
+# Run only specific aggregators
+uv run python card_aggregator.py run --only supercycle_completion_time --only foil_types_by_name
+
+# Exclude certain aggregators
+uv run python card_aggregator.py run --exclude count_cards_by_name --exclude count_finishes_by_name
+
+# Preview what would be generated
+uv run python card_aggregator.py run --dry-run
+
+# Custom input and output
+uv run python card_aggregator.py run --input-file data/downloads/custom.json -o data/output/custom
 ```
 
-This will generate the reports and then start a local web server to view them in your browser.
+#### `all` Command
+
+```bash
+uv run python card_aggregator.py all --help
+```
+
+**Options:**
+- `--serve / --no-serve`: Start server after processing (default: enabled)
+- `--skip-download`: Skip downloading fresh data
+- `--skip-types`: Skip updating creature/land types
+
+**Examples:**
+
+```bash
+# Complete workflow with all steps
+uv run python card_aggregator.py all
+
+# Skip download if you already have fresh data
+uv run python card_aggregator.py all --skip-download
+
+# Process only (skip download and type updates)
+uv run python card_aggregator.py all --skip-download --skip-types
+
+# Generate without serving
+uv run python card_aggregator.py all --no-serve
+```
+
+#### Global Options
+
+Available for all commands:
+- `-v, --verbose`: Show detailed output
+- `-q, --quiet`: Minimal output
+
+### Output
+
+Generated HTML and JSON files are saved to `./data/output/[timestamp]/` by default.
+
+The reports feature:
+- Interactive sortable and filterable tables powered by AG Grid
+- Responsive design for desktop and mobile
+- Navigation between different aggregator reports
+- Timestamped generation information
 
 ### Automated Updates
 
