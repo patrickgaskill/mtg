@@ -50,7 +50,7 @@ jobs:
         run: uv run card_aggregator.py update-types
 
       - name: Run card aggregator
-        run: uv run card_aggregator.py run --output-folder ${{ env.OUTPUT_FOLDER }}
+        run: uv run card_aggregator.py run --output ${{ env.OUTPUT_FOLDER }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
