@@ -89,26 +89,36 @@
     </main>
 
     <script>
+      // Initialize grid with loading state
+      const columnDefs = {{ column_defs | tojson }};
+
+      const gridOptions = {
+        theme: "legacy",
+        columnDefs: columnDefs,
+        rowData: null,
+        loading: true,
+        defaultColDef: {
+          sortable: true,
+          filter: true,
+          resizable: true
+        },
+        pagination: true,
+        paginationPageSize: 100
+      };
+
+      const gridDiv = document.querySelector('#myGrid');
+      const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+      // Fetch data and update grid
       fetch('{{ data_file }}')
         .then(response => response.json())
         .then(data => {
-          const columnDefs = {{ column_defs | tojson }};
-
-          const gridOptions = {
-            theme: "legacy",
-            columnDefs: columnDefs,
-            rowData: data,
-            defaultColDef: {
-              sortable: true,
-              filter: true,
-              resizable: true
-            },
-            pagination: true,
-            paginationPageSize: 100
-          };
-
-          const gridDiv = document.querySelector('#myGrid');
-          new agGrid.createGrid(gridDiv, gridOptions);
+          gridApi.setGridOption('rowData', data);
+          gridApi.setGridOption('loading', false);
+        })
+        .catch(error => {
+          console.error('Error loading data:', error);
+          gridApi.setGridOption('loading', false);
         });
     </script>
   </body>
