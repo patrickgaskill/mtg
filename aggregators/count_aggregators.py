@@ -16,8 +16,9 @@ class CountAggregator(Aggregator):
         key_fields: List[str],
         count_finishes: bool = False,
         description: str = "",
+        explanation: str = "",
     ):
-        super().__init__(name, display_name, description)
+        super().__init__(name, display_name, description, explanation)
         self.data: Dict[Tuple, int] = defaultdict(int)
         self.key_fields = key_fields
         self.count_finishes = count_finishes
