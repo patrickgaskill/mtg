@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List
 
+import markdown
 from jinja2 import Template
 
 logging.basicConfig(level=logging.INFO)
@@ -15,10 +16,17 @@ logger = logging.getLogger(__name__)
 class Aggregator(ABC):
     """Abstract base class for all aggregators."""
 
-    def __init__(self, name: str, display_name: str, description: str = ""):
+    def __init__(
+        self,
+        name: str,
+        display_name: str,
+        description: str = "",
+        explanation: str = "",
+    ):
         self.name = name
         self.display_name = display_name
         self.description = description
+        self.explanation = explanation
         self.column_defs = []
 
     @abstractmethod
@@ -41,11 +49,19 @@ class Aggregator(ABC):
         with json_filepath.open("w", encoding="utf-8") as json_file:
             json.dump(self.get_sorted_data(), json_file)
 
+        # Convert markdown explanation to HTML if present
+        explanation_html = ""
+        if self.explanation:
+            explanation_html = markdown.markdown(
+                self.explanation, extensions=["fenced_code", "tables"]
+            )
+
         # Generate HTML file using template
         html_content = template.render(
             title=self.display_name,
             display_name=self.display_name,
             description=self.description,
+            explanation=explanation_html,
             nav_links=nav_links,
             data_file=json_filename,
             column_defs=self.column_defs,

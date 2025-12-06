@@ -121,8 +121,7 @@ def create_all_aggregators() -> List[Aggregator]:
         ),
         FoilTypesAggregator(description="Foil types by card name"),
         SupercycleTimeAggregator(
-            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.yaml",
-            description="Time to complete supercycles",
+            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.yaml"
         ),
         MaximalTypesWithEffectsAggregator(
             all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,

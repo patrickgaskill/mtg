@@ -29,9 +29,22 @@ def format_time_difference(days: int) -> str:
 class SupercycleTimeAggregator(Aggregator):
     """Track completion times for card supercycles."""
 
-    def __init__(self, supercycles_file: Path, description: str = ""):
+    def __init__(self, supercycles_file: Path):
         super().__init__(
-            "supercycle_completion_time", "Supercycle Completion Times", description
+            name="supercycle_completion_time",
+            display_name="Supercycle Completion Times",
+            description="Time to complete supercycles",
+            explanation="""
+## What are Supercycles?
+
+Supercycles are groups of related cards printed across multiple sets over time.
+This report tracks how long it took to complete each supercycle from the first
+card to the last card.
+
+**Note:** Times are calculated from the release date of the first card printed
+to the release date of the last card printed. For ongoing supercycles, the time
+shown is from the first card to today's date.
+            """,
         )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: Dict[str, date] = {}
