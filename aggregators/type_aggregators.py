@@ -24,7 +24,32 @@ class MaximalPrintedTypesAggregator(Aggregator):
         all_land_types_file: Path,
         description: str = "",
     ):
-        super().__init__("maximal_printed_types", "Maximal Printed Types", description)
+        super().__init__(
+            "maximal_printed_types",
+            "Maximal Printed Types",
+            description,
+            explanation="""
+## What are Maximal Printed Types?
+
+This report shows cards that have the maximum number of types **as printed on the card**,
+without considering any external effects or abilities.
+
+A card is considered to have "maximal types" if there's no other card whose printed types
+are a strict superset of this card's types. In other words, you can't add more types to
+this card without removing at least one existing type.
+
+**Special handling:**
+- Cards with **Changeling** (like Mistform Ultimus) count as having all creature types
+- **Planar Nexus** counts as having all nonbasic land types
+- Only traditional Magic cards are included (no silver-bordered, tokens, etc.)
+
+**Important notes:**
+- This differs from "Maximal Types with Global Effects" which considers what types cards could have when affected by other cards in play
+- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules.
+  During this time, cards with Changeling or similar effects may not show the new types in this report.
+  Types are updated via the `update-types` command.
+            """,
+        )
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 240},
@@ -120,6 +145,41 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         self.name = "maximal_types_with_effects"
         self.display_name = "Maximal Types with Global Effects"
         self.description = "Cards with maximal types, considering global effects"
+        self.explanation = """
+## What are Maximal Types with Global Effects?
+
+This report shows cards that achieve the maximum number of types when considering **global effects**
+from other cards that could be in play simultaneously.
+
+Unlike "Maximal Printed Types" which only counts what's printed on the card, this aggregator
+considers how cards would be modified by other permanents in play.
+
+## Global Effects Considered
+
+The following cards and their effects are included in the calculation:
+
+**Type-Granting Effects:**
+- **In Bolas's Clutches** - Makes permanents Legendary
+- **Rimefeather Owl** - Makes permanents Snow
+- **Enchanted Evening** - Makes permanents Enchantments
+- **Mycosynth Lattice** - Makes permanents Artifacts
+- **March of the Machines** - Makes artifacts into Creatures
+
+**Creature Type Effects:**
+- **Maskwood Nexus** - Creatures have all creature types
+- **Cards with Changeling** - Already have all creature types
+
+**Land Type Effects:**
+- **Life and Limb** - Forests and Saprolings become Creature Land Saproling Forest
+- **Prismatic Omen** - Lands have all basic land types
+- **Planar Nexus** - Has all nonbasic land types
+- **Omo, Queen of Vesuva** - Lands have all land types, Creatures have all creature types
+
+This shows the theoretical maximum types achievable through card combinations!
+
+**Important note:**
+- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. Cards that grant "all creature types" or "all land types" will only include types that have been updated via the `update-types` command, which fetches the official type lists from the comprehensive rules
+        """
         self.global_effects = self.define_global_effects()
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
         self.column_defs = [

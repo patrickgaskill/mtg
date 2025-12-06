@@ -37,13 +37,23 @@ class SupercycleTimeAggregator(Aggregator):
             explanation="""
 ## What are Supercycles?
 
-Supercycles are groups of related cards printed across multiple sets over time.
-This report tracks how long it took to complete each supercycle from the first
-card to the last card.
+A **supercycle** (also called a **mega-mega cycle**) is a cycle of related cards distributed
+across multiple sets that aren't confined to a single block. These cycles typically feature:
 
-**Note:** Times are calculated from the release date of the first card printed
-to the release date of the last card printed. For ongoing supercycles, the time
-shown is from the first card to today's date.
+- Cards with shared mechanical or thematic elements
+- Distributed representation across colors (often all five)
+- Consistent mechanics with color-appropriate variations
+- Thematic connections (legends from a plane, artifact types, creature classes)
+
+## About This Report
+
+This report tracks how long it took to complete each supercycle, measured from the release
+date of the first card to the last card. For ongoing supercycles, the time shown is from
+the first card to today's date.
+
+**Examples of supercycles:**
+- Tutors (five monocolored rare tutors from different sets)
+- Elder Dragons (six three-colored legendary dragons with consistent abilities)
             """,
         )
         self.supercycles = self.load_supercycles(supercycles_file)
