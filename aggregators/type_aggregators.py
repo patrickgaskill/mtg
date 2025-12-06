@@ -45,7 +45,9 @@ this card without removing at least one existing type.
 
 **Important notes:**
 - This differs from "Maximal Types with Global Effects" which considers what types cards could have when affected by other cards in play
-- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. During this time, cards with Changeling or similar effects may not show the new types in this report until the comprehensive rules are updated via the `update-types` command
+- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules.
+  During this time, cards with Changeling or similar effects may not show the new types in this report.
+  Types are updated via the `update-types` command.
             """,
         )
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
