@@ -66,6 +66,14 @@
       .explanation strong {
         font-weight: 600;
       }
+
+      .error-message {
+        padding: 10px;
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+      }
     </style>
   </head>
   <body>
@@ -124,11 +132,13 @@
         .catch(error => {
           console.error('Error loading data:', error);
           gridApi.setGridOption('loading', false);
-          gridApi.setGridOption('overlayNoRowsTemplate',
-            `<span style="padding: 10px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
-              Error loading data: ${error.message}
-            </span>`
-          );
+
+          // Create error element using DOM API to prevent XSS
+          const errorSpan = document.createElement('span');
+          errorSpan.className = 'error-message';
+          errorSpan.textContent = `Error loading data: ${error.message}`;
+
+          gridApi.setGridOption('overlayNoRowsTemplate', errorSpan.outerHTML);
           gridApi.showNoRowsOverlay();
         });
     </script>
