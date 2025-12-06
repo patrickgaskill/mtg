@@ -43,8 +43,9 @@ this card without removing at least one existing type.
 - **Planar Nexus** counts as having all nonbasic land types
 - Only traditional Magic cards are included (no silver-bordered, tokens, etc.)
 
-**Note:** This differs from "Maximal Types with Global Effects" which considers what types
-cards could have when affected by other cards in play.
+**Important notes:**
+- This differs from "Maximal Types with Global Effects" which considers what types cards could have when affected by other cards in play
+- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. During this time, cards with Changeling or similar effects may not show the new types in this report until the comprehensive rules are updated via the `update-types` command
             """,
         )
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
@@ -173,6 +174,9 @@ The following cards and their effects are included in the calculation:
 - **Omo, Queen of Vesuva** - Lands have all land types, Creatures have all creature types
 
 This shows the theoretical maximum types achievable through card combinations!
+
+**Important note:**
+- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. Cards that grant "all creature types" or "all land types" will only include types that have been updated via the `update-types` command, which fetches the official type lists from the comprehensive rules
         """
         self.global_effects = self.define_global_effects()
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
