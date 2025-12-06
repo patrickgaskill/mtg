@@ -89,26 +89,47 @@
     </main>
 
     <script>
+      // Initialize grid with loading state
+      const columnDefs = {{ column_defs | tojson }};
+
+      const gridOptions = {
+        theme: "legacy",
+        columnDefs: columnDefs,
+        rowData: null,
+        loading: true,
+        defaultColDef: {
+          sortable: true,
+          filter: true,
+          resizable: true
+        },
+        pagination: true,
+        paginationPageSize: 100
+      };
+
+      const gridDiv = document.querySelector('#myGrid');
+      const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+      // Fetch data and update grid
       fetch('{{ data_file }}')
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
         .then(data => {
-          const columnDefs = {{ column_defs | tojson }};
-
-          const gridOptions = {
-            theme: "legacy",
-            columnDefs: columnDefs,
-            rowData: data,
-            defaultColDef: {
-              sortable: true,
-              filter: true,
-              resizable: true
-            },
-            pagination: true,
-            paginationPageSize: 100
-          };
-
-          const gridDiv = document.querySelector('#myGrid');
-          new agGrid.createGrid(gridDiv, gridOptions);
+          gridApi.setGridOption('rowData', data);
+          gridApi.setGridOption('loading', false);
+        })
+        .catch(error => {
+          console.error('Error loading data:', error);
+          gridApi.setGridOption('loading', false);
+          gridApi.showNoRowsOverlay();
+          gridApi.setGridOption('overlayNoRowsTemplate',
+            `<span style="padding: 10px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">
+              Error loading data: ${error.message}
+            </span>`
+          );
         });
     </script>
   </body>
