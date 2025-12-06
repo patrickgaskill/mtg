@@ -32,6 +32,40 @@
         height: 600px;
         width: 100%;
       }
+
+      .explanation {
+        background-color: #f8f9fa;
+        border-left: 4px solid #007bff;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 4px;
+      }
+
+      .explanation h2 {
+        margin-top: 0;
+        font-size: 1.2rem;
+        color: #333;
+      }
+
+      .explanation p {
+        margin: 0.5rem 0;
+      }
+
+      .explanation ul, .explanation ol {
+        margin: 0.5rem 0;
+        padding-left: 2rem;
+      }
+
+      .explanation code {
+        background-color: #e9ecef;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+
+      .explanation strong {
+        font-weight: 600;
+      }
     </style>
   </head>
   <body>
@@ -44,6 +78,12 @@
       </select>
       
       <h1>{{ display_name }}</h1>
+
+      {% if explanation %}
+      <div class="explanation">
+        {{ explanation | safe }}
+      </div>
+      {% endif %}
 
       <div id="myGrid" class="ag-theme-quartz-auto-dark"></div>
     </main>
