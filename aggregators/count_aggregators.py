@@ -20,13 +20,18 @@ class CountAggregator(Aggregator):
     ):
         super().__init__(name, display_name, description, explanation)
         self.data: Dict[Tuple, int] = defaultdict(int)
+        self.cards: Dict[Tuple, Dict[str, Any]] = {}
         self.key_fields = key_fields
         self.count_finishes = count_finishes
 
         # Define column definitions for ag-grid
-        self.column_defs = [
-            {"field": field, "headerName": field.title()} for field in key_fields
-        ]
+        self.column_defs = []
+        for field in key_fields:
+            col_def = {"field": field, "headerName": field.title()}
+            # Add card link renderer for "name" fields
+            if field == "name":
+                col_def["cellRenderer"] = "cardLinkRenderer"
+            self.column_defs.append(col_def)
         self.column_defs.append(
             {"field": "count", "headerName": "Count", "type": "numericColumn"}
         )
@@ -34,16 +39,25 @@ class CountAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
+        # Keep reference to first card for scryfall data
+        if key not in self.cards:
+            self.cards[key] = card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
-        return sorted(
-            [
-                {**dict(zip(self.key_fields, key)), "count": count}
-                for key, count in self.data.items()
-            ],
-            key=lambda x: x["count"],
-            reverse=True,
-        )
+        result = []
+        for key, count in self.data.items():
+            row_data = {**dict(zip(self.key_fields, key)), "count": count}
+            # Add scryfall data if we have a reference card
+            if key in self.cards:
+                card = self.cards[key]
+                row_data["scryfall_uri"] = card.get("scryfall_uri", "")
+                row_data["image_uri"] = (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                )
+            result.append(row_data)
+        return sorted(result, key=lambda x: x["count"], reverse=True)
 
 
 class MaxCollectorNumberBySetAggregator(Aggregator):
