@@ -1,5 +1,6 @@
 import re
 from typing import Set, Tuple
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -24,24 +25,40 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
     except Exception as e:
         raise ValueError(f"Error parsing rules page HTML: {e}")
 
-    # Find the link to the txt version of the rules
-    txt_link = soup.find("a", href=re.compile(r".*CompRules.*\.txt$"))
-    if not txt_link:
+    # Find all links to txt versions of the rules
+    txt_links = soup.find_all("a", href=re.compile(r".*CompRules.*\.txt$"))
+    if not txt_links:
         raise ValueError("Couldn't find the link to the comprehensive rules text file")
 
-    txt_url = txt_link["href"]
+    # Try each TXT link until one works (sometimes the newest link is broken)
+    rules_text = None
+    errors = []
 
-    try:
-        res = requests.get(txt_url, timeout=60)  # Longer timeout for large file
-        res.raise_for_status()
-        res.encoding = "utf-8"
-        rules_text = res.text.replace("’", "'")
-    except (ConnectionError, Timeout) as e:
-        raise ValueError(f"Network error while downloading comprehensive rules: {e}")
-    except HTTPError as e:
-        raise ValueError(f"HTTP error while downloading comprehensive rules: {e}")
-    except RequestException as e:
-        raise ValueError(f"Request error while downloading comprehensive rules: {e}")
+    for txt_link in txt_links:
+        # Handle relative URLs; assume hrefs are already properly URL-encoded
+        txt_url = urljoin(url, txt_link["href"])
+
+        try:
+            res = requests.get(txt_url, timeout=60)  # Longer timeout for large file
+            res.raise_for_status()
+            res.encoding = "utf-8"
+            rules_text = res.text.replace("'", "'")
+            break  # Success, stop trying other links
+        except HTTPError as e:
+            errors.append(f"HTTP error while downloading from {txt_url}: {e}")
+            continue  # Try next link
+        except (ConnectionError, Timeout) as e:
+            errors.append(f"Network error while downloading from {txt_url}: {e}")
+            continue  # Try next link
+        except RequestException as e:
+            errors.append(f"Request error while downloading from {txt_url}: {e}")
+            continue  # Try next link
+
+    if rules_text is None:
+        error_summary = "\n".join(f"  - {error}" for error in errors)
+        raise ValueError(
+            f"Failed to download comprehensive rules after trying {len(txt_links)} link(s):\n{error_summary}"
+        )
 
     # Extract creature types
     creature_types_match = re.search(
