@@ -11,6 +11,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
     />
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tippy.js@6/dist/tippy.css"
+    />
     <style>
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -74,6 +80,37 @@
         border: 1px solid #f5c6cb;
         border-radius: 4px;
       }
+
+      .card-link {
+        color: #007bff;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .card-link:hover {
+        text-decoration: underline;
+      }
+
+      .tippy-box {
+        background-color: #333;
+      }
+
+      .tippy-box[data-theme~='card'] {
+        background-color: transparent;
+        padding: 0;
+      }
+
+      .tippy-box[data-theme~='card'] .tippy-content {
+        padding: 0;
+      }
+
+      .card-tooltip-image {
+        display: block;
+        max-width: 488px;
+        height: auto;
+        border-radius: 13px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
   <body>
@@ -97,6 +134,101 @@
     </main>
 
     <script>
+      // Card Link Cell Renderer
+      class CardLinkRenderer {
+        init(params) {
+          this.eGui = document.createElement('span');
+
+          const cardData = params.data;
+          const colDef = params.colDef;
+          const value = params.value;
+
+          if (!value) {
+            this.eGui.textContent = '';
+            return;
+          }
+
+          // Handle multiple cards (comma-separated)
+          const cardNames = value.split(',').map(name => name.trim());
+
+          cardNames.forEach((cardName, index) => {
+            if (index > 0) {
+              this.eGui.appendChild(document.createTextNode(', '));
+            }
+
+            const link = document.createElement('a');
+            link.className = 'card-link';
+            link.textContent = cardName;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+
+            // Determine the card's Scryfall URI and image
+            const cardInfo = this.getCardInfo(cardData, cardName, colDef);
+
+            if (cardInfo.scryfallUri) {
+              link.href = cardInfo.scryfallUri;
+            } else {
+              // Fallback: search by exact card name
+              link.href = `https://scryfall.com/search?q=!"${encodeURIComponent(cardName)}"`;
+            }
+
+            // Add tooltip with card image if available
+            if (cardInfo.imageUri) {
+              tippy(link, {
+                content: `<img src="${cardInfo.imageUri}" class="card-tooltip-image" alt="${cardName}">`,
+                allowHTML: true,
+                theme: 'card',
+                placement: 'right',
+                arrow: false,
+                maxWidth: 'none',
+                delay: [200, 0]
+              });
+            }
+
+            this.eGui.appendChild(link);
+          });
+        }
+
+        getCardInfo(cardData, cardName, colDef) {
+          // If column has cardLinkData specified, use that field's data
+          const linkDataField = colDef.cardLinkData;
+
+          if (linkDataField && cardData[linkDataField]) {
+            // Handle array of card objects (e.g., supercycle members)
+            if (Array.isArray(cardData[linkDataField])) {
+              const cardInfo = cardData[linkDataField].find(c => c.name === cardName);
+              if (cardInfo) {
+                return {
+                  scryfallUri: cardInfo.scryfall_uri || null,
+                  imageUri: cardInfo.image_uri || (cardInfo.image_uris && cardInfo.image_uris.normal) || null
+                };
+              }
+            } else {
+              // Single card object
+              const cardInfo = cardData[linkDataField];
+              return {
+                scryfallUri: cardInfo.scryfall_uri || null,
+                imageUri: cardInfo.image_uri || (cardInfo.image_uris && cardInfo.image_uris.normal) || null
+              };
+            }
+          }
+
+          // Fallback: look in row data itself
+          return {
+            scryfallUri: cardData.scryfall_uri || null,
+            imageUri: cardData.image_uri || (cardData.image_uris && cardData.image_uris.normal) || null
+          };
+        }
+
+        getGui() {
+          return this.eGui;
+        }
+
+        refresh(params) {
+          return false;
+        }
+      }
+
       // Initialize grid with loading state
       const columnDefs = {{ column_defs | tojson }};
 
@@ -109,6 +241,9 @@
           sortable: true,
           filter: true,
           resizable: true
+        },
+        components: {
+          cardLinkRenderer: CardLinkRenderer
         },
         pagination: true,
         paginationPageSize: 100
