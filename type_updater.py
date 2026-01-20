@@ -32,10 +32,10 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
 
     # Try each TXT link until one works (sometimes the newest link is broken)
     rules_text = None
-    last_error = None
+    errors = []
 
     for txt_link in txt_links:
-        # Handle relative URLs and ensure proper URL encoding
+        # Handle relative URLs; assume hrefs are already properly URL-encoded
         txt_url = urljoin(url, txt_link["href"])
 
         try:
@@ -45,17 +45,20 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
             rules_text = res.text.replace("'", "'")
             break  # Success, stop trying other links
         except HTTPError as e:
-            last_error = f"HTTP error while downloading comprehensive rules from {txt_url}: {e}"
+            errors.append(f"HTTP error while downloading from {txt_url}: {e}")
             continue  # Try next link
         except (ConnectionError, Timeout) as e:
-            last_error = f"Network error while downloading comprehensive rules from {txt_url}: {e}"
+            errors.append(f"Network error while downloading from {txt_url}: {e}")
             continue  # Try next link
         except RequestException as e:
-            last_error = f"Request error while downloading comprehensive rules from {txt_url}: {e}"
+            errors.append(f"Request error while downloading from {txt_url}: {e}")
             continue  # Try next link
 
     if rules_text is None:
-        raise ValueError(f"Failed to download comprehensive rules. Last error: {last_error}")
+        error_summary = "\n".join(f"  - {error}" for error in errors)
+        raise ValueError(
+            f"Failed to download comprehensive rules after trying {len(txt_links)} link(s):\n{error_summary}"
+        )
 
     # Extract creature types
     creature_types_match = re.search(
