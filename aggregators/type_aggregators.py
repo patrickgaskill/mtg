@@ -53,7 +53,12 @@ this card without removing at least one existing type.
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 240},
-            {"field": "name", "headerName": "Name", "width": 160},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 160,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date"},
         ]
@@ -125,6 +130,12 @@ this card without removing at least one existing type.
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                ),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
@@ -184,7 +195,12 @@ This shows the theoretical maximum types achievable through card combinations!
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 240},
-            {"field": "name", "headerName": "Name", "width": 160},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 160,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date"},
         ]
@@ -283,6 +299,12 @@ This shows the theoretical maximum types achievable through card combinations!
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                ),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
