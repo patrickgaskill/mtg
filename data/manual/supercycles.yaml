@@ -233,3 +233,217 @@ supercycles:
       - Eerie Ultimatum
       - Inspired Ultimatum
       - Emergent Ultimatum
+
+  - name: Tutors
+    finished: true # Classic 1-mana tutors
+    cards:
+      - Enlightened Tutor
+      - Mystical Tutor
+      - Vampiric Tutor
+      - Gamble
+      - Worldly Tutor
+
+  - name: Voices
+    finished: true # Angels with color protection
+    cards:
+      - Voice of Truth
+      - Voice of Reason
+      - Voice of Grace
+      - Voice of Law
+      - Voice of Duty
+
+  - name: Towers
+    finished: true # Artifacts with expensive activated abilities
+    cards:
+      - Tower of Eons
+      - Tower of Fortunes
+      - Tower of Murmurs
+      - Tower of Calamities
+      - Tower of Champions
+
+  - name: Oaths of the Gatewatch
+    finished: true # Legendary enchantments with Planeswalker interaction
+    cards:
+      - Oath of Gideon
+      - Oath of Jace
+      - Oath of Liliana
+      - Oath of Chandra
+      - Oath of Nissa
+
+  # - name: Cones
+  #   finished: true # Sorceries with repeated effects
+  #   cards:
+  #     - Incremental Blight
+  #     - Gruesome Menagerie
+  #     - Cone of Flame
+  #     - Incremental Growth
+  #     - Bestial Menage
+
+  - name: Innistrad Angels
+    finished: true # Archangels from Innistrad with WW plus one color
+    cards:
+      - Avacyn, Angel of Hope
+      - Bruna, Light of Alabaster
+      - Liesa, Shroud of Dusk
+      - Gisela, Blade of Goldnight
+      - Sigarda, Host of Herons
+
+  - name: Young Spellcasters
+    finished: false # Young spellcasters imitating famous planeswalkers
+    cards:
+      - Young Necromancer
+      - Young Pyromancer
+
+  # - name: Charm Creatures
+  #   finished: false # Creatures with modal enter abilities
+  #   cards:
+  #     - Charming Prince
+  #     - Aether Channeler
+  #     - Callous Bloodmage
+  #     - Charming Scoundrel
+
+  - name: Phyrexian Monsters
+    finished: false # 5/5 Phyrexian Horrors with four colored pips
+    cards:
+      - Phyrexian Vindicator
+      - Phyrexian Obliterator
+      - Phyrexian Harvester
+
+  # - name: Common Relentless Cards
+  #   finished: true # Commons allowing unlimited deck copies
+  #   cards:
+  #     - Hare Apparent
+  #     - Persistent Petitioners
+  #     - Shadowborn Apostle
+  #     - Dragon's Approach
+  #     - Slime Against Humanity
+
+  - name: Destinies
+    finished: false # Auras granting creature types and returning when creature dies
+    cards:
+      - Angelic Destiny
+      - Draconic Destiny
+      - Avatar Destiny
+
+  # - name: +1/+1 Lords
+  #   finished: true # Creatures conferring stat bonuses to tribal subtypes
+  #   cards:
+  #     - Field Marshal
+  #     - Lord of Atlantis
+  #     - Lord of the Undead
+  #     - Goblin King
+  #     - Elvish Champion
+
+  - name: 1 Mana Figures
+    finished: true # One-mana creatures with three sequential activated abilities
+    cards:
+      - Figure of Fable
+      - Ascendant Spirit
+      - Evolved Sleeper
+      - Figure of Destiny
+      - Warden of the First Tree
+
+  # - name: Platinum Angel / Abyssal Persecutor
+  #   finished: true # Angel/Demon affecting win/loss conditions
+  #   cards:
+  #     - Platinum Angel
+  #     - Abyssal Persecutor
+
+  # - name: Chief Engineer / Inspiring Statuary
+  #   finished: true # Convoke/Improvise enablers
+  #   cards:
+  #     - Chief Engineer
+  #     - Inspiring Statuary
+
+  # - name: Druid Elves
+  #   finished: true # 1/1 Elf Druids tapping for green plus allied/enemy colors
+  #   cards:
+  #     - Druid of the Anima
+  #     - Urborg Elf
+
+  # - name: Hierarchs
+  #   finished: true # 0/1 creatures with Exalted tapping for three colors
+  #   cards:
+  #     - Noble Hierarch
+  #     - Ignoble Hierarch
+
+  - name: Charming Creatures
+    finished: false # Human creatures with modal enter abilities from Eldraine
+    cards:
+      - Charming Prince
+      - Charming Scoundrel
+
+  - name: Trees
+    finished: true # 0/13 Plants that swap toughness with player life
+    cards:
+      - Tree of Redemption
+      - Tree of Perdition
+
+  - name: Delver Evolution
+    finished: true # Descent into madness of a single researcher
+    cards:
+      - Delver of Secrets
+      - Aberrant Researcher
+      - Docent of Perfection
+
+  - name: Mana/Draw Rocks
+    finished: true # Artifacts tapping for colorless or drawing cards
+    cards:
+      - Mind Stone
+      - Hedron Archive
+      - Dreamstone Hedron
+
+  - name: Legendary Core Set Dragons
+    finished: true # Red rare legendary Dragons from consecutive Core Sets
+    cards:
+      - Lathliss, Dragon Queen
+      - Drakuseth, Maw of Flames
+      - Gadrak, the Crown-Scourge
+
+  - name: Etched Compleation
+    finished: true # Transition from wizard to Mirran soldier to Phyrexian
+    cards:
+      - Etched Oracle
+      - Etched Champion
+      - Etched Monstrosity
+
+  # - name: Batch Lands
+  #   finished: false # Lands affecting creatures of specific typal couplings
+  #   cards:
+  #     - Swarmyard
+  #     - Animal Sanctuary
+  #     - Accursed Duneyard
+
+  # - name: Gold Counterspells
+  #   finished: false # Rare multicolor instants with counterspell effects
+  #   cards:
+  #     - Absorb
+  #     - Undermine
+  #     - Counterflux
+  #     - Electrosiphon
+  #     - Invert Polarity
+  #     - Voidslime
+
+  - name: Walking Batteries
+    finished: true # Artifact creatures producing colorless mana when destroyed
+    cards:
+      - Myr Moonvessel
+      - Cathodion
+      - Su-Chi
+      - Su-Chi Cave Guard
+
+  - name: Kellan in the Omenpath Arc
+    finished: true # Kellan's journey across planes
+    cards:
+      - Kellan, the Fae-Blooded
+      - Kellan, Daring Traveler
+      - Kellan, Inquisitive Prodigy
+      - Kellan, the Kid
+
+  - name: Thirsts
+    finished: false # Blue instants drawing three cards, discarding two
+    cards:
+      - Thirst for Knowledge
+      - Thirst for Meaning
+      - Thirst for Discovery
+      - Thirst for Identity
