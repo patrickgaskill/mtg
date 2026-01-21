@@ -147,6 +147,13 @@ the first card to today's date.
                         card_name,
                     )
 
+            if not card_objects:
+                logger.error(
+                    "Supercycle '%s' has no valid card data; skipping from results",
+                    name,
+                )
+                continue
+
             result.append(
                 {
                     "supercycle": name,

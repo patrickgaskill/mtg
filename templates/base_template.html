@@ -154,11 +154,19 @@
             return;
           }
 
-          // Handle multiple cards (comma-separated)
-          // Note: This assumes card names don't contain commas. Cards with commas
-          // (e.g., "_____", Creature Collector" from Unfinity) are extremely rare
-          // and typically filtered out by is_traditional_card().
-          const cardNames = value.split(',').map(name => name.trim());
+          // Handle multiple cards
+          // When cardLinkData provides an array of card objects, extract names from there
+          // to properly handle card names that contain commas. Otherwise fall back to
+          // splitting by comma for backwards compatibility with other aggregators.
+          let cardNames;
+          const linkDataField = colDef.cardLinkData;
+          if (linkDataField && cardData[linkDataField] && Array.isArray(cardData[linkDataField])) {
+            // Extract card names from the structured data
+            cardNames = cardData[linkDataField].map(cardObj => cardObj.name);
+          } else {
+            // Fallback: parse comma-separated string
+            cardNames = value.split(',').map(name => name.trim());
+          }
 
           cardNames.forEach((cardName, index) => {
             if (index > 0) {
@@ -195,11 +203,17 @@
                 fallback.setAttribute('role', 'img');
                 fallback.setAttribute('aria-label', `Card image for ${cardName} unavailable`);
                 fallback.textContent = 'Card image unavailable';
-                try {
+
+                if (typeof this.replaceWith === 'function') {
                   this.replaceWith(fallback);
-                } catch (e) {
-                  // If replaceWith fails, hide the broken image
-                  this.style.display = 'none';
+                } else if (this.parentNode) {
+                  this.parentNode.replaceChild(fallback, this);
+                } else {
+                  // Log an error if we cannot replace or attach the fallback node
+                  console.error('Failed to replace broken card image with fallback', {
+                    cardName: cardName,
+                    imageUri: cardInfo.imageUri
+                  });
                 }
               };
 
@@ -277,7 +291,7 @@
           // Clean up Tippy instances to prevent memory leaks
           if (this.tippyInstances) {
             this.tippyInstances.forEach(instance => {
-              if (instance && instance.destroy) {
+              if (instance) {
                 instance.destroy();
               }
             });

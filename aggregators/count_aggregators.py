@@ -41,7 +41,11 @@ class CountAggregator(Aggregator):
         )
 
     def process_card(self, card: Dict[str, Any]) -> None:
-        key = tuple(card.get(field) for field in self.key_fields)
+        # Build key values and skip cards that are missing any required key field.
+        key_values = [card.get(field) for field in self.key_fields]
+        if any(value is None for value in key_values):
+            return
+        key = tuple(key_values)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
         # Keep minimal Scryfall data to reduce memory usage (only when "name" is a key field)
         # Note: Stores first encountered printing's link/image. For count aggregators,
