@@ -39,23 +39,24 @@ class CountAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
-        # Keep reference to first card for scryfall data
+        # Keep minimal Scryfall data to reduce memory usage
         if key not in self.cards:
-            self.cards[key] = card
+            self.cards[key] = {
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                ),
+            }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
         result = []
         for key, count in self.data.items():
             row_data = {**dict(zip(self.key_fields, key)), "count": count}
-            # Add scryfall data if we have a reference card
+            # Add scryfall data if available
             if key in self.cards:
-                card = self.cards[key]
-                row_data["scryfall_uri"] = card.get("scryfall_uri", "")
-                row_data["image_uri"] = (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                )
+                row_data.update(self.cards[key])
             result.append(row_data)
         return sorted(result, key=lambda x: x["count"], reverse=True)
 

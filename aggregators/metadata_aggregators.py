@@ -37,9 +37,16 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         key = (card.get("set"), card.get("name"))
         self.data[key].add(card.get("illustration_id"))
-        # Keep reference to first card for scryfall data
+        # Keep minimal Scryfall data to reduce memory usage
         if key not in self.cards:
-            self.cards[key] = card
+            self.cards[key] = {
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                ),
+            }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
         return [
@@ -47,12 +54,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
                 "set": set_,
                 "name": name,
                 "count": len(illustrations),
-                "scryfall_uri": self.cards.get((set_, name), {}).get("scryfall_uri", ""),
-                "image_uri": (
-                    self.cards.get((set_, name), {}).get("image_uris", {}).get("normal", "")
-                    if self.cards.get((set_, name), {}).get("image_uris")
-                    else ""
-                ),
+                **self.cards.get((set_, name), {}),
             }
             for (set_, name), illustrations in self.data.items()
         ]
@@ -86,9 +88,16 @@ class PromoTypesAggregator(Aggregator):
         promo_types = card.get("promo_types", [])
         if promo_types:
             self.data[name].update(promo_types)
-            # Keep reference to first card for scryfall data
+            # Keep minimal Scryfall data to reduce memory usage
             if name not in self.cards:
-                self.cards[name] = card
+                self.cards[name] = {
+                    "scryfall_uri": card.get("scryfall_uri", ""),
+                    "image_uri": (
+                        card.get("image_uris", {}).get("normal", "")
+                        if card.get("image_uris")
+                        else ""
+                    ),
+                }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
         return [
@@ -96,12 +105,7 @@ class PromoTypesAggregator(Aggregator):
                 "name": name,
                 "promoTypes": ", ".join(sorted(promo_types)),
                 "count": len(promo_types),
-                "scryfall_uri": self.cards.get(name, {}).get("scryfall_uri", ""),
-                "image_uri": (
-                    self.cards.get(name, {}).get("image_uris", {}).get("normal", "")
-                    if self.cards.get(name, {}).get("image_uris")
-                    else ""
-                ),
+                **self.cards.get(name, {}),
             }
             for name, promo_types in self.data.items()
         ]
@@ -134,9 +138,16 @@ class FoilTypesAggregator(Aggregator):
         name = card.get("name")
         set_ = card.get("set")
 
-        # Keep reference to first card for scryfall data
+        # Keep minimal Scryfall data to reduce memory usage
         if name not in self.cards:
-            self.cards[name] = card
+            self.cards[name] = {
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": (
+                    card.get("image_uris", {}).get("normal", "")
+                    if card.get("image_uris")
+                    else ""
+                ),
+            }
 
         # Handle special foil sets
         if set_ in SPECIAL_FOIL_SETS:
@@ -178,12 +189,7 @@ class FoilTypesAggregator(Aggregator):
                 "name": name,
                 "foilTypes": ", ".join(sorted(foil_types)),
                 "count": len(foil_types),
-                "scryfall_uri": self.cards.get(name, {}).get("scryfall_uri", ""),
-                "image_uri": (
-                    self.cards.get(name, {}).get("image_uris", {}).get("normal", "")
-                    if self.cards.get(name, {}).get("image_uris")
-                    else ""
-                ),
+                **self.cards.get(name, {}),
             }
             for name, foil_types in self.data.items()
         ]

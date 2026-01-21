@@ -102,8 +102,16 @@ the first card to today's date.
             card_date = date.fromisoformat(released_at)
             if name not in self.card_dates or card_date < self.card_dates[name]:
                 self.card_dates[name] = card_date
-                # Keep the earliest printing for Scryfall data
-                self.card_data[name] = card
+                # Keep minimal Scryfall data to reduce memory usage
+                self.card_data[name] = {
+                    "name": name,
+                    "scryfall_uri": card.get("scryfall_uri", ""),
+                    "image_uri": (
+                        card.get("image_uris", {}).get("normal", "")
+                        if card.get("image_uris")
+                        else ""
+                    ),
+                }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
         today = date.today()
@@ -129,21 +137,11 @@ the first card to today's date.
             formatted_time = format_time_difference(days)
 
             # Collect card objects with Scryfall data for tooltips
-            card_objects = []
-            for card_name in cycle["cards"]:
-                if card_name in self.card_data:
-                    card = self.card_data[card_name]
-                    card_objects.append(
-                        {
-                            "name": card_name,
-                            "scryfall_uri": card.get("scryfall_uri", ""),
-                            "image_uri": (
-                                card.get("image_uris", {}).get("normal", "")
-                                if card.get("image_uris")
-                                else ""
-                            ),
-                        }
-                    )
+            card_objects = [
+                self.card_data[card_name]
+                for card_name in cycle["cards"]
+                if card_name in self.card_data
+            ]
 
             result.append(
                 {

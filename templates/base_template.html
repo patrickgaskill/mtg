@@ -11,11 +11,11 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
     />
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://unpkg.com/@popperjs/core@2.11.8"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.7"></script>
     <link
       rel="stylesheet"
-      href="https://unpkg.com/tippy.js@6/dist/tippy.css"
+      href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css"
     />
     <style>
       body {
@@ -176,9 +176,14 @@
 
             // Add tooltip with card image if available
             if (cardInfo.imageUri) {
+              // Create image element using DOM to prevent XSS
+              const img = document.createElement('img');
+              img.src = cardInfo.imageUri;
+              img.alt = cardName;
+              img.className = 'card-tooltip-image';
+
               tippy(link, {
-                content: `<img src="${cardInfo.imageUri}" class="card-tooltip-image" alt="${cardName}">`,
-                allowHTML: true,
+                content: img,
                 theme: 'card',
                 placement: 'right',
                 arrow: false,
@@ -202,7 +207,7 @@
               if (cardInfo) {
                 return {
                   scryfallUri: cardInfo.scryfall_uri || null,
-                  imageUri: cardInfo.image_uri || (cardInfo.image_uris && cardInfo.image_uris.normal) || null
+                  imageUri: cardInfo.image_uri || null
                 };
               }
             } else {
@@ -210,7 +215,7 @@
               const cardInfo = cardData[linkDataField];
               return {
                 scryfallUri: cardInfo.scryfall_uri || null,
-                imageUri: cardInfo.image_uri || (cardInfo.image_uris && cardInfo.image_uris.normal) || null
+                imageUri: cardInfo.image_uri || null
               };
             }
           }
@@ -218,7 +223,7 @@
           // Fallback: look in row data itself
           return {
             scryfallUri: cardData.scryfall_uri || null,
-            imageUri: cardData.image_uri || (cardData.image_uris && cardData.image_uris.normal) || null
+            imageUri: cardData.image_uri || null
           };
         }
 
