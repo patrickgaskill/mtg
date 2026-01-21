@@ -137,11 +137,16 @@ the first card to today's date.
             formatted_time = format_time_difference(days)
 
             # Collect card objects with Scryfall data for tooltips
-            card_objects = [
-                self.card_data[card_name]
-                for card_name in cycle["cards"]
-                if card_name in self.card_data
-            ]
+            card_objects = []
+            for card_name in cycle["cards"]:
+                if card_name in self.card_data:
+                    card_objects.append(self.card_data[card_name])
+                else:
+                    logger.warning(
+                        "Supercycle '%s' references card '%s' with no processed data",
+                        name,
+                        card_name,
+                    )
 
             result.append(
                 {

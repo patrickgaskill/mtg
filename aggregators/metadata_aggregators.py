@@ -38,6 +38,8 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         key = (card.get("set"), card.get("name"))
         self.data[key].add(card.get("illustration_id"))
         # Keep minimal Scryfall data to reduce memory usage
+        # Note: Stores first encountered printing's link/image per (set, name).
+        # For illustration counting, showing any printing from the set is acceptable.
         if key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
@@ -89,6 +91,8 @@ class PromoTypesAggregator(Aggregator):
         if promo_types:
             self.data[name].update(promo_types)
             # Keep minimal Scryfall data to reduce memory usage
+            # Note: Stores first encountered printing's link/image per card name.
+            # Shows any representative printing; promo type aggregation is the focus, not specific versions.
             if name not in self.cards:
                 self.cards[name] = {
                     "scryfall_uri": card.get("scryfall_uri", ""),
@@ -139,6 +143,8 @@ class FoilTypesAggregator(Aggregator):
         set_ = card.get("set")
 
         # Keep minimal Scryfall data to reduce memory usage
+        # Note: Stores first encountered printing's link/image per card name.
+        # Shows any representative printing; foil type aggregation is the focus, not specific versions.
         if name not in self.cards:
             self.cards[name] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),

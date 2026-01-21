@@ -29,6 +29,7 @@ class CountAggregator(Aggregator):
         for field in key_fields:
             col_def = {"field": field, "headerName": field.title()}
             # Add card link renderer for "name" fields
+            # Note: This requires process_card to store Scryfall data (see process_card method)
             if field == "name":
                 col_def["cellRenderer"] = "cardLinkRenderer"
             self.column_defs.append(col_def)
@@ -40,6 +41,8 @@ class CountAggregator(Aggregator):
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
         # Keep minimal Scryfall data to reduce memory usage
+        # Note: Stores first encountered printing's link/image. For count aggregators,
+        # showing any printing is acceptable since the focus is on counts, not specific versions.
         if key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
