@@ -154,3 +154,20 @@ def generalize_mana_cost(mana_cost: str) -> str:
                 return mana_cost
 
     return "".join(color_map.get(c, c) for c in mana_cost)
+
+
+def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
+    """
+    Extract the image URI for a card.
+
+    Args:
+        card (Dict[str, Any]): A dictionary representing a card.
+        size (str, optional): The image size to retrieve. Defaults to "normal".
+
+    Returns:
+        str: The image URI, or empty string if not available.
+    """
+    image_uris = card.get("image_uris")
+    if image_uris:
+        return image_uris.get(size, "")
+    return ""

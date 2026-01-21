@@ -3,7 +3,7 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from card_utils import generalize_mana_cost, get_sort_key
+from card_utils import generalize_mana_cost, get_card_image_uri, get_sort_key
 
 from .base import Aggregator
 
@@ -52,11 +52,7 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
             for (power, toughness), card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
@@ -117,11 +113,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 "originalManaCost": card.get("mana_cost", ""),
                 "count": self.count[generalized_cost],
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
             for generalized_cost, card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])

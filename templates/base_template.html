@@ -171,7 +171,7 @@
               link.href = cardInfo.scryfallUri;
             } else {
               // Fallback: search by exact card name
-              link.href = `https://scryfall.com/search?q=!"${encodeURIComponent(cardName)}"`;
+              link.href = `https://scryfall.com/search?q=${encodeURIComponent(`!"${cardName}"`)}`;
             }
 
             // Add tooltip with card image if available

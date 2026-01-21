@@ -3,6 +3,8 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
+from card_utils import get_card_image_uri
+
 from .base import Aggregator
 
 
@@ -23,6 +25,7 @@ class CountAggregator(Aggregator):
         self.cards: Dict[Tuple, Dict[str, Any]] = {}
         self.key_fields = key_fields
         self.count_finishes = count_finishes
+        self.has_name_field = "name" in key_fields
 
         # Define column definitions for ag-grid
         self.column_defs = []
@@ -40,17 +43,13 @@ class CountAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         key = tuple(card.get(field) for field in self.key_fields)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
-        # Keep minimal Scryfall data to reduce memory usage
+        # Keep minimal Scryfall data to reduce memory usage (only when "name" is a key field)
         # Note: Stores first encountered printing's link/image. For count aggregators,
         # showing any printing is acceptable since the focus is on counts, not specific versions.
-        if key not in self.cards:
+        if self.has_name_field and key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:

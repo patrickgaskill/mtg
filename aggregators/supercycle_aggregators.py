@@ -7,6 +7,8 @@ from typing import Any, Dict, List, Set
 
 import yaml
 
+from card_utils import get_card_image_uri
+
 from .base import Aggregator, logger
 
 
@@ -106,11 +108,7 @@ the first card to today's date.
                 self.card_data[name] = {
                     "name": name,
                     "scryfall_uri": card.get("scryfall_uri", ""),
-                    "image_uri": (
-                        card.get("image_uris", {}).get("normal", "")
-                        if card.get("image_uris")
-                        else ""
-                    ),
+                    "image_uri": get_card_image_uri(card),
                 }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:

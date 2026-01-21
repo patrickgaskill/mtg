@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Set, Tuple
 from card_utils import (
     BASIC_LAND_TYPES,
     extract_types,
+    get_card_image_uri,
     get_sort_key,
     is_all_creature_types,
     is_permanent,
@@ -131,11 +132,7 @@ this card without removing at least one existing type.
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
@@ -300,11 +297,7 @@ This shows the theoretical maximum types achievable through card combinations!
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])

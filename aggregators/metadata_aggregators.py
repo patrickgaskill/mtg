@@ -4,6 +4,8 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any, Dict, List, Set, Tuple
 
+from card_utils import get_card_image_uri
+
 from .base import Aggregator
 from .constants import FOIL_PROMO_TYPES, MODERN_FOIL_CUTOFF_DATE, SPECIAL_FOIL_SETS
 
@@ -43,11 +45,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         if key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
@@ -96,11 +94,7 @@ class PromoTypesAggregator(Aggregator):
             if name not in self.cards:
                 self.cards[name] = {
                     "scryfall_uri": card.get("scryfall_uri", ""),
-                    "image_uri": (
-                        card.get("image_uris", {}).get("normal", "")
-                        if card.get("image_uris")
-                        else ""
-                    ),
+                    "image_uri": get_card_image_uri(card),
                 }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
@@ -148,11 +142,7 @@ class FoilTypesAggregator(Aggregator):
         if name not in self.cards:
             self.cards[name] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": (
-                    card.get("image_uris", {}).get("normal", "")
-                    if card.get("image_uris")
-                    else ""
-                ),
+                "image_uri": get_card_image_uri(card),
             }
 
         # Handle special foil sets
