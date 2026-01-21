@@ -11,7 +11,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
     />
-    <script src="https://unpkg.com/@popperjs/core@2.11.8"></script>
+    <script src="https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://unpkg.com/tippy.js@6.3.7"></script>
     <link
       rel="stylesheet"
@@ -138,6 +138,10 @@
     <script>
       // Card Link Cell Renderer
       class CardLinkRenderer {
+        constructor() {
+          this.tippyInstances = [];
+        }
+
         init(params) {
           this.eGui = document.createElement('span');
 
@@ -151,6 +155,9 @@
           }
 
           // Handle multiple cards (comma-separated)
+          // Note: This assumes card names don't contain commas. Cards with commas
+          // (e.g., "_____", Creature Collector" from Unfinity) are extremely rare
+          // and typically filtered out by is_traditional_card().
           const cardNames = value.split(',').map(name => name.trim());
 
           cardNames.forEach((cardName, index) => {
@@ -179,17 +186,27 @@
               // Create image element using DOM to prevent XSS
               const img = document.createElement('img');
               img.src = cardInfo.imageUri;
-              img.alt = cardName;
+              img.alt = `Magic: The Gathering card - ${cardName}`;
               img.className = 'card-tooltip-image';
+              img.onerror = function () {
+                // Replace broken image with a text fallback in the tooltip
+                try {
+                  this.replaceWith(document.createTextNode('Card image unavailable'));
+                } catch (e) {
+                  this.style.display = 'none';
+                }
+              };
 
-              tippy(link, {
+              const tippyInstance = tippy(link, {
                 content: img,
                 theme: 'card',
                 placement: 'right',
                 arrow: false,
                 maxWidth: 'none',
-                delay: [200, 0]
+                delay: [200, 0],
+                trigger: 'mouseenter focus'
               });
+              this.tippyInstances.push(tippyInstance);
             }
 
             this.eGui.appendChild(link);
@@ -209,6 +226,13 @@
                   scryfallUri: cardInfo.scryfall_uri || null,
                   imageUri: cardInfo.image_uri || null
                 };
+              } else {
+                // Log a warning when the expected card is not found in the array
+                console.warn(
+                  '[CardLinkRenderer] Expected card "%s" in array field "%s", but no matching entry was found. Falling back to row-level card data.',
+                  cardName,
+                  linkDataField
+                );
               }
             } else {
               // Single card object
@@ -233,6 +257,18 @@
 
         refresh(params) {
           return false;
+        }
+
+        destroy() {
+          // Clean up Tippy instances to prevent memory leaks
+          if (this.tippyInstances) {
+            this.tippyInstances.forEach(instance => {
+              if (instance && instance.destroy) {
+                instance.destroy();
+              }
+            });
+            this.tippyInstances = [];
+          }
         }
       }
 
