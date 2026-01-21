@@ -104,7 +104,8 @@ the first card to today's date.
             card_date = date.fromisoformat(released_at)
             if name not in self.card_dates or card_date < self.card_dates[name]:
                 self.card_dates[name] = card_date
-                # Keep minimal Scryfall data to reduce memory usage
+                # Keep minimal Scryfall data to reduce memory usage.
+                # Empty strings for missing data are handled by JavaScript renderer fallback.
                 self.card_data[name] = {
                     "name": name,
                     "scryfall_uri": card.get("scryfall_uri", ""),

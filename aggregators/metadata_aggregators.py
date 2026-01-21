@@ -42,6 +42,8 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         # Keep minimal Scryfall data to reduce memory usage
         # Note: Stores first encountered printing's link/image per (set, name).
         # For illustration counting, showing any printing from the set is acceptable.
+        # Empty strings are stored for missing data - the JavaScript renderer handles this
+        # by falling back to Scryfall search.
         if key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
@@ -91,6 +93,7 @@ class PromoTypesAggregator(Aggregator):
             # Keep minimal Scryfall data to reduce memory usage
             # Note: Stores first encountered printing's link/image per card name.
             # Shows any representative printing; promo type aggregation is the focus, not specific versions.
+            # Empty strings for missing data are handled by JavaScript renderer fallback.
             if name not in self.cards:
                 self.cards[name] = {
                     "scryfall_uri": card.get("scryfall_uri", ""),

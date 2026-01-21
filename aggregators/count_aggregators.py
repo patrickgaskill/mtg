@@ -25,7 +25,7 @@ class CountAggregator(Aggregator):
         self.cards: Dict[Tuple, Dict[str, Any]] = {}
         self.key_fields = key_fields
         self.count_finishes = count_finishes
-        self.has_name_field = "name" in key_fields
+        self.needs_card_links = "name" in key_fields
 
         # Define column definitions for ag-grid
         self.column_defs = []
@@ -46,7 +46,9 @@ class CountAggregator(Aggregator):
         # Keep minimal Scryfall data to reduce memory usage (only when "name" is a key field)
         # Note: Stores first encountered printing's link/image. For count aggregators,
         # showing any printing is acceptable since the focus is on counts, not specific versions.
-        if self.has_name_field and key not in self.cards:
+        # Empty strings are stored for missing data - this is intentional as the JavaScript
+        # CardLinkRenderer handles null/empty values by falling back to Scryfall search.
+        if self.needs_card_links and key not in self.cards:
             self.cards[key] = {
                 "scryfall_uri": card.get("scryfall_uri", ""),
                 "image_uri": get_card_image_uri(card),

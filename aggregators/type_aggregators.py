@@ -125,6 +125,8 @@ this card without removing at least one existing type.
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "types": card.get("type_line", ""),
@@ -290,6 +292,8 @@ This shows the theoretical maximum types achievable through card combinations!
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "originalTypes": card.get("type_line", ""),

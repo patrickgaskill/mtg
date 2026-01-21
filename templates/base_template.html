@@ -186,17 +186,28 @@
               // Create image element using DOM to prevent XSS
               const img = document.createElement('img');
               img.src = cardInfo.imageUri;
+              // Using DOM property assignment (not innerHTML) prevents XSS
               img.alt = `Magic: The Gathering card - ${cardName}`;
               img.className = 'card-tooltip-image';
               img.onerror = function () {
-                // Replace broken image with a text fallback in the tooltip
+                // Replace broken image with accessible text fallback
+                const fallback = document.createElement('span');
+                fallback.setAttribute('role', 'img');
+                fallback.setAttribute('aria-label', `Card image for ${cardName} unavailable`);
+                fallback.textContent = 'Card image unavailable';
                 try {
-                  this.replaceWith(document.createTextNode('Card image unavailable'));
+                  this.replaceWith(fallback);
                 } catch (e) {
+                  // If replaceWith fails, hide the broken image
                   this.style.display = 'none';
                 }
               };
 
+              // Create Tippy instance for this card link.
+              // Performance note: Each link gets its own instance, which has memory overhead.
+              // This is acceptable because: (1) AG Grid paginates rows, limiting visible instances,
+              // (2) destroy() cleans up instances when cells are removed, and (3) the user
+              // experience benefit of instant tooltips outweighs using a shared singleton approach.
               const tippyInstance = tippy(link, {
                 content: img,
                 theme: 'card',
@@ -256,6 +267,9 @@
         }
 
         refresh(params) {
+          // Return false to prevent AG Grid from refreshing this cell renderer in place.
+          // Card links are static content that doesn't change based on data updates,
+          // so recreating the renderer is more appropriate than refreshing.
           return false;
         }
 

@@ -168,10 +168,11 @@ def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
         str: The image URI, or empty string if not available.
     """
     # For double-faced or multi-faced cards, Scryfall stores image URIs on the faces.
-    card_faces = card.get("card_faces") or []
+    card_faces = card.get("card_faces")
     if card_faces:
-        first_face = card_faces[0] or {}
-        face_image_uris = first_face.get("image_uris")
+        # Get first face; defensive `or {}` handles unlikely case of None in array
+        first_face = card_faces[0] if len(card_faces) > 0 else {}
+        face_image_uris = first_face.get("image_uris") if first_face else None
         if face_image_uris:
             return face_image_uris.get(size, "") or ""
 
