@@ -154,18 +154,17 @@
             return;
           }
 
-          // Handle multiple cards
-          // When cardLinkData provides an array of card objects, extract names from there
-          // to properly handle card names that contain commas. Otherwise fall back to
-          // splitting by comma for backwards compatibility with other aggregators.
+          // Handle single or multiple cards
+          // The supercycle aggregator uses cardLinkData with an array of card objects.
+          // For other aggregators, value is a single card name (which may contain commas).
           let cardNames;
           const linkDataField = colDef.cardLinkData;
           if (linkDataField && cardData[linkDataField] && Array.isArray(cardData[linkDataField])) {
-            // Extract card names from the structured data
+            // Extract card names from the structured data (supercycles)
             cardNames = cardData[linkDataField].map(cardObj => cardObj.name);
           } else {
-            // Fallback: parse comma-separated string
-            cardNames = value.split(',').map(name => name.trim());
+            // Single card name - do NOT split by comma
+            cardNames = [value];
           }
 
           cardNames.forEach((cardName, index) => {

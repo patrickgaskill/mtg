@@ -92,6 +92,9 @@ class PromoTypesAggregator(Aggregator):
 
     def process_card(self, card: Dict[str, Any]) -> None:
         name = card.get("name")
+        # Skip cards without a name
+        if name is None:
+            return
         promo_types = card.get("promo_types", [])
         if promo_types:
             self.data[name].update(promo_types)
@@ -142,6 +145,9 @@ class FoilTypesAggregator(Aggregator):
 
     def process_card(self, card: Dict[str, Any]) -> None:
         name = card.get("name")
+        # Skip cards without a name
+        if name is None:
+            return
         set_ = card.get("set")
 
         # Keep minimal Scryfall data to reduce memory usage
