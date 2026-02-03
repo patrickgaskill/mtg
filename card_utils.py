@@ -170,16 +170,13 @@ def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
     # For double-faced or multi-faced cards, Scryfall stores image URIs on the faces.
     card_faces = card.get("card_faces")
     if card_faces:
-        # Use the first valid face dict; explicitly handle unlikely None or non-dict entries.
-        first_face = None
+        # Use the first valid face dict from the array.
         for face in card_faces:
             if isinstance(face, dict):
-                first_face = face
+                face_image_uris = face.get("image_uris")
+                if face_image_uris:
+                    return face_image_uris.get(size, "")
                 break
-        if first_face is not None:
-            face_image_uris = first_face.get("image_uris")
-            if face_image_uris:
-                return face_image_uris.get(size, "")
 
     # Fallback for single-faced cards or when face image URIs are unavailable.
     image_uris = card.get("image_uris")

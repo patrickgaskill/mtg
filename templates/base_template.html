@@ -155,15 +155,15 @@
           }
 
           // Handle single or multiple cards
-          // The supercycle aggregator uses cardLinkData with an array of card objects.
-          // For other aggregators, value is a single card name (which may contain commas).
+          // The supercycle aggregator provides an array of card objects via cardLinkData.
+          // Other aggregators provide a single card name string (treated as-is, not split).
           let cardNames;
           const linkDataField = colDef.cardLinkData;
           if (linkDataField && cardData[linkDataField] && Array.isArray(cardData[linkDataField])) {
             // Extract card names from the structured data (supercycles)
             cardNames = cardData[linkDataField].map(cardObj => cardObj.name);
           } else {
-            // Single card name - do NOT split by comma
+            // Single card name - treat as complete name even if it contains commas
             cardNames = [value];
           }
 
@@ -203,13 +203,10 @@
                 fallback.setAttribute('aria-label', `Card image for ${cardName} unavailable`);
                 fallback.textContent = 'Card image unavailable';
 
-                if (typeof this.replaceWith === 'function') {
-                  this.replaceWith(fallback);
-                } else if (this.parentNode) {
+                if (this.parentNode) {
                   this.parentNode.replaceChild(fallback, this);
                 } else {
-                  // Log an error if we cannot replace or attach the fallback node
-                  console.error('Failed to replace broken card image with fallback', {
+                  console.error('Failed to replace broken card image: no parent node', {
                     cardName: cardName,
                     imageUri: cardInfo.imageUri
                   });
@@ -289,11 +286,7 @@
         destroy() {
           // Clean up Tippy instances to prevent memory leaks
           if (this.tippyInstances) {
-            this.tippyInstances.forEach(instance => {
-              if (instance) {
-                instance.destroy();
-              }
-            });
+            this.tippyInstances.forEach(instance => instance.destroy());
             this.tippyInstances = [];
           }
         }
