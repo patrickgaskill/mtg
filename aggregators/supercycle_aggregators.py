@@ -63,18 +63,18 @@ the first card to today's date.
         self.card_data: Dict[str, Dict[str, Any]] = {}
         self.found_cards: Set[str] = set()
         self.column_defs = [
-            {"field": "supercycle", "headerName": "Supercycle", "width": 200},
-            {"field": "status", "headerName": "Status", "width": 120},
+            {"field": "supercycle", "headerName": "Supercycle", "width": 220},
+            {"field": "status", "headerName": "Status", "width": 100},
             {
                 "field": "cards",
                 "headerName": "Cards",
-                "width": 400,
+                "width": 450,
                 "cellRenderer": "cardLinkRenderer",
                 "cardLinkData": "cardObjects",
             },
-            {"field": "time", "headerName": "Time", "width": 200},
-            {"field": "startDate", "headerName": "Start Date", "width": 150},
-            {"field": "endDate", "headerName": "End Date", "width": 150},
+            {"field": "time", "headerName": "Time", "width": 150},
+            {"field": "startDate", "headerName": "Start Date", "width": 120},
+            {"field": "endDate", "headerName": "End Date", "width": 120},
         ]
 
     def load_supercycles(self, file_path: Path) -> Dict[str, Dict[str, Any]]:

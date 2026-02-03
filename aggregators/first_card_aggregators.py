@@ -19,16 +19,16 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
         )
         self.data: Dict[Tuple[str, str], Dict[str, Any]] = {}
         self.column_defs = [
-            {"field": "power", "headerName": "Power", "width": 100},
-            {"field": "toughness", "headerName": "Toughness", "width": 100},
+            {"field": "power", "headerName": "Power", "width": 90},
+            {"field": "toughness", "headerName": "Toughness", "width": 110},
             {
                 "field": "name",
                 "headerName": "Name",
                 "width": 200,
                 "cellRenderer": "cardLinkRenderer",
             },
-            {"field": "set", "headerName": "Set", "width": 100},
-            {"field": "releaseDate", "headerName": "Release Date", "width": 150},
+            {"field": "set", "headerName": "Set", "width": 80},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
 
     def process_card(self, card: Dict[str, Any]) -> None:
@@ -77,7 +77,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             {
                 "field": "generalizedManaCost",
                 "headerName": "Generalized Mana Cost",
-                "width": 120,
+                "width": 200,
             },
             {
                 "field": "name",
@@ -85,14 +85,14 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 "width": 200,
                 "cellRenderer": "cardLinkRenderer",
             },
-            {"field": "set", "headerName": "Set", "width": 100},
-            {"field": "releaseDate", "headerName": "Release Date", "width": 150},
+            {"field": "set", "headerName": "Set", "width": 80},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
             {
                 "field": "originalManaCost",
                 "headerName": "Original Mana Cost",
-                "width": 150,
+                "width": 180,
             },
-            {"field": "count", "headerName": "Count", "type": "numericColumn"},
+            {"field": "count", "headerName": "Count", "width": 100, "type": "numericColumn"},
         ]
 
     def process_card(self, card: Dict[str, Any]) -> None:

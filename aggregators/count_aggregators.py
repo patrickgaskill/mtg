@@ -35,9 +35,12 @@ class CountAggregator(Aggregator):
             # Note: This requires process_card to store Scryfall data (see process_card method)
             if field == "name":
                 col_def["cellRenderer"] = "cardLinkRenderer"
+                col_def["width"] = 200
+            elif field == "set":
+                col_def["width"] = 80
             self.column_defs.append(col_def)
         self.column_defs.append(
-            {"field": "count", "headerName": "Count", "type": "numericColumn"}
+            {"field": "count", "headerName": "Count", "width": 100, "type": "numericColumn"}
         )
 
     def process_card(self, card: Dict[str, Any]) -> None:
@@ -80,10 +83,11 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
         )
         self.data: Dict[str, int] = defaultdict(int)
         self.column_defs = [
-            {"field": "set", "headerName": "Set", "width": 100},
+            {"field": "set", "headerName": "Set", "width": 80},
             {
                 "field": "maxNumber",
                 "headerName": "Max Collector Number",
+                "width": 180,
                 "type": "numericColumn",
                 "sort": "desc",
             },

@@ -53,15 +53,15 @@ this card without removing at least one existing type.
         )
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
-            {"field": "types", "headerName": "Types", "width": 240},
+            {"field": "types", "headerName": "Types", "width": 300},
             {
                 "field": "name",
                 "headerName": "Name",
-                "width": 160,
+                "width": 200,
                 "cellRenderer": "cardLinkRenderer",
             },
-            {"field": "set", "headerName": "Set", "width": 100},
-            {"field": "releaseDate", "headerName": "Release Date"},
+            {"field": "set", "headerName": "Set", "width": 80},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
         self.all_creature_types = self.load_types(all_creature_types_file)
         self.all_land_types = self.load_types(all_land_types_file)
@@ -193,15 +193,15 @@ This shows the theoretical maximum types achievable through card combinations!
         self.global_effects = self.define_global_effects()
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
-            {"field": "originalTypes", "headerName": "Original Types", "width": 240},
+            {"field": "originalTypes", "headerName": "Original Types", "width": 300},
             {
                 "field": "name",
                 "headerName": "Name",
-                "width": 160,
+                "width": 200,
                 "cellRenderer": "cardLinkRenderer",
             },
-            {"field": "set", "headerName": "Set", "width": 100},
-            {"field": "releaseDate", "headerName": "Release Date"},
+            {"field": "set", "headerName": "Set", "width": 80},
+            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
 
     def define_global_effects(self):

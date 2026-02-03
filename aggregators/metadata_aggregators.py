@@ -22,15 +22,17 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         self.data: Dict[Tuple[str, str], Set[str]] = defaultdict(set)
         self.cards: Dict[Tuple[str, str], Dict[str, Any]] = {}
         self.column_defs = [
-            {"field": "set", "headerName": "Set"},
+            {"field": "set", "headerName": "Set", "width": 80},
             {
                 "field": "name",
                 "headerName": "Name",
+                "width": 200,
                 "cellRenderer": "cardLinkRenderer",
             },
             {
                 "field": "count",
                 "headerName": "Count",
+                "width": 100,
                 "type": "numericColumn",
                 "sort": "desc",
             },
