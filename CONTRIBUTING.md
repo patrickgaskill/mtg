@@ -4,7 +4,7 @@ Thank you for considering contributing to this project! We welcome contributions
 
 ## Code of Conduct
 
-This project will adopt a Code of Conduct (CODE_OF_CONDUCT.md) in a future update; in the meantime, please be respectful and professional in all interactions.
+This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
 
 ## Getting Started
 
