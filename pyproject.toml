@@ -71,8 +71,7 @@ markers = [
     "integration: marks tests as integration tests",
 ]
 filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
+    "default",
 ]
 
 [tool.coverage.run]

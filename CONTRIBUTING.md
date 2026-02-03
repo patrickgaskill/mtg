@@ -4,7 +4,7 @@ Thank you for considering contributing to this project! We welcome contributions
 
 ## Code of Conduct
 
-Please read and follow our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+This project will adopt a Code of Conduct (CODE_OF_CONDUCT.md) in a future update; in the meantime, please be respectful and professional in all interactions.
 
 ## Getting Started
 
@@ -170,13 +170,13 @@ class MyAggregator(Aggregator):
         ]
         self.data = []
 
-    def process_card(self, card: dict[str, any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         """Process a single card."""
         # Extract relevant data
         # Update internal state
         pass
 
-    def get_sorted_data(self) -> list[dict[str, any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         """Return sorted data for display."""
         return sorted(self.data, key=lambda x: x["value"])
 ```
