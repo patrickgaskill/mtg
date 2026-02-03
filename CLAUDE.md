@@ -171,6 +171,7 @@ supercycles:
 
 ## Dependencies
 
+**Production dependencies:**
 - **typer** - Modern CLI framework with rich terminal output
 - **rich** - Beautiful terminal formatting and progress bars
 - **ijson** - Streaming JSON parser for large files
@@ -178,6 +179,10 @@ supercycles:
 - **jinja2** - Template engine for HTML generation
 - **beautifulsoup4** - HTML parsing for comprehensive rules scraping
 - **pyyaml** - YAML parsing for supercycles data
+
+**Dev dependencies:**
+- **ty** - Astral's extremely fast Python type checker
+- **ruff** - Astral's extremely fast Python linter and formatter
 
 Package management via **uv** (fast pip/poetry replacement).
 
@@ -239,7 +244,9 @@ Workflow file: `.github/workflows/publish_html.yml`
 - Use descriptive variable names
 - Follow existing patterns for consistency
 
-**Committing:**
+**Before committing:**
+- **ALWAYS format code with ruff:** `uv run ruff format .`
+- **ALWAYS typecheck with ty:** `uv run ty check`
 - Write clear commit messages following existing style
 - Reference issue numbers when applicable
 - Test locally with `uv run python card_aggregator.py run --serve`
