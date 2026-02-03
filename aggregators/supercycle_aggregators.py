@@ -3,7 +3,7 @@
 import json
 from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any
 
 import yaml
 
@@ -59,9 +59,9 @@ the first card to today's date.
             """,
         )
         self.supercycles = self.load_supercycles(supercycles_file)
-        self.card_dates: Dict[str, date] = {}
-        self.card_data: Dict[str, Dict[str, Any]] = {}
-        self.found_cards: Set[str] = set()
+        self.card_dates: dict[str, date] = {}
+        self.card_data: dict[str, dict[str, Any]] = {}
+        self.found_cards: set[str] = set()
         self.column_defs = [
             {"field": "supercycle", "headerName": "Supercycle", "width": 220},
             {"field": "status", "headerName": "Status", "width": 100},
@@ -77,27 +77,24 @@ the first card to today's date.
             {"field": "endDate", "headerName": "End Date", "width": 120},
         ]
 
-    def load_supercycles(self, file_path: Path) -> Dict[str, Dict[str, Any]]:
+    def load_supercycles(self, file_path: Path) -> dict[str, dict[str, Any]]:
         """Load supercycles from YAML or JSON file."""
         try:
             with file_path.open("r", encoding="utf-8") as f:
-                if (
-                    file_path.suffix.lower() == ".yaml"
-                    or file_path.suffix.lower() == ".yml"
-                ):
+                if file_path.suffix.lower() == ".yaml" or file_path.suffix.lower() == ".yml":
                     data = yaml.safe_load(f)
                 else:
                     # Fallback to JSON for backward compatibility
                     data = json.load(f)
                 return {cycle["name"]: cycle for cycle in data["supercycles"]}
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Failed to load supercycles from {file_path}: {e}")
             return {}
         except (yaml.YAMLError, json.JSONDecodeError) as e:
             logger.error(f"Failed to parse supercycles file {file_path}: {e}")
             return {}
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         name = card.get("name")
         released_at = card.get("released_at")
         if name and released_at:
@@ -112,15 +109,13 @@ the first card to today's date.
                     "image_uri": get_card_image_uri(card),
                 }
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         today = date.today()
         result = []
 
         for name, cycle in self.supercycles.items():
             card_dates = [
-                self.card_dates.get(card)
-                for card in cycle["cards"]
-                if card in self.card_dates
+                self.card_dates.get(card) for card in cycle["cards"] if card in self.card_dates
             ]
             if not card_dates:
                 continue

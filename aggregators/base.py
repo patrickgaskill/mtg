@@ -4,7 +4,7 @@ import json
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import markdown
 from jinja2 import Template
@@ -30,17 +30,17 @@ class Aggregator(ABC):
         self.column_defs = []
 
     @abstractmethod
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         """Process a single card."""
         pass
 
     @abstractmethod
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         """Return sorted data for display."""
         pass
 
     def generate_html_file(
-        self, output_folder: Path, template: Template, nav_links: List[Dict[str, str]]
+        self, output_folder: Path, template: Template, nav_links: list[dict[str, str]]
     ) -> None:
         """Generate HTML and JSON files for this aggregator."""
         # Generate JSON file

@@ -1,7 +1,7 @@
 """Aggregators for analyzing card types."""
 
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any
 
 from card_utils import (
     BASIC_LAND_TYPES,
@@ -51,7 +51,7 @@ this card without removing at least one existing type.
   Types are updated via the `update-types` command.
             """,
         )
-        self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
+        self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 300},
             {
@@ -67,16 +67,16 @@ this card without removing at least one existing type.
         self.all_land_types = self.load_types(all_land_types_file)
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
 
-    def load_types(self, file_path: Path) -> Set[str]:
+    def load_types(self, file_path: Path) -> set[str]:
         """Load types from a text file."""
         try:
             with file_path.resolve().open("r") as f:
                 return set(line.strip() for line in f if line.strip())
-        except IOError as e:
+        except OSError as e:
             logger.error(f"Failed to load types from {file_path}: {e}")
             return set()
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         if not is_traditional_card(card):
             return
 
@@ -86,9 +86,7 @@ this card without removing at least one existing type.
         else:
             self.process_single_face(card, card)
 
-    def process_single_face(
-        self, face: Dict[str, Any], parent_card: Dict[str, Any]
-    ) -> None:
+    def process_single_face(self, face: dict[str, Any], parent_card: dict[str, Any]) -> None:
         """Process a single face of a card."""
         card_types = extract_types(face)
 
@@ -124,7 +122,7 @@ this card without removing at least one existing type.
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         # Scryfall data (scryfall_uri, image_uri) added directly to output.
         # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
@@ -191,7 +189,7 @@ This shows the theoretical maximum types achievable through card combinations!
 - **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. Cards that grant "all creature types" or "all land types" will only include types that have been updated via the `update-types` command, which fetches the official type lists from the comprehensive rules
         """
         self.global_effects = self.define_global_effects()
-        self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
+        self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 300},
             {
@@ -222,9 +220,7 @@ This shows the theoretical maximum types achievable through card combinations!
             "March of the Machines": lambda card_types: card_types.union({"Creature"})
             if "Artifact" in card_types and "Creature" not in card_types
             else card_types,
-            "Maskwood Nexus": lambda card_types: card_types.union(
-                self.all_creature_types
-            )
+            "Maskwood Nexus": lambda card_types: card_types.union(self.all_creature_types)
             if "Creature" in card_types
             else card_types,
             "Life and Limb": lambda card_types: card_types.union(
@@ -244,15 +240,13 @@ This shows the theoretical maximum types achievable through card combinations!
             else card_types,
         }
 
-    def apply_global_effects(self, card_types: Set[str]) -> Set[str]:
+    def apply_global_effects(self, card_types: set[str]) -> set[str]:
         """Apply all global effects to the card types."""
         for effect in self.global_effects.values():
             card_types = effect(card_types)
         return card_types
 
-    def process_single_face(
-        self, face: Dict[str, Any], parent_card: Dict[str, Any]
-    ) -> None:
+    def process_single_face(self, face: dict[str, Any], parent_card: dict[str, Any]) -> None:
         """Process a single face with global effects applied."""
         card_types = extract_types(face)
 
@@ -291,7 +285,7 @@ This shows the theoretical maximum types achievable through card combinations!
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         # Scryfall data (scryfall_uri, image_uri) added directly to output.
         # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
