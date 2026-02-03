@@ -1,7 +1,7 @@
 """Aggregators that find the first card with specific characteristics."""
 
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from card_utils import generalize_mana_cost, get_card_image_uri, get_sort_key
 
@@ -17,7 +17,7 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
             "First Cards by Power and Toughness",
             description,
         )
-        self.data: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        self.data: dict[tuple[str, str], dict[str, Any]] = {}
         self.column_defs = [
             {"field": "power", "headerName": "Power", "width": 90},
             {"field": "toughness", "headerName": "Toughness", "width": 110},
@@ -31,7 +31,7 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
             {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         power = card.get("power", "")
         toughness = card.get("toughness", "")
 
@@ -43,7 +43,7 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
         if key not in self.data or get_sort_key(card) < get_sort_key(self.data[key]):
             self.data[key] = card
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         # Scryfall data (scryfall_uri, image_uri) added directly to output.
         # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
@@ -71,8 +71,8 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             "First Cards by Generalized Mana Cost",
             description,
         )
-        self.data: Dict[str, Dict[str, Any]] = {}
-        self.count: Dict[str, int] = defaultdict(int)
+        self.data: dict[str, dict[str, Any]] = {}
+        self.count: dict[str, int] = defaultdict(int)
         self.column_defs = [
             {
                 "field": "generalizedManaCost",
@@ -95,7 +95,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             {"field": "count", "headerName": "Count", "width": 100, "type": "numericColumn"},
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         mana_cost = card.get("mana_cost")
         if mana_cost:
             generalized_cost = generalize_mana_cost(mana_cost)
@@ -105,7 +105,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             ):
                 self.data[generalized_cost] = card
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         # Scryfall data (scryfall_uri, image_uri) added directly to output.
         # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [

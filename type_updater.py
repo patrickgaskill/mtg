@@ -1,5 +1,4 @@
 import re
-from typing import Set, Tuple
 from urllib.parse import urljoin
 
 import requests
@@ -7,7 +6,7 @@ from bs4 import BeautifulSoup, Tag
 from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
 
-def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
+def fetch_and_parse_types() -> tuple[set[str], set[str]]:
     url = "https://magic.wizards.com/en/rules"
 
     try:
@@ -95,8 +94,6 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
     land_types_text = land_types_match.group(1)
 
     # Handle land types, preserving "Power-Plant" and "Urza's"
-    land_types = {
-        type.strip().replace("and ", "") for type in land_types_text.split(",")
-    }
+    land_types = {type.strip().replace("and ", "") for type in land_types_text.split(",")}
 
     return creature_types, land_types

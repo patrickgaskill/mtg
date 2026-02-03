@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any
 
 from card_utils import get_card_image_uri
 
@@ -19,8 +19,8 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
             "Card Illustrations Count by Set",
             description,
         )
-        self.data: Dict[Tuple[str, str], Set[str]] = defaultdict(set)
-        self.cards: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        self.data: dict[tuple[str, str], set[str]] = defaultdict(set)
+        self.cards: dict[tuple[str, str], dict[str, Any]] = {}
         self.column_defs = [
             {"field": "set", "headerName": "Set", "width": 80},
             {
@@ -38,7 +38,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
             },
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         set_ = card.get("set")
         name = card.get("name")
         illustration_id = card.get("illustration_id")
@@ -59,7 +59,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
                 "image_uri": get_card_image_uri(card),
             }
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
             {
                 "set": set_,
@@ -76,8 +76,8 @@ class PromoTypesAggregator(Aggregator):
 
     def __init__(self, description: str = ""):
         super().__init__("promo_types_by_name", "Promo Types by Card Name", description)
-        self.data: Dict[str, Set[str]] = defaultdict(set)
-        self.cards: Dict[str, Dict[str, Any]] = {}
+        self.data: dict[str, set[str]] = defaultdict(set)
+        self.cards: dict[str, dict[str, Any]] = {}
         self.column_defs = [
             {
                 "field": "name",
@@ -94,7 +94,7 @@ class PromoTypesAggregator(Aggregator):
             },
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         name = card.get("name")
         # Skip cards without a name
         if name is None:
@@ -112,7 +112,7 @@ class PromoTypesAggregator(Aggregator):
                     "image_uri": get_card_image_uri(card),
                 }
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
             {
                 "name": name,
@@ -129,8 +129,8 @@ class FoilTypesAggregator(Aggregator):
 
     def __init__(self, description: str = ""):
         super().__init__("foil_types_by_name", "Foil Types by Card Name", description)
-        self.data: Dict[str, Set[str]] = defaultdict(set)
-        self.cards: Dict[str, Dict[str, Any]] = {}
+        self.data: dict[str, set[str]] = defaultdict(set)
+        self.cards: dict[str, dict[str, Any]] = {}
         self.column_defs = [
             {
                 "field": "name",
@@ -147,7 +147,7 @@ class FoilTypesAggregator(Aggregator):
             },
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         name = card.get("name")
         # Skip cards without a name
         if name is None:
@@ -197,7 +197,7 @@ class FoilTypesAggregator(Aggregator):
         if "etched" in finishes:
             self.data[name].add("etched")
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
             {
                 "name": name,

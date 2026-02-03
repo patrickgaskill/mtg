@@ -6,7 +6,7 @@ import threading
 import webbrowser
 from datetime import datetime
 from pathlib import Path
-from typing import Annotated, Dict, List, Optional
+from typing import Annotated
 
 import ijson
 import requests
@@ -24,12 +24,9 @@ from rich.panel import Panel
 from rich.progress import (
     DownloadColumn,
     Progress,
-    SpinnerColumn,
-    TimeElapsedColumn,
     wrap_file,
 )
 from rich.table import Table
-from rich.text import Text
 
 from aggregators import (
     Aggregator,
@@ -70,12 +67,8 @@ _quiet = False
 
 @app.callback()
 def main(
-    verbose: Annotated[
-        bool, typer.Option("--verbose", "-v", help="Show detailed output")
-    ] = False,
-    quiet: Annotated[
-        bool, typer.Option("--quiet", "-q", help="Minimal output")
-    ] = False,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Show detailed output")] = False,
+    quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Minimal output")] = False,
 ):
     """🎴 MTG Card Aggregator - Process Scryfall data and generate interactive reports"""
     global _verbose, _quiet
@@ -85,7 +78,7 @@ def main(
         console.quiet = True
 
 
-def create_all_aggregators() -> List[Aggregator]:
+def create_all_aggregators() -> list[Aggregator]:
     """Create and return all available aggregators."""
     return [
         CountAggregator(
@@ -158,9 +151,7 @@ This helps identify which printings have multiple finish options available.
         CountCardIllustrationsBySetAggregator(
             description="Count of unique card illustrations by set"
         ),
-        MaxCollectorNumberBySetAggregator(
-            description="Maximum collector number by set"
-        ),
+        MaxCollectorNumberBySetAggregator(description="Maximum collector number by set"),
         MaximalPrintedTypesAggregator(
             all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             all_land_types_file=DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE,
@@ -171,9 +162,7 @@ This helps identify which printings have multiple finish options available.
             description="First card for each unique power/toughness combination"
         ),
         FoilTypesAggregator(description="Foil types by card name"),
-        SupercycleTimeAggregator(
-            supercycles_file=MANUAL_DATA_FOLDER / "supercycles.yaml"
-        ),
+        SupercycleTimeAggregator(supercycles_file=MANUAL_DATA_FOLDER / "supercycles.yaml"),
         MaximalTypesWithEffectsAggregator(
             all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             all_land_types_file=DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE,
@@ -220,9 +209,7 @@ def status():
         types_info = f"""[bold]Creature Types:[/bold] {creature_count} types (updated {creature_modified.strftime("%Y-%m-%d")})
 [bold]Land Types:[/bold] {land_count} types (updated {land_modified.strftime("%Y-%m-%d")})"""
     else:
-        types_info = (
-            "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
-        )
+        types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
 
     console.print(Panel(types_info, title="🏷️  Type Data", border_style="green"))
 
@@ -236,9 +223,7 @@ def status():
 @app.command(name="list")
 def list_aggregators():
     """📋 List all available aggregators"""
-    table = Table(
-        title="Available Aggregators", show_header=True, header_style="bold cyan"
-    )
+    table = Table(title="Available Aggregators", show_header=True, header_style="bold cyan")
     table.add_column("Name", style="cyan", no_wrap=True)
     table.add_column("Display Name", style="green")
     table.add_column("Description")
@@ -260,9 +245,7 @@ def update_types():
         # fetch_and_parse_types raises ValueError for network and parsing errors
         console.print(f"[red]Error fetching types: {e}[/red]")
         if "Network error" in str(e) or "timeout" in str(e).lower():
-            console.print(
-                "[yellow]Please check your internet connection and try again.[/yellow]"
-            )
+            console.print("[yellow]Please check your internet connection and try again.[/yellow]")
         elif "HTTP error" in str(e):
             console.print(
                 "[yellow]The Magic rules website may be temporarily unavailable.[/yellow]"
@@ -281,7 +264,7 @@ def update_types():
         console.print(
             f"[green]Updated {ALL_CREATURE_TYPES_FILE} with {len(creature_types)} types.[/green]"
         )
-    except IOError as e:
+    except OSError as e:
         console.print(f"[red]Error writing to {ALL_CREATURE_TYPES_FILE}: {e}[/red]")
 
     # Update land types file
@@ -290,10 +273,8 @@ def update_types():
         with land_types_file.open("w") as f:
             for land_type in sorted(land_types):
                 f.write(f"{land_type}\n")
-        console.print(
-            f"[green]Updated {ALL_LAND_TYPES_FILE} with {len(land_types)} types.[/green]"
-        )
-    except IOError as e:
+        console.print(f"[green]Updated {ALL_LAND_TYPES_FILE} with {len(land_types)} types.[/green]")
+    except OSError as e:
         console.print(f"[red]Error writing to {ALL_LAND_TYPES_FILE}: {e}[/red]")
 
 
@@ -308,24 +289,18 @@ def download():
         bulk_data_files = response.json()["data"]
     except (ConnectionError, Timeout) as e:
         console.print(f"[red]Network error while fetching bulk data list: {e}[/red]")
-        console.print(
-            "[yellow]Please check your internet connection and try again.[/yellow]"
-        )
+        console.print("[yellow]Please check your internet connection and try again.[/yellow]")
         raise typer.Exit(1)
     except HTTPError as e:
         console.print(f"[red]HTTP error while fetching bulk data list: {e}[/red]")
-        console.print(
-            "[yellow]The Scryfall API may be temporarily unavailable.[/yellow]"
-        )
+        console.print("[yellow]The Scryfall API may be temporarily unavailable.[/yellow]")
         raise typer.Exit(1)
     except RequestException as e:
         console.print(f"[red]Request error while fetching bulk data list: {e}[/red]")
         raise typer.Exit(1)
     except (KeyError, json.JSONDecodeError) as e:
         console.print(f"[red]Error parsing bulk data response: {e}[/red]")
-        console.print(
-            "[yellow]The Scryfall API response format may have changed.[/yellow]"
-        )
+        console.print("[yellow]The Scryfall API response format may have changed.[/yellow]")
         raise typer.Exit(1)
 
     try:
@@ -346,9 +321,7 @@ def download():
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
         console.print(f"[red]Network error while downloading file: {e}[/red]")
-        console.print(
-            "[yellow]Please check your internet connection and try again.[/yellow]"
-        )
+        console.print("[yellow]Please check your internet connection and try again.[/yellow]")
         raise typer.Exit(1)
     except HTTPError as e:
         console.print(f"[red]HTTP error while downloading file: {e}[/red]")
@@ -374,23 +347,19 @@ def download():
                     progress.update(task, advance=size)
     except ChunkedEncodingError as e:
         console.print(f"[red]Connection lost during download: {e}[/red]")
-        console.print(
-            "[yellow]The download was interrupted. Please try again.[/yellow]"
-        )
+        console.print("[yellow]The download was interrupted. Please try again.[/yellow]")
         # Clean up partially downloaded file
         if file_path.exists():
             file_path.unlink()
         raise typer.Exit(1)
     except (ConnectionError, Timeout) as e:
         console.print(f"[red]Network error during download: {e}[/red]")
-        console.print(
-            "[yellow]The connection was lost during download. Please try again.[/yellow]"
-        )
+        console.print("[yellow]The connection was lost during download. Please try again.[/yellow]")
         # Clean up partially downloaded file
         if file_path.exists():
             file_path.unlink()
         raise typer.Exit(1)
-    except IOError as e:
+    except OSError as e:
         console.print(f"[red]Error writing file to disk: {e}[/red]")
         console.print("[yellow]Please check disk space and write permissions.[/yellow]")
         # Clean up partially downloaded file
@@ -404,28 +373,18 @@ def download():
             file_path.unlink()
         raise typer.Exit(1)
 
-    console.print(
-        f"[green]Download complete:[/green] [bold]{file_path}[/bold]", highlight=False
-    )
+    console.print(f"[green]Download complete:[/green] [bold]{file_path}[/bold]", highlight=False)
     return file_path
 
 
 @app.command()
 def all(
     serve: Annotated[bool, typer.Option(help="Start server after processing")] = True,
-    skip_download: Annotated[
-        bool, typer.Option(help="Skip downloading fresh data")
-    ] = False,
-    skip_types: Annotated[
-        bool, typer.Option(help="Skip updating creature/land types")
-    ] = False,
+    skip_download: Annotated[bool, typer.Option(help="Skip downloading fresh data")] = False,
+    skip_types: Annotated[bool, typer.Option(help="Skip updating creature/land types")] = False,
 ):
     """🚀 Run complete workflow: download → update-types → process → serve"""
-    console.print(
-        Panel.fit(
-            "🎴 MTG Card Aggregator - Complete Workflow", border_style="bold blue"
-        )
-    )
+    console.print(Panel.fit("🎴 MTG Card Aggregator - Complete Workflow", border_style="bold blue"))
 
     steps_total = 4 - (1 if skip_download else 0) - (1 if skip_types else 0)
     current_step = 1
@@ -451,9 +410,7 @@ def all(
     # Find the latest input file
     input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
     if input_file is None:
-        console.print(
-            "[red]No data file found. Please run with download enabled.[/red]"
-        )
+        console.print("[red]No data file found. Please run with download enabled.[/red]")
         raise typer.Exit(1)
 
     # Create timestamped output folder
@@ -470,10 +427,10 @@ def all(
         dry_run=False,
     )
 
-    console.print(f"\n[bold green]✓ Workflow complete![/bold green]")
+    console.print("\n[bold green]✓ Workflow complete![/bold green]")
 
 
-def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
+def find_latest_default_cards(data_folder: Path) -> Path | None:
     """
     Find the latest "default-cards" file in the specified data folder.
 
@@ -491,7 +448,7 @@ def find_latest_default_cards(data_folder: Path) -> Optional[Path]:
     )
 
 
-def generate_nav_links(aggregators: List[Aggregator]) -> List[Dict[str, str]]:
+def generate_nav_links(aggregators: list[Aggregator]) -> list[dict[str, str]]:
     """
     Generate navigation links for aggregator HTML pages.
 
@@ -516,8 +473,8 @@ def run_internal(
     input_file: Path,
     output_folder: Path,
     serve: bool,
-    only: Optional[List[str]],
-    exclude: Optional[List[str]],
+    only: list[str] | None,
+    exclude: list[str] | None,
     dry_run: bool,
 ) -> None:
     """Internal function that does the actual processing work."""
@@ -566,18 +523,14 @@ def run_internal(
     elif exclude:
         aggregators = [a for a in all_aggregators if a.name not in exclude]
         if not aggregators:
-            console.print(
-                "[yellow]Warning: All aggregators excluded by --exclude filter[/yellow]"
-            )
+            console.print("[yellow]Warning: All aggregators excluded by --exclude filter[/yellow]")
             return
     else:
         aggregators = all_aggregators
 
     if dry_run:
-        console.print(f"\n[yellow]DRY RUN - No files will be generated[/yellow]\n")
-        table = Table(
-            title="Aggregators to Process", show_header=True, header_style="bold cyan"
-        )
+        console.print("\n[yellow]DRY RUN - No files will be generated[/yellow]\n")
+        table = Table(title="Aggregators to Process", show_header=True, header_style="bold cyan")
         table.add_column("#", style="dim", width=4)
         table.add_column("Name", style="cyan")
         table.add_column("Display Name", style="green")
@@ -586,9 +539,7 @@ def run_internal(
             table.add_row(str(idx), agg.name, agg.display_name)
 
         console.print(table)
-        console.print(
-            f"\n[dim]Total: {len(aggregators)} aggregators would be processed[/dim]"
-        )
+        console.print(f"\n[dim]Total: {len(aggregators)} aggregators would be processed[/dim]")
         return
 
     with wrap_file(
@@ -624,9 +575,7 @@ def run_internal(
         try:
             aggregator.generate_html_file(output_folder, base_template, nav_links)
         except Exception as e:
-            console.print(
-                f"[red]Error generating files for {aggregator.name}: {e}[/red]"
-            )
+            console.print(f"[red]Error generating files for {aggregator.name}: {e}[/red]")
 
         # Save sorted data from each aggregator to a JSON file
         try:
@@ -635,15 +584,11 @@ def run_internal(
             with json_filepath.open("w", encoding="utf-8") as json_file:
                 json.dump(aggregator.get_sorted_data(), json_file)
         except Exception as e:
-            console.print(
-                f"[red]Error saving JSON data for {aggregator.name}: {e}[/red]"
-            )
+            console.print(f"[red]Error saving JSON data for {aggregator.name}: {e}[/red]")
 
     # Show summary table
     console.print()
-    table = Table(
-        title="Processing Summary", show_header=True, header_style="bold green"
-    )
+    table = Table(title="Processing Summary", show_header=True, header_style="bold green")
     table.add_column("Aggregator", style="cyan")
     table.add_column("Records", justify="right", style="green")
 
@@ -653,7 +598,7 @@ def run_internal(
 
     console.print(table)
 
-    console.print(f"\n[bold green]✓ Processing complete![/bold green]")
+    console.print("\n[bold green]✓ Processing complete![/bold green]")
     console.print(f"[green]Output:[/green] {output_folder.resolve()}")
 
     # Start HTTP server if requested
@@ -664,13 +609,11 @@ def run_internal(
 @app.command()
 def run(
     input_file: Annotated[
-        Optional[Path],
-        typer.Option(
-            help="Path to Scryfall JSON file (auto-detects latest if not specified)"
-        ),
+        Path | None,
+        typer.Option(help="Path to Scryfall JSON file (auto-detects latest if not specified)"),
     ] = None,
     output_folder: Annotated[
-        Optional[Path],
+        Path | None,
         typer.Option(
             "--output",
             "-o",
@@ -686,18 +629,16 @@ def run(
         ),
     ] = False,
     only: Annotated[
-        Optional[List[str]],
+        list[str] | None,
         typer.Option(help="Only run specific aggregators (can specify multiple times)"),
     ] = None,
     exclude: Annotated[
-        Optional[List[str]],
+        list[str] | None,
         typer.Option(help="Exclude specific aggregators (can specify multiple times)"),
     ] = None,
     dry_run: Annotated[
         bool,
-        typer.Option(
-            "--dry-run", help="Show what would be generated without processing"
-        ),
+        typer.Option("--dry-run", help="Show what would be generated without processing"),
     ] = False,
 ):
     """⚙️  Generate reports from card data"""

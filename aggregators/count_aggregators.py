@@ -1,7 +1,7 @@
 """Aggregators that count various card properties."""
 
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from card_utils import get_card_image_uri
 
@@ -15,14 +15,14 @@ class CountAggregator(Aggregator):
         self,
         name: str,
         display_name: str,
-        key_fields: List[str],
+        key_fields: list[str],
         count_finishes: bool = False,
         description: str = "",
         explanation: str = "",
     ):
         super().__init__(name, display_name, description, explanation)
-        self.data: Dict[Tuple, int] = defaultdict(int)
-        self.cards: Dict[Tuple, Dict[str, Any]] = {}
+        self.data: dict[tuple, int] = defaultdict(int)
+        self.cards: dict[tuple, dict[str, Any]] = {}
         self.key_fields = key_fields
         self.count_finishes = count_finishes
         self.needs_card_links = "name" in key_fields
@@ -43,7 +43,7 @@ class CountAggregator(Aggregator):
             {"field": "count", "headerName": "Count", "width": 100, "type": "numericColumn"}
         )
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         # Build key values and skip cards that are missing any required key field.
         key_values = [card.get(field) for field in self.key_fields]
         if any(value is None for value in key_values):
@@ -61,7 +61,7 @@ class CountAggregator(Aggregator):
                 "image_uri": get_card_image_uri(card),
             }
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         result = []
         for key, count in self.data.items():
             row_data = {**dict(zip(self.key_fields, key)), "count": count}
@@ -81,7 +81,7 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
             "Maximum Collector Number by Set",
             description,
         )
-        self.data: Dict[str, int] = defaultdict(int)
+        self.data: dict[str, int] = defaultdict(int)
         self.column_defs = [
             {"field": "set", "headerName": "Set", "width": 80},
             {
@@ -93,21 +93,15 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
             },
         ]
 
-    def process_card(self, card: Dict[str, Any]) -> None:
+    def process_card(self, card: dict[str, Any]) -> None:
         collector_number = card.get("collector_number")
         key = card.get("set")
-        if (
-            collector_number is not None
-            and collector_number.isdigit()
-            and key is not None
-        ):
+        if collector_number is not None and collector_number.isdigit() and key is not None:
             collector_number = int(collector_number)
             self.data[key] = max(self.data[key], collector_number)
 
-    def get_sorted_data(self) -> List[Dict[str, Any]]:
+    def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
             {"set": key, "maxNumber": value}
-            for key, value in sorted(
-                self.data.items(), key=lambda x: x[1], reverse=True
-            )
+            for key, value in sorted(self.data.items(), key=lambda x: x[1], reverse=True)
         ]

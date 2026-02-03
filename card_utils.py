@@ -1,6 +1,6 @@
 import re
 from datetime import date, datetime
-from typing import Any, Dict, Set, Tuple
+from typing import Any
 
 from aggregators.constants import (
     NON_TRADITIONAL_BORDERS,
@@ -12,36 +12,34 @@ from aggregators.constants import (
 BASIC_LAND_TYPES = {"Forest", "Island", "Mountain", "Plains", "Swamp"}
 
 
-def extract_types(card: Dict[str, Any]) -> Set[str]:
+def extract_types(card: dict[str, Any]) -> set[str]:
     """
     Extract the types from a card's type line.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
-        Set[str]: A set of types extracted from the card's type line.
+        set[str]: A set of types extracted from the card's type line.
     """
     text = card.get("type_line", "").replace("Time Lord", "Time-Lord")
     words = re.findall(r"\b[\w\-']+\b", text)
     return set(word.replace("Time-Lord", "Time Lord") for word in words)
 
 
-def get_sort_key(card: Dict[str, Any]) -> Tuple[date, str, int, str]:
+def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
     """
     Generate a sort key for a card.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
-        Tuple[date, str, int, str]: A tuple containing the release date, set name,
+        tuple[date, str, int, str]: A tuple containing the release date, set name,
         parsed collector number, and original collector number string.
     """
     released_at = card.get("released_at")
-    release_date = (
-        date.fromisoformat(released_at) if released_at else datetime.max.date()
-    )
+    release_date = date.fromisoformat(released_at) if released_at else datetime.max.date()
 
     collector_number = card.get("collector_number", "")
     try:
@@ -52,27 +50,25 @@ def get_sort_key(card: Dict[str, Any]) -> Tuple[date, str, int, str]:
     return release_date, card.get("set", ""), parsed_number, collector_number
 
 
-def is_all_creature_types(card: Dict[str, Any]) -> bool:
+def is_all_creature_types(card: dict[str, Any]) -> bool:
     """
     Check if a card has all creature types.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
         bool: True if the card has all creature types, False otherwise.
     """
-    return card.get("name") == "Mistform Ultimus" or "Changeling" in card.get(
-        "keywords", []
-    )
+    return card.get("name") == "Mistform Ultimus" or "Changeling" in card.get("keywords", [])
 
 
-def is_permanent(card: Dict[str, Any]) -> bool:
+def is_permanent(card: dict[str, Any]) -> bool:
     """
     Determine if a card is a permanent.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
         bool: True if the card is a permanent, False otherwise.
@@ -90,19 +86,19 @@ def is_permanent(card: Dict[str, Any]) -> bool:
 
 
 def is_traditional_card(
-    card: Dict[str, Any],
-    non_traditional_set_types: Set[str] = NON_TRADITIONAL_SET_TYPES,
-    non_traditional_layouts: Set[str] = NON_TRADITIONAL_LAYOUTS,
-    non_traditional_borders: Set[str] = NON_TRADITIONAL_BORDERS,
+    card: dict[str, Any],
+    non_traditional_set_types: set[str] = NON_TRADITIONAL_SET_TYPES,
+    non_traditional_layouts: set[str] = NON_TRADITIONAL_LAYOUTS,
+    non_traditional_borders: set[str] = NON_TRADITIONAL_BORDERS,
 ) -> bool:
     """
     Determine if a card is considered traditional.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
-        non_traditional_set_types (Set[str], optional): Set of non-traditional set types.
-        non_traditional_layouts (Set[str], optional): Set of non-traditional layouts.
-        non_traditional_borders (Set[str], optional): Set of non-traditional border colors.
+        card (dict[str, Any]): A dictionary representing a card.
+        non_traditional_set_types (set[str], optional): Set of non-traditional set types.
+        non_traditional_layouts (set[str], optional): Set of non-traditional layouts.
+        non_traditional_borders (set[str], optional): Set of non-traditional border colors.
 
     Returns:
         bool: True if the card is traditional, False otherwise.
@@ -156,12 +152,12 @@ def generalize_mana_cost(mana_cost: str) -> str:
     return "".join(color_map.get(c, c) for c in mana_cost)
 
 
-def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
+def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
     """
     Extract the image URI for a card.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
         size (str, optional): The image size to retrieve. Defaults to "normal".
 
     Returns:
