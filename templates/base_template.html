@@ -303,13 +303,18 @@
         defaultColDef: {
           sortable: true,
           filter: true,
-          resizable: true
+          resizable: true,
+          minWidth: 80
         },
         components: {
           cardLinkRenderer: CardLinkRenderer
         },
         pagination: true,
-        paginationPageSize: 100
+        paginationPageSize: 100,
+        onFirstDataRendered: (params) => {
+          // Auto-size all columns to fit content on initial load
+          params.api.autoSizeAllColumns(false);
+        }
       };
 
       const gridDiv = document.querySelector('#myGrid');
