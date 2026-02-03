@@ -176,6 +176,7 @@ def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
                 face_image_uris = face.get("image_uris")
                 if face_image_uris:
                     return face_image_uris.get(size, "")
+                # Stop after checking first valid dict face, even if it lacks images
                 break
 
     # Fallback for single-faced cards or when face image URIs are unavailable.
