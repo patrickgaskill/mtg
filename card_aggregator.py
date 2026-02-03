@@ -21,7 +21,13 @@ from requests.exceptions import (
 )
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import DownloadColumn, Progress, SpinnerColumn, TimeElapsedColumn, wrap_file
+from rich.progress import (
+    DownloadColumn,
+    Progress,
+    SpinnerColumn,
+    TimeElapsedColumn,
+    wrap_file,
+)
 from rich.table import Table
 from rich.text import Text
 
@@ -64,8 +70,12 @@ _quiet = False
 
 @app.callback()
 def main(
-    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Show detailed output")] = False,
-    quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Minimal output")] = False,
+    verbose: Annotated[
+        bool, typer.Option("--verbose", "-v", help="Show detailed output")
+    ] = False,
+    quiet: Annotated[
+        bool, typer.Option("--quiet", "-q", help="Minimal output")
+    ] = False,
 ):
     """🎴 MTG Card Aggregator - Process Scryfall data and generate interactive reports"""
     global _verbose, _quiet
@@ -210,19 +220,25 @@ def status():
         types_info = f"""[bold]Creature Types:[/bold] {creature_count} types (updated {creature_modified.strftime("%Y-%m-%d")})
 [bold]Land Types:[/bold] {land_count} types (updated {land_modified.strftime("%Y-%m-%d")})"""
     else:
-        types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
+        types_info = (
+            "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
+        )
 
     console.print(Panel(types_info, title="🏷️  Type Data", border_style="green"))
 
     # Show aggregator count
     agg_count = len(create_all_aggregators())
-    console.print(f"\n[cyan]Available Aggregators:[/cyan] {agg_count} (use '[bold]list[/bold]' command to see details)")
+    console.print(
+        f"\n[cyan]Available Aggregators:[/cyan] {agg_count} (use '[bold]list[/bold]' command to see details)"
+    )
 
 
 @app.command(name="list")
 def list_aggregators():
     """📋 List all available aggregators"""
-    table = Table(title="Available Aggregators", show_header=True, header_style="bold cyan")
+    table = Table(
+        title="Available Aggregators", show_header=True, header_style="bold cyan"
+    )
     table.add_column("Name", style="cyan", no_wrap=True)
     table.add_column("Display Name", style="green")
     table.add_column("Description")
@@ -397,34 +413,47 @@ def download():
 @app.command()
 def all(
     serve: Annotated[bool, typer.Option(help="Start server after processing")] = True,
-    skip_download: Annotated[bool, typer.Option(help="Skip downloading fresh data")] = False,
-    skip_types: Annotated[bool, typer.Option(help="Skip updating creature/land types")] = False,
+    skip_download: Annotated[
+        bool, typer.Option(help="Skip downloading fresh data")
+    ] = False,
+    skip_types: Annotated[
+        bool, typer.Option(help="Skip updating creature/land types")
+    ] = False,
 ):
     """🚀 Run complete workflow: download → update-types → process → serve"""
-    console.print(Panel.fit(
-        "🎴 MTG Card Aggregator - Complete Workflow",
-        border_style="bold blue"
-    ))
+    console.print(
+        Panel.fit(
+            "🎴 MTG Card Aggregator - Complete Workflow", border_style="bold blue"
+        )
+    )
 
     steps_total = 4 - (1 if skip_download else 0) - (1 if skip_types else 0)
     current_step = 1
 
     if not skip_download:
-        console.print(f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Downloading data...")
+        console.print(
+            f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Downloading data..."
+        )
         download()
         current_step += 1
 
     if not skip_types:
-        console.print(f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Updating types...")
+        console.print(
+            f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Updating types..."
+        )
         update_types()
         current_step += 1
 
-    console.print(f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Processing cards...")
+    console.print(
+        f"\n[bold blue]Step {current_step}/{steps_total}:[/bold blue] Processing cards..."
+    )
 
     # Find the latest input file
     input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
     if input_file is None:
-        console.print("[red]No data file found. Please run with download enabled.[/red]")
+        console.print(
+            "[red]No data file found. Please run with download enabled.[/red]"
+        )
         raise typer.Exit(1)
 
     # Create timestamped output folder
@@ -511,13 +540,17 @@ def run_internal(
         output_folder.mkdir(parents=True, exist_ok=True)
 
     # Show header
-    console.print(Panel.fit(
-        "🎴 MTG Card Aggregator",
-        subtitle="Processing Scryfall data",
-        border_style="blue"
-    ))
+    console.print(
+        Panel.fit(
+            "🎴 MTG Card Aggregator",
+            subtitle="Processing Scryfall data",
+            border_style="blue",
+        )
+    )
     console.print(f"📥 Input:  [cyan]{input_file.name}[/cyan]")
-    console.print(f"📤 Output: [cyan]{output_folder.name if output_folder else 'N/A (dry run)'}[/cyan]")
+    console.print(
+        f"📤 Output: [cyan]{output_folder.name if output_folder else 'N/A (dry run)'}[/cyan]"
+    )
 
     # Create all aggregators
     all_aggregators = create_all_aggregators()
@@ -526,19 +559,25 @@ def run_internal(
     if only:
         aggregators = [a for a in all_aggregators if a.name in only]
         if not aggregators:
-            console.print(f"[yellow]Warning: No aggregators match --only filter. Available: {[a.name for a in all_aggregators]}[/yellow]")
+            console.print(
+                f"[yellow]Warning: No aggregators match --only filter. Available: {[a.name for a in all_aggregators]}[/yellow]"
+            )
             return
     elif exclude:
         aggregators = [a for a in all_aggregators if a.name not in exclude]
         if not aggregators:
-            console.print("[yellow]Warning: All aggregators excluded by --exclude filter[/yellow]")
+            console.print(
+                "[yellow]Warning: All aggregators excluded by --exclude filter[/yellow]"
+            )
             return
     else:
         aggregators = all_aggregators
 
     if dry_run:
         console.print(f"\n[yellow]DRY RUN - No files will be generated[/yellow]\n")
-        table = Table(title="Aggregators to Process", show_header=True, header_style="bold cyan")
+        table = Table(
+            title="Aggregators to Process", show_header=True, header_style="bold cyan"
+        )
         table.add_column("#", style="dim", width=4)
         table.add_column("Name", style="cyan")
         table.add_column("Display Name", style="green")
@@ -547,7 +586,9 @@ def run_internal(
             table.add_row(str(idx), agg.name, agg.display_name)
 
         console.print(table)
-        console.print(f"\n[dim]Total: {len(aggregators)} aggregators would be processed[/dim]")
+        console.print(
+            f"\n[dim]Total: {len(aggregators)} aggregators would be processed[/dim]"
+        )
         return
 
     with wrap_file(
@@ -600,7 +641,9 @@ def run_internal(
 
     # Show summary table
     console.print()
-    table = Table(title="Processing Summary", show_header=True, header_style="bold green")
+    table = Table(
+        title="Processing Summary", show_header=True, header_style="bold green"
+    )
     table.add_column("Aggregator", style="cyan")
     table.add_column("Records", justify="right", style="green")
 
@@ -620,27 +663,42 @@ def run_internal(
 
 @app.command()
 def run(
-    input_file: Annotated[Optional[Path], typer.Option(
-        help="Path to Scryfall JSON file (auto-detects latest if not specified)"
-    )] = None,
-    output_folder: Annotated[Optional[Path], typer.Option(
-        "--output", "-o",
-        help="Output directory (default: timestamped folder in data/output/)"
-    )] = None,
-    serve: Annotated[bool, typer.Option(
-        "--serve", "-s",
-        help="🌐 Start HTTP server and open browser after generation"
-    )] = False,
-    only: Annotated[Optional[List[str]], typer.Option(
-        help="Only run specific aggregators (can specify multiple times)"
-    )] = None,
-    exclude: Annotated[Optional[List[str]], typer.Option(
-        help="Exclude specific aggregators (can specify multiple times)"
-    )] = None,
-    dry_run: Annotated[bool, typer.Option(
-        "--dry-run",
-        help="Show what would be generated without processing"
-    )] = False,
+    input_file: Annotated[
+        Optional[Path],
+        typer.Option(
+            help="Path to Scryfall JSON file (auto-detects latest if not specified)"
+        ),
+    ] = None,
+    output_folder: Annotated[
+        Optional[Path],
+        typer.Option(
+            "--output",
+            "-o",
+            help="Output directory (default: timestamped folder in data/output/)",
+        ),
+    ] = None,
+    serve: Annotated[
+        bool,
+        typer.Option(
+            "--serve",
+            "-s",
+            help="🌐 Start HTTP server and open browser after generation",
+        ),
+    ] = False,
+    only: Annotated[
+        Optional[List[str]],
+        typer.Option(help="Only run specific aggregators (can specify multiple times)"),
+    ] = None,
+    exclude: Annotated[
+        Optional[List[str]],
+        typer.Option(help="Exclude specific aggregators (can specify multiple times)"),
+    ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            "--dry-run", help="Show what would be generated without processing"
+        ),
+    ] = False,
 ):
     """⚙️  Generate reports from card data"""
     # Use the provided input_file if specified, otherwise find the latest
@@ -681,17 +739,17 @@ def serve_and_open_browser(directory: Path):
     url = f"http://localhost:{port}/index.html"
 
     console.print()
-    console.print(Panel(
-        f"[green]✓[/green] Server running at [link={url}]{url}[/link]\n"
-        f"[yellow]Press Ctrl+C to stop[/yellow]",
-        title="🌐 HTTP Server",
-        border_style="green"
-    ))
+    console.print(
+        Panel(
+            f"[green]✓[/green] Server running at [link={url}]{url}[/link]\n"
+            f"[yellow]Press Ctrl+C to stop[/yellow]",
+            title="🌐 HTTP Server",
+            border_style="green",
+        )
+    )
 
     # Open browser in a separate thread
-    threading.Timer(
-        1.0, lambda: webbrowser.open(url)
-    ).start()
+    threading.Timer(1.0, lambda: webbrowser.open(url)).start()
 
     try:
         # Start server

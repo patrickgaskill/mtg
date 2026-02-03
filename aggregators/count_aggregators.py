@@ -92,7 +92,11 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         collector_number = card.get("collector_number")
         key = card.get("set")
-        if collector_number is not None and collector_number.isdigit() and key is not None:
+        if (
+            collector_number is not None
+            and collector_number.isdigit()
+            and key is not None
+        ):
             collector_number = int(collector_number)
             self.data[key] = max(self.data[key], collector_number)
 
