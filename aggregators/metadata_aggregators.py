@@ -39,11 +39,13 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
     def process_card(self, card: Dict[str, Any]) -> None:
         set_ = card.get("set")
         name = card.get("name")
+        illustration_id = card.get("illustration_id")
         # Skip cards that lack a set or name to avoid aggregating them under (None, ...) keys.
         if set_ is None or name is None:
             return
         key = (set_, name)
-        self.data[key].add(card.get("illustration_id"))
+        if illustration_id is not None:
+            self.data[key].add(illustration_id)
         # Keep minimal Scryfall data to reduce memory usage
         # Note: Stores first encountered printing's link/image per (set, name).
         # For illustration counting, showing any printing from the set is acceptable.
