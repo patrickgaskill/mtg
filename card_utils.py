@@ -17,10 +17,10 @@ def extract_types(card: dict[str, Any]) -> set[str]:
     Extract the types from a card's type line.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
-        Set[str]: A set of types extracted from the card's type line.
+        set[str]: A set of types extracted from the card's type line.
     """
     text = card.get("type_line", "").replace("Time Lord", "Time-Lord")
     words = re.findall(r"\b[\w\-']+\b", text)
@@ -32,10 +32,10 @@ def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
     Generate a sort key for a card.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
-        Tuple[date, str, int, str]: A tuple containing the release date, set name,
+        tuple[date, str, int, str]: A tuple containing the release date, set name,
         parsed collector number, and original collector number string.
     """
     released_at = card.get("released_at")
@@ -55,7 +55,7 @@ def is_all_creature_types(card: dict[str, Any]) -> bool:
     Check if a card has all creature types.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
         bool: True if the card has all creature types, False otherwise.
@@ -68,7 +68,7 @@ def is_permanent(card: dict[str, Any]) -> bool:
     Determine if a card is a permanent.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
 
     Returns:
         bool: True if the card is a permanent, False otherwise.
@@ -95,10 +95,10 @@ def is_traditional_card(
     Determine if a card is considered traditional.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
-        non_traditional_set_types (Set[str], optional): Set of non-traditional set types.
-        non_traditional_layouts (Set[str], optional): Set of non-traditional layouts.
-        non_traditional_borders (Set[str], optional): Set of non-traditional border colors.
+        card (dict[str, Any]): A dictionary representing a card.
+        non_traditional_set_types (set[str], optional): Set of non-traditional set types.
+        non_traditional_layouts (set[str], optional): Set of non-traditional layouts.
+        non_traditional_borders (set[str], optional): Set of non-traditional border colors.
 
     Returns:
         bool: True if the card is traditional, False otherwise.
@@ -157,7 +157,7 @@ def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
     Extract the image URI for a card.
 
     Args:
-        card (Dict[str, Any]): A dictionary representing a card.
+        card (dict[str, Any]): A dictionary representing a card.
         size (str, optional): The image size to retrieve. Defaults to "normal".
 
     Returns:
