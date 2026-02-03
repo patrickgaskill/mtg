@@ -191,7 +191,7 @@ This shows the theoretical maximum types achievable through card combinations!
 - **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. Cards that grant "all creature types" or "all land types" will only include types that have been updated via the `update-types` command, which fetches the official type lists from the comprehensive rules
         """
         self.global_effects = self.define_global_effects()
-        self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
+        self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 240},
             {

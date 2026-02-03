@@ -3,7 +3,7 @@ from typing import Set, Tuple
 from urllib.parse import urljoin
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
 
@@ -36,7 +36,13 @@ def fetch_and_parse_types() -> Tuple[Set[str], Set[str]]:
 
     for txt_link in txt_links:
         # Handle relative URLs; assume hrefs are already properly URL-encoded
-        txt_url = urljoin(url, txt_link["href"])
+        # Type check: ensure we have a Tag object with an href attribute
+        if not isinstance(txt_link, Tag):
+            continue
+        href = txt_link.get("href")
+        if href is None or not isinstance(href, str):
+            continue
+        txt_url = urljoin(url, href)
 
         try:
             res = requests.get(txt_url, timeout=60)  # Longer timeout for large file
