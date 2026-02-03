@@ -154,3 +154,34 @@ def generalize_mana_cost(mana_cost: str) -> str:
                 return mana_cost
 
     return "".join(color_map.get(c, c) for c in mana_cost)
+
+
+def get_card_image_uri(card: Dict[str, Any], size: str = "normal") -> str:
+    """
+    Extract the image URI for a card.
+
+    Args:
+        card (Dict[str, Any]): A dictionary representing a card.
+        size (str, optional): The image size to retrieve. Defaults to "normal".
+
+    Returns:
+        str: The image URI, or empty string if not available.
+    """
+    # For double-faced or multi-faced cards, Scryfall stores image URIs on the faces.
+    card_faces = card.get("card_faces")
+    if card_faces:
+        # Use the first valid face dict from the array.
+        for face in card_faces:
+            if isinstance(face, dict):
+                face_image_uris = face.get("image_uris")
+                if face_image_uris:
+                    return face_image_uris.get(size, "")
+                # Stop after checking first valid dict face, even if it lacks images
+                break
+
+    # Fallback for single-faced cards or when face image URIs are unavailable.
+    image_uris = card.get("image_uris")
+    if image_uris:
+        return image_uris.get(size, "")
+
+    return ""

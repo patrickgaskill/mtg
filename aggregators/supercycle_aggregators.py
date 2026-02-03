@@ -7,6 +7,8 @@ from typing import Any, Dict, List, Set
 
 import yaml
 
+from card_utils import get_card_image_uri
+
 from .base import Aggregator, logger
 
 
@@ -58,10 +60,18 @@ the first card to today's date.
         )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: Dict[str, date] = {}
+        self.card_data: Dict[str, Dict[str, Any]] = {}
         self.found_cards: Set[str] = set()
         self.column_defs = [
             {"field": "supercycle", "headerName": "Supercycle", "width": 200},
             {"field": "status", "headerName": "Status", "width": 120},
+            {
+                "field": "cards",
+                "headerName": "Cards",
+                "width": 400,
+                "cellRenderer": "cardLinkRenderer",
+                "cardLinkData": "cardObjects",
+            },
             {"field": "time", "headerName": "Time", "width": 200},
             {"field": "startDate", "headerName": "Start Date", "width": 150},
             {"field": "endDate", "headerName": "End Date", "width": 150},
@@ -94,6 +104,13 @@ the first card to today's date.
             card_date = date.fromisoformat(released_at)
             if name not in self.card_dates or card_date < self.card_dates[name]:
                 self.card_dates[name] = card_date
+                # Keep minimal Scryfall data to reduce memory usage.
+                # Empty strings for missing data are handled by JavaScript renderer fallback.
+                self.card_data[name] = {
+                    "name": name,
+                    "scryfall_uri": card.get("scryfall_uri", ""),
+                    "image_uri": get_card_image_uri(card),
+                }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
         today = date.today()
@@ -117,10 +134,32 @@ the first card to today's date.
             days = (latest_date - earliest_date).days
             status = "Finished" if cycle["finished"] else "Unfinished"
             formatted_time = format_time_difference(days)
+
+            # Collect card objects with Scryfall data for tooltips
+            card_objects = []
+            for card_name in cycle["cards"]:
+                if card_name in self.card_data:
+                    card_objects.append(self.card_data[card_name])
+                else:
+                    logger.warning(
+                        "Supercycle '%s' references card '%s' with no processed data",
+                        name,
+                        card_name,
+                    )
+
+            if not card_objects:
+                logger.error(
+                    "Supercycle '%s' has no valid card data; skipping from results",
+                    name,
+                )
+                continue
+
             result.append(
                 {
                     "supercycle": name,
                     "status": status,
+                    "cards": ", ".join(cycle["cards"]),
+                    "cardObjects": card_objects,
                     "time": formatted_time,
                     "startDate": earliest_date.strftime("%B %d, %Y"),
                     "endDate": latest_date.strftime("%B %d, %Y")

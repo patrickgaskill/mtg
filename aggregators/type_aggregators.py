@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Set, Tuple
 from card_utils import (
     BASIC_LAND_TYPES,
     extract_types,
+    get_card_image_uri,
     get_sort_key,
     is_all_creature_types,
     is_permanent,
@@ -53,7 +54,12 @@ this card without removing at least one existing type.
         self.maximal_types: Dict[Tuple[str, ...], Dict[str, Any]] = {}
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 240},
-            {"field": "name", "headerName": "Name", "width": 160},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 160,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date"},
         ]
@@ -119,12 +125,16 @@ this card without removing at least one existing type.
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "types": card.get("type_line", ""),
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": get_card_image_uri(card),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
@@ -184,7 +194,12 @@ This shows the theoretical maximum types achievable through card combinations!
         self.maximal_types: Dict[Tuple[str, ...], Tuple[Dict[str, Any], Set[str]]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 240},
-            {"field": "name", "headerName": "Name", "width": 160},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 160,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date"},
         ]
@@ -277,12 +292,16 @@ This shows the theoretical maximum types achievable through card combinations!
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "originalTypes": card.get("type_line", ""),
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": get_card_image_uri(card),
             }
             for key, card in sorted(
                 self.maximal_types.items(), key=lambda item: get_sort_key(item[1])

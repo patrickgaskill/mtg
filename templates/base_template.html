@@ -11,6 +11,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
     />
+    <script src="https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.7"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css"
+    />
     <style>
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -74,6 +80,39 @@
         border: 1px solid #f5c6cb;
         border-radius: 4px;
       }
+
+      .card-link {
+        color: #58a6ff;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .card-link:hover {
+        color: #79c0ff;
+        text-decoration: underline;
+      }
+
+      .tippy-box {
+        background-color: #333;
+      }
+
+      .tippy-box[data-theme~='card'] {
+        background-color: transparent;
+        padding: 0;
+      }
+
+      .tippy-box[data-theme~='card'] .tippy-content {
+        padding: 0;
+      }
+
+      .card-tooltip-image {
+        display: block;
+        max-width: 488px;
+        height: auto;
+        border-radius: 13px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
   <body>
@@ -97,6 +136,162 @@
     </main>
 
     <script>
+      // Card Link Cell Renderer
+      class CardLinkRenderer {
+        constructor() {
+          this.tippyInstances = [];
+        }
+
+        init(params) {
+          this.eGui = document.createElement('span');
+
+          const cardData = params.data;
+          const colDef = params.colDef;
+          const value = params.value;
+
+          if (!value) {
+            this.eGui.textContent = '';
+            return;
+          }
+
+          // Handle single or multiple cards
+          // The supercycle aggregator provides an array of card objects via cardLinkData.
+          // Other aggregators provide a single card name string (treated as-is, not split).
+          let cardNames;
+          const linkDataField = colDef.cardLinkData;
+          if (linkDataField && cardData[linkDataField] && Array.isArray(cardData[linkDataField])) {
+            // Extract card names from the structured data (supercycles)
+            cardNames = cardData[linkDataField].map(cardObj => cardObj.name);
+          } else {
+            // Single card name - treat as complete name even if it contains commas
+            cardNames = [value];
+          }
+
+          cardNames.forEach((cardName, index) => {
+            if (index > 0) {
+              this.eGui.appendChild(document.createTextNode(', '));
+            }
+
+            const link = document.createElement('a');
+            link.className = 'card-link';
+            link.textContent = cardName;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+
+            // Determine the card's Scryfall URI and image
+            const cardInfo = this.getCardInfo(cardData, cardName, colDef);
+
+            if (cardInfo.scryfallUri) {
+              link.href = cardInfo.scryfallUri;
+            } else {
+              // Fallback: search by exact card name
+              link.href = `https://scryfall.com/search?q=${encodeURIComponent(`!"${cardName}"`)}`;
+            }
+
+            // Add tooltip with card image if available
+            if (cardInfo.imageUri) {
+              // Create image element using DOM to prevent XSS
+              const img = document.createElement('img');
+              img.src = cardInfo.imageUri;
+              // Using DOM property assignment (not innerHTML) prevents XSS
+              img.alt = `Magic: The Gathering card - ${cardName}`;
+              img.className = 'card-tooltip-image';
+              img.onerror = function () {
+                // Replace broken image with accessible text fallback
+                const fallback = document.createElement('span');
+                fallback.setAttribute('role', 'img');
+                fallback.setAttribute('aria-label', `Card image for ${cardName} unavailable`);
+                fallback.textContent = 'Card image unavailable';
+
+                if (this.parentNode) {
+                  this.parentNode.replaceChild(fallback, this);
+                } else {
+                  console.error('Failed to replace broken card image: no parent node', {
+                    cardName: cardName,
+                    imageUri: cardInfo.imageUri
+                  });
+                }
+              };
+
+              // Create Tippy instance for this card link.
+              // Performance note: Each link gets its own instance, which has memory overhead.
+              // This is acceptable because: (1) AG Grid paginates rows, limiting visible instances,
+              // (2) destroy() cleans up instances when cells are removed, and (3) the user
+              // experience benefit of instant tooltips outweighs using a shared singleton approach.
+              const tippyInstance = tippy(link, {
+                content: img,
+                theme: 'card',
+                placement: 'right',
+                arrow: false,
+                maxWidth: 'none',
+                delay: [200, 0],
+                trigger: 'mouseenter focus'
+              });
+              this.tippyInstances.push(tippyInstance);
+            }
+
+            this.eGui.appendChild(link);
+          });
+        }
+
+        getCardInfo(cardData, cardName, colDef) {
+          // If column has cardLinkData specified, use that field's data
+          const linkDataField = colDef.cardLinkData;
+
+          if (linkDataField && cardData[linkDataField]) {
+            // Handle array of card objects (e.g., supercycle members)
+            if (Array.isArray(cardData[linkDataField])) {
+              const cardInfo = cardData[linkDataField].find(c => c.name === cardName);
+              if (cardInfo) {
+                return {
+                  scryfallUri: cardInfo.scryfall_uri || null,
+                  imageUri: cardInfo.image_uri || null
+                };
+              } else {
+                // Log a warning when the expected card is not found in the array
+                console.warn(
+                  '[CardLinkRenderer] Expected card "%s" in array field "%s", but no matching entry was found. Falling back to row-level card data.',
+                  cardName,
+                  linkDataField
+                );
+              }
+            } else {
+              // Single card object
+              const cardInfo = cardData[linkDataField];
+              return {
+                scryfallUri: cardInfo.scryfall_uri || null,
+                imageUri: cardInfo.image_uri || null
+              };
+            }
+          }
+
+          // Fallback: look in row data itself
+          return {
+            scryfallUri: cardData.scryfall_uri || null,
+            imageUri: cardData.image_uri || null
+          };
+        }
+
+        getGui() {
+          return this.eGui;
+        }
+
+        refresh(params) {
+          // Return false to prevent AG Grid from refreshing this cell renderer in place.
+          // Card links are static content that doesn't change based on data updates,
+          // so recreating the renderer is more appropriate than refreshing.
+          return false;
+        }
+
+        destroy() {
+          // Clean up Tippy instances to prevent memory leaks
+          if (this.tippyInstances) {
+            this.tippyInstances.forEach(instance => instance.destroy());
+            this.tippyInstances = [];
+          }
+        }
+      }
+
       // Initialize grid with loading state
       const columnDefs = {{ column_defs | tojson }};
 
@@ -109,6 +304,9 @@
           sortable: true,
           filter: true,
           resizable: true
+        },
+        components: {
+          cardLinkRenderer: CardLinkRenderer
         },
         pagination: true,
         paginationPageSize: 100

@@ -3,6 +3,8 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
+from card_utils import get_card_image_uri
+
 from .base import Aggregator
 
 
@@ -20,30 +22,51 @@ class CountAggregator(Aggregator):
     ):
         super().__init__(name, display_name, description, explanation)
         self.data: Dict[Tuple, int] = defaultdict(int)
+        self.cards: Dict[Tuple, Dict[str, Any]] = {}
         self.key_fields = key_fields
         self.count_finishes = count_finishes
+        self.needs_card_links = "name" in key_fields
 
         # Define column definitions for ag-grid
-        self.column_defs = [
-            {"field": field, "headerName": field.title()} for field in key_fields
-        ]
+        self.column_defs = []
+        for field in key_fields:
+            col_def = {"field": field, "headerName": field.title()}
+            # Add card link renderer for "name" fields
+            # Note: This requires process_card to store Scryfall data (see process_card method)
+            if field == "name":
+                col_def["cellRenderer"] = "cardLinkRenderer"
+            self.column_defs.append(col_def)
         self.column_defs.append(
             {"field": "count", "headerName": "Count", "type": "numericColumn"}
         )
 
     def process_card(self, card: Dict[str, Any]) -> None:
-        key = tuple(card.get(field) for field in self.key_fields)
+        # Build key values and skip cards that are missing any required key field.
+        key_values = [card.get(field) for field in self.key_fields]
+        if any(value is None for value in key_values):
+            return
+        key = tuple(key_values)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
+        # Keep minimal Scryfall data to reduce memory usage (only when "name" is a key field)
+        # Note: Stores first encountered printing's link/image. For count aggregators,
+        # showing any printing is acceptable since the focus is on counts, not specific versions.
+        # Empty strings are stored for missing data - this is intentional as the JavaScript
+        # CardLinkRenderer handles null/empty values by falling back to Scryfall search.
+        if self.needs_card_links and key not in self.cards:
+            self.cards[key] = {
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": get_card_image_uri(card),
+            }
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
-        return sorted(
-            [
-                {**dict(zip(self.key_fields, key)), "count": count}
-                for key, count in self.data.items()
-            ],
-            key=lambda x: x["count"],
-            reverse=True,
-        )
+        result = []
+        for key, count in self.data.items():
+            row_data = {**dict(zip(self.key_fields, key)), "count": count}
+            # Add scryfall data if available
+            if key in self.cards:
+                row_data.update(self.cards[key])
+            result.append(row_data)
+        return sorted(result, key=lambda x: x["count"], reverse=True)
 
 
 class MaxCollectorNumberBySetAggregator(Aggregator):

@@ -3,7 +3,7 @@
 from collections import defaultdict
 from typing import Any, Dict, List, Tuple
 
-from card_utils import generalize_mana_cost, get_sort_key
+from card_utils import generalize_mana_cost, get_card_image_uri, get_sort_key
 
 from .base import Aggregator
 
@@ -21,7 +21,12 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
         self.column_defs = [
             {"field": "power", "headerName": "Power", "width": 100},
             {"field": "toughness", "headerName": "Toughness", "width": 100},
-            {"field": "name", "headerName": "Name", "width": 200},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 200,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date", "width": 150},
         ]
@@ -39,6 +44,8 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
             self.data[key] = card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "power": power,
@@ -46,6 +53,8 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": get_card_image_uri(card),
             }
             for (power, toughness), card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
@@ -70,7 +79,12 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 "headerName": "Generalized Mana Cost",
                 "width": 120,
             },
-            {"field": "name", "headerName": "Name", "width": 200},
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 200,
+                "cellRenderer": "cardLinkRenderer",
+            },
             {"field": "set", "headerName": "Set", "width": 100},
             {"field": "releaseDate", "headerName": "Release Date", "width": 150},
             {
@@ -92,6 +106,8 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 self.data[generalized_cost] = card
 
     def get_sorted_data(self) -> List[Dict[str, Any]]:
+        # Scryfall data (scryfall_uri, image_uri) added directly to output.
+        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "generalizedManaCost": generalized_cost,
@@ -100,6 +116,8 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 "releaseDate": card.get("released_at", ""),
                 "originalManaCost": card.get("mana_cost", ""),
                 "count": self.count[generalized_cost],
+                "scryfall_uri": card.get("scryfall_uri", ""),
+                "image_uri": get_card_image_uri(card),
             }
             for generalized_cost, card in sorted(
                 self.data.items(), key=lambda item: get_sort_key(item[1])
