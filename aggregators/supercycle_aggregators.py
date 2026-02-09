@@ -68,7 +68,11 @@ the first card to today's date.
             {
                 "field": "cards",
                 "headerName": "Cards",
-                "width": 450,
+                "width": 280,
+                "wrapText": True,
+                "autoHeight": True,
+                "suppressAutoSize": True,
+                "cellClass": "compact-cell",
                 "cellRenderer": "cardLinkRenderer",
                 "cardLinkData": "cardObjects",
             },
@@ -121,10 +125,7 @@ the first card to today's date.
                 continue
 
             earliest_date = min(card_dates)
-            if cycle["finished"]:
-                latest_date = max(card_dates)
-            else:
-                latest_date = today
+            latest_date = max(card_dates) if cycle["finished"] else today
 
             days = (latest_date - earliest_date).days
             status = "Finished" if cycle["finished"] else "Unfinished"
