@@ -498,10 +498,10 @@ def run_internal(
 
     # Show header
     console.print(
-        Panel.fit(
-            "🎴 MTG Card Aggregator",
-            subtitle="Processing Scryfall data",
+        Panel(
+            "🎴 MTG Card Aggregator\nProcessing Scryfall data",
             border_style="blue",
+            expand=False,
         )
     )
     console.print(f"📥 Input:  [cyan]{input_file.name}[/cyan]")
