@@ -36,27 +36,7 @@ class SupercycleTimeAggregator(Aggregator):
             name="supercycle_completion_time",
             display_name="Supercycle Completion Times",
             description="Time to complete supercycles",
-            explanation="""
-## What are Supercycles?
-
-A **supercycle** (also called a **mega-mega cycle**) is a cycle of related cards distributed
-across multiple sets that aren't confined to a single block. These cycles typically feature:
-
-- Cards with shared mechanical or thematic elements
-- Distributed representation across colors (often all five)
-- Consistent mechanics with color-appropriate variations
-- Thematic connections (legends from a plane, artifact types, creature classes)
-
-## About This Report
-
-This report tracks how long it took to complete each supercycle, measured from the release
-date of the first card to the last card. For ongoing supercycles, the time shown is from
-the first card to today's date.
-
-**Examples of supercycles:**
-- Tutors (five monocolored rare tutors from different sets)
-- Elder Dragons (six three-colored legendary dragons with consistent abilities)
-            """,
+            explanation='Learn more about supercycles on the <a href="https://mtg.fandom.com/wiki/Mega_mega_cycle" target="_blank" rel="noopener noreferrer">MTG Wiki</a>.',
         )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: dict[str, date] = {}
