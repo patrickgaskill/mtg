@@ -191,7 +191,7 @@ def status():
     else:
         data_info = "[yellow]No data downloaded yet. Run 'download' command.[/yellow]"
 
-    console.print(Panel(data_info, title="📦 Data Status", border_style="blue"))
+    console.print(Panel(data_info, title="📦 Data Status", border_style="cyan", padding=(0, 1)))
 
     # Check for type files
     creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
@@ -211,7 +211,7 @@ def status():
     else:
         types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
 
-    console.print(Panel(types_info, title="🏷️  Type Data", border_style="green"))
+    console.print(Panel(types_info, title="🏷️  Type Data", border_style="cyan", padding=(0, 1)))
 
     # Show aggregator count
     agg_count = len(create_all_aggregators())
@@ -384,7 +384,13 @@ def all(
     skip_types: Annotated[bool, typer.Option(help="Skip updating creature/land types")] = False,
 ):
     """🚀 Run complete workflow: download → update-types → process → serve"""
-    console.print(Panel.fit("🎴 MTG Card Aggregator - Complete Workflow", border_style="bold blue"))
+    console.print(
+        Panel(
+            "[bold]🎴 MTG Card Aggregator[/bold]\nComplete Workflow",
+            border_style="cyan",
+            padding=(0, 1),
+        )
+    )
 
     steps_total = 4 - (1 if skip_download else 0) - (1 if skip_types else 0)
     current_step = 1
@@ -499,9 +505,9 @@ def run_internal(
     # Show header
     console.print(
         Panel(
-            "🎴 MTG Card Aggregator\nProcessing Scryfall data",
-            border_style="blue",
-            expand=False,
+            "[bold]🎴 MTG Card Aggregator[/bold]\nProcessing Scryfall data",
+            border_style="cyan",
+            padding=(0, 1),
         )
     )
     console.print(f"📥 Input:  [cyan]{input_file.name}[/cyan]")
@@ -683,9 +689,10 @@ def serve_and_open_browser(directory: Path):
     console.print(
         Panel(
             f"[green]✓[/green] Server running at [link={url}]{url}[/link]\n"
-            f"[yellow]Press Ctrl+C to stop[/yellow]",
+            f"[dim]Press Ctrl+C to stop[/dim]",
             title="🌐 HTTP Server",
             border_style="green",
+            padding=(0, 1),
         )
     )
 
