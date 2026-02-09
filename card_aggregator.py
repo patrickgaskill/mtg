@@ -188,10 +188,12 @@ def status():
 [bold]Size:[/bold] {size:.1f} MB
 [bold]Downloaded:[/bold] {modified.strftime("%Y-%m-%d %H:%M:%S")}
 [bold]Path:[/bold] {latest}"""
+        data_border = "green"
     else:
         data_info = "[yellow]No data downloaded yet. Run 'download' command.[/yellow]"
+        data_border = "yellow"
 
-    console.print(Panel(data_info, title="📦 Data Status", border_style="blue"))
+    console.print(Panel(data_info, title="📦 Data Status", border_style=data_border, padding=(0, 1)))
 
     # Check for type files
     creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
@@ -208,10 +210,12 @@ def status():
 
         types_info = f"""[bold]Creature Types:[/bold] {creature_count} types (updated {creature_modified.strftime("%Y-%m-%d")})
 [bold]Land Types:[/bold] {land_count} types (updated {land_modified.strftime("%Y-%m-%d")})"""
+        types_border = "green"
     else:
         types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
+        types_border = "yellow"
 
-    console.print(Panel(types_info, title="🏷️  Type Data", border_style="green"))
+    console.print(Panel(types_info, title="🏷️  Type Data", border_style=types_border, padding=(0, 1)))
 
     # Show aggregator count
     agg_count = len(create_all_aggregators())
@@ -384,7 +388,13 @@ def all(
     skip_types: Annotated[bool, typer.Option(help="Skip updating creature/land types")] = False,
 ):
     """🚀 Run complete workflow: download → update-types → process → serve"""
-    console.print(Panel.fit("🎴 MTG Card Aggregator - Complete Workflow", border_style="bold blue"))
+    console.print(
+        Panel(
+            "[bold]🎴 MTG Card Aggregator[/bold]\nComplete Workflow",
+            border_style="cyan",
+            padding=(0, 1),
+        )
+    )
 
     steps_total = 4 - (1 if skip_download else 0) - (1 if skip_types else 0)
     current_step = 1
@@ -498,10 +508,10 @@ def run_internal(
 
     # Show header
     console.print(
-        Panel.fit(
-            "🎴 MTG Card Aggregator",
-            subtitle="Processing Scryfall data",
-            border_style="blue",
+        Panel(
+            "[bold]🎴 MTG Card Aggregator[/bold]\nProcessing Scryfall data",
+            border_style="cyan",
+            padding=(0, 1),
         )
     )
     console.print(f"📥 Input:  [cyan]{input_file.name}[/cyan]")
@@ -683,9 +693,10 @@ def serve_and_open_browser(directory: Path):
     console.print(
         Panel(
             f"[green]✓[/green] Server running at [link={url}]{url}[/link]\n"
-            f"[yellow]Press Ctrl+C to stop[/yellow]",
+            f"[dim]Press Ctrl+C to stop[/dim]",
             title="🌐 HTTP Server",
             border_style="green",
+            padding=(0, 1),
         )
     )
 
