@@ -20,7 +20,6 @@ A Python-based Magic: The Gathering card data aggregation and reporting tool tha
 mtg/
 ├── aggregators/              # Modular aggregator classes
 │   ├── base.py              # Abstract base class for all aggregators
-│   ├── constants.py         # Shared constants (foil types, dates, filters)
 │   ├── count_aggregators.py # Generic counting, collector numbers
 │   ├── first_card_aggregators.py # First cards by power/toughness, mana cost
 │   ├── metadata_aggregators.py   # Illustrations, promo types, foil types
@@ -29,12 +28,17 @@ mtg/
 ├── templates/               # Jinja2 HTML templates
 │   ├── base_template.html  # AG Grid-based report page
 │   └── index_template.html # Landing page with report list
+├── tests/                   # Test suite
+│   ├── conftest.py         # Shared pytest fixtures
+│   ├── test_card_utils.py  # Tests for card utility functions
+│   └── test_type_updater.py # Tests for type fetching
 ├── data/                    # Data files (mostly gitignored)
 │   ├── downloads/          # Scryfall JSON files (gitignored)
 │   ├── manual/             # supercycles.yaml (tracked in git)
 │   └── output/             # Generated HTML reports (gitignored)
 ├── card_aggregator.py      # Main CLI application (Typer)
 ├── card_utils.py           # Utility functions for card processing
+├── constants.py            # Shared constants (foil types, dates, filters)
 ├── type_updater.py         # Scrapes MTG comprehensive rules for types
 ├── pyproject.toml          # uv package manager configuration
 └── README.md               # User-facing documentation
@@ -70,7 +74,7 @@ class Aggregator(ABC):
 
 ### Card Filtering
 
-Constants in `aggregators/constants.py` define what counts as "traditional" cards:
+Constants in `constants.py` define what counts as "traditional" cards:
 - `NON_TRADITIONAL_SET_TYPES` - memorabilia, funny sets
 - `NON_TRADITIONAL_LAYOUTS` - emblems, tokens
 - `NON_TRADITIONAL_BORDERS` - silver/gold borders
@@ -122,9 +126,11 @@ uv run python card_aggregator.py run [--input-file PATH] [--output-dir PATH] [--
 
 ### Updating Constants
 
-- Card filtering constants: `aggregators/constants.py`
-- Foil types and special sets: `aggregators/constants.py`
+- Card filtering constants: `constants.py` (root level)
+- Foil types and special sets: `constants.py` (root level)
 - Basic land types: `card_utils.py:BASIC_LAND_TYPES`
+
+**Note:** `constants.py` was moved from `aggregators/` to root level to fix circular import issues.
 
 ### Working with Supercycles
 
@@ -160,14 +166,41 @@ supercycles:
    - Runs daily via GitHub Actions
    - Downloads data, processes, deploys to GitHub Pages
 
-## Testing Considerations
+## Testing
 
-**Currently no tests exist.** When adding tests, consider:
+**Test Framework:** pytest with pytest-cov for coverage reporting
+
+**Current Coverage:**
+- `card_utils.py`: 100% coverage (8/8 functions)
+- `type_updater.py`: 94% coverage
+- Target coverage: 80-90% for all modules
+
+**Running Tests:**
+```bash
+# Run all tests
+uv run pytest
+
+# Run with coverage report
+uv run pytest --cov --cov-report=term-missing
+
+# Run specific test file
+uv run pytest tests/test_card_utils.py -v
+```
+
+**Test Patterns:**
+- Use test classes to group related tests
+- Name tests descriptively: `test_<function>_<scenario>`
+- Always add docstrings explaining what is being tested
+- Mock external dependencies (HTTP calls, file I/O)
+- Test edge cases: empty inputs, missing fields, special characters
+- Use fixtures for reusable test data (defined in `tests/conftest.py`)
+
+**When Adding Tests:**
 - Unit tests for card utility functions (`card_utils.py`)
 - Unit tests for type extraction and classification
 - Integration tests for aggregator processing
 - Mock Scryfall API responses for download tests
-- Test with edge cases (multi-faced cards, Changelings, special characters)
+- Test with edge cases (multi-faced cards, Changelings, special characters, "Time Lord")
 
 ## Dependencies
 
@@ -199,6 +232,13 @@ Package management via **uv** (fast pip/poetry replacement).
 5. **Memory Efficiency** - Use `ijson` for streaming large JSON files rather than loading entire file into memory.
 
 ## Recent Changes
+
+- **2026-02-09** - Phase 2: Added comprehensive test suite (PR #52):
+  - Created 59 test cases (43 for card_utils, 16 for type_updater)
+  - Achieved 100% coverage for card_utils.py, 94% for type_updater.py
+  - Moved constants.py from aggregators/ to root level to fix circular import
+  - Configured pytest with coverage reporting in pyproject.toml
+  - Added test fixtures in tests/conftest.py
 
 - **2025-11-20** - Code cleanup (commit a03c957):
   - Consolidated duplicate constants to `aggregators/constants.py`
@@ -243,10 +283,29 @@ Workflow file: `.github/workflows/publish_html.yml`
 - Keep aggregators focused on single responsibility
 - Use descriptive variable names
 - Follow existing patterns for consistency
+- **AVOID linting suppression comments (`# noqa`, `# type: ignore`, etc.) unless absolutely necessary**
+  - First try to fix the issue properly
+  - If suppression is unavoidable, add a clear comment explaining why
+  - Consider configuring rules globally in `pyproject.toml` instead of inline suppressions
 
 **Before committing:**
-- **ALWAYS format code with ruff:** `uv run ruff format .`
-- **ALWAYS typecheck with ty:** `uv run ty check`
+- **ALWAYS run tests:** `uv run pytest` - All tests must pass
+- **ALWAYS run typechecking:** `uv run ty check` - No type errors allowed
+- **ALWAYS run linting:** `uv run ruff check .` - Check for violations
+- **ALWAYS format code:** `uv run ruff format .` - Apply consistent formatting
 - Write clear commit messages following existing style
 - Reference issue numbers when applicable
 - Test locally with `uv run python card_aggregator.py run --serve`
+
+**Before creating PRs:**
+- **ALWAYS proactively review the PR yourself first**
+- Check `git diff main...your-branch --stat` to verify only intended changes are included
+- Ensure the branch is based on `main`, not another feature branch
+- Run all validation steps (tests, linting, typechecking) on the PR branch
+- Think defensively about issues that other reviewers might catch:
+  - Unrelated changes accidentally included
+  - Missing test coverage for edge cases
+  - Unclear test names or missing docstrings
+  - Code that could be simplified
+  - Missing error handling
+- Fix issues proactively before requesting review
