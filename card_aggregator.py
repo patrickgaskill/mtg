@@ -193,7 +193,9 @@ def status():
         data_info = "[yellow]No data downloaded yet. Run 'download' command.[/yellow]"
         data_border = "yellow"
 
-    console.print(Panel(data_info, title="📦 Data Status", border_style=data_border, padding=(0, 1)))
+    console.print(
+        Panel(data_info, title="📦 Data Status", border_style=data_border, padding=(0, 1))
+    )
 
     # Check for type files
     creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
@@ -215,7 +217,9 @@ def status():
         types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
         types_border = "yellow"
 
-    console.print(Panel(types_info, title="🏷️  Type Data", border_style=types_border, padding=(0, 1)))
+    console.print(
+        Panel(types_info, title="🏷️  Type Data", border_style=types_border, padding=(0, 1))
+    )
 
     # Show aggregator count
     agg_count = len(create_all_aggregators())

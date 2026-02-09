@@ -2,7 +2,7 @@ import re
 from datetime import date, datetime
 from typing import Any
 
-from aggregators.constants import (
+from constants import (
     NON_TRADITIONAL_BORDERS,
     NON_TRADITIONAL_LAYOUTS,
     NON_TRADITIONAL_SET_TYPES,

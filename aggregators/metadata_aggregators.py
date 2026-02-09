@@ -5,9 +5,9 @@ from datetime import datetime
 from typing import Any
 
 from card_utils import get_card_image_uri
+from constants import FOIL_PROMO_TYPES, MODERN_FOIL_CUTOFF_DATE, SPECIAL_FOIL_SETS
 
 from .base import Aggregator
-from .constants import FOIL_PROMO_TYPES, MODERN_FOIL_CUTOFF_DATE, SPECIAL_FOIL_SETS
 
 
 class CountCardIllustrationsBySetAggregator(Aggregator):
