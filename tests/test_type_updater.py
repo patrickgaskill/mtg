@@ -308,7 +308,7 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        # Use curly quote in rules text
+        # Use curly quote in rules text (as in actual MTG comprehensive rules)
         rules_text = """
         All other creature types are one word long: Advisor, Urza's.
         205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are Desert, Urza's. Of that list
@@ -322,9 +322,9 @@ class TestFetchAndParseTypes:
 
         creature_types, land_types = type_updater.fetch_and_parse_types()
 
-        # Check that types with apostrophes are parsed correctly
-        assert any("Urza's" in t or "Urza" in t for t in creature_types)
-        assert any("Urza's" in t or "Urza" in t for t in land_types)
+        # Check that curly quotes were normalized to straight quotes
+        assert "Urza's" in creature_types
+        assert "Urza's" in land_types
 
     @responses.activate
     def test_request_exception_on_rules_page(self):

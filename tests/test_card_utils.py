@@ -250,7 +250,7 @@ class TestIsTraditionalCard:
         )
 
 
-class TestGeneralizeManaCode:
+class TestGeneralizeManaCost:
     """Tests for generalize_mana_cost function."""
 
     def test_generic_mana(self):
