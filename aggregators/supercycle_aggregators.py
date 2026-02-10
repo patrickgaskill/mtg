@@ -94,9 +94,6 @@ class SupercycleTimeAggregator(Aggregator):
                 }
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        # Clear warnings before regenerating data to avoid duplicates
-        self.warnings.clear()
-
         today = date.today()
         result = []
 

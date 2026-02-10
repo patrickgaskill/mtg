@@ -20,6 +20,7 @@ from requests.exceptions import (
     Timeout,
 )
 from rich.console import Console
+from rich.markup import escape
 from rich.panel import Panel
 from rich.progress import (
     DownloadColumn,
@@ -193,7 +194,9 @@ def status():
         data_info = "[yellow]No data downloaded yet. Run 'download' command.[/yellow]"
         data_border = "yellow"
 
-    console.print(Panel(data_info, title="📦 Data Status", border_style=data_border, padding=(0, 1)))
+    console.print(
+        Panel(data_info, title="📦 Data Status", border_style=data_border, padding=(0, 1))
+    )
 
     # Check for type files
     creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
@@ -215,7 +218,9 @@ def status():
         types_info = "[yellow]Type files not found. Run 'update-types' command.[/yellow]"
         types_border = "yellow"
 
-    console.print(Panel(types_info, title="🏷️  Type Data", border_style=types_border, padding=(0, 1)))
+    console.print(
+        Panel(types_info, title="🏷️  Type Data", border_style=types_border, padding=(0, 1))
+    )
 
     # Show aggregator count
     agg_count = len(create_all_aggregators())
@@ -608,11 +613,15 @@ def run_internal(
 
     console.print(table)
 
-    # Display warnings from aggregators
+    # Display warnings from aggregators (deduplicated)
     all_warnings = []
+    seen_warnings = set()
     for agg in aggregators:
         for warning in agg.warnings:
-            all_warnings.append(f"[{agg.display_name}] {warning}")
+            warning_text = f"[{escape(agg.display_name)}] {warning}"
+            if warning_text not in seen_warnings:
+                seen_warnings.add(warning_text)
+                all_warnings.append(warning_text)
 
     if all_warnings:
         console.print()
