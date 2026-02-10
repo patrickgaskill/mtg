@@ -13,7 +13,7 @@ from card_utils import (
     is_traditional_card,
 )
 
-from .base import Aggregator, logger
+from .base import Aggregator
 
 
 class MaximalPrintedTypesAggregator(Aggregator):
@@ -73,7 +73,7 @@ this card without removing at least one existing type.
             with file_path.resolve().open("r") as f:
                 return set(line.strip() for line in f if line.strip())
         except OSError as e:
-            logger.error(f"Failed to load types from {file_path}: {e}")
+            self.warnings.append(f"Error: Failed to load types from {file_path}: {e}")
             return set()
 
     def process_card(self, card: dict[str, Any]) -> None:

@@ -608,6 +608,22 @@ def run_internal(
 
     console.print(table)
 
+    # Display warnings from aggregators
+    all_warnings = []
+    for agg in aggregators:
+        for warning in agg.warnings:
+            all_warnings.append(f"[{agg.display_name}] {warning}")
+
+    if all_warnings:
+        console.print()
+        warning_panel = Panel(
+            "\n".join(all_warnings),
+            title="⚠️  Warnings",
+            border_style="yellow",
+            padding=(1, 2),
+        )
+        console.print(warning_panel)
+
     console.print("\n[bold green]✓ Processing complete![/bold green]")
     console.print(f"[green]Output:[/green] {output_folder.resolve()}")
 
