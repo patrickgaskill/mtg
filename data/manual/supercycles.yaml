@@ -170,7 +170,6 @@ supercycles:
     finished: false # Needs a white titan to complete
     cards:
       - Phlage, Titan of Fire's Fury # Red/White
-      - Skotha, Titan of Eternal Dark # Blue/Black
       - Kroxa, Titan of Death's Hunger # Black/Red
       - Uro, Titan of Nature's Wrath # Blue/Green
 
@@ -216,7 +215,7 @@ supercycles:
       - Arcades Sabboth
       - Chromium
       - Nicol Bolas
-      - Vaevictus Asmadi
+      - Vaevictis Asmadi
       - Palladia-Mors
       - Piru, the Volatile
 
@@ -435,9 +434,9 @@ supercycles:
   - name: Kellan in the Omenpath Arc
     finished: true # Kellan's journey across planes
     cards:
-      - Kellan, the Fae-Blooded
-      - Kellan, Daring Traveler
-      - Kellan, Inquisitive Prodigy
+      - Kellan, the Fae-Blooded // Birthright Boon
+      - Kellan, Daring Traveler // Journey On
+      - Kellan, Inquisitive Prodigy // Tail the Suspect
       - Kellan, the Kid
 
   - name: Thirsts

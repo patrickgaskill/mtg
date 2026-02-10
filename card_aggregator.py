@@ -20,6 +20,7 @@ from requests.exceptions import (
     Timeout,
 )
 from rich.console import Console
+from rich.markup import escape
 from rich.panel import Panel
 from rich.progress import (
     DownloadColumn,
@@ -611,6 +612,26 @@ def run_internal(
         table.add_row(agg.display_name, str(len(data)))
 
     console.print(table)
+
+    # Display warnings from aggregators (deduplicated)
+    all_warnings = []
+    seen_warnings = set()
+    for agg in aggregators:
+        for warning in agg.warnings:
+            warning_text = f"[{escape(agg.display_name)}] {warning}"
+            if warning_text not in seen_warnings:
+                seen_warnings.add(warning_text)
+                all_warnings.append(warning_text)
+
+    if all_warnings:
+        console.print()
+        warning_panel = Panel(
+            "\n".join(all_warnings),
+            title="⚠️  Warnings",
+            border_style="yellow",
+            padding=(1, 2),
+        )
+        console.print(warning_panel)
 
     console.print("\n[bold green]✓ Processing complete![/bold green]")
     console.print(f"[green]Output:[/green] {output_folder.resolve()}")

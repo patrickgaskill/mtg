@@ -9,7 +9,7 @@ import yaml
 
 from card_utils import get_card_image_uri
 
-from .base import Aggregator, logger
+from .base import Aggregator
 
 
 def format_time_difference(days: int) -> str:
@@ -72,10 +72,10 @@ class SupercycleTimeAggregator(Aggregator):
                     data = json.load(f)
                 return {cycle["name"]: cycle for cycle in data["supercycles"]}
         except OSError as e:
-            logger.error(f"Failed to load supercycles from {file_path}: {e}")
+            self.warnings.append(f"Error: Failed to load supercycles from {file_path}: {e}")
             return {}
         except (yaml.YAMLError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to parse supercycles file {file_path}: {e}")
+            self.warnings.append(f"Error: Failed to parse supercycles file {file_path}: {e}")
             return {}
 
     def process_card(self, card: dict[str, Any]) -> None:
@@ -117,16 +117,13 @@ class SupercycleTimeAggregator(Aggregator):
                 if card_name in self.card_data:
                     card_objects.append(self.card_data[card_name])
                 else:
-                    logger.warning(
-                        "Supercycle '%s' references card '%s' with no processed data",
-                        name,
-                        card_name,
+                    self.warnings.append(
+                        f"Supercycle '{name}' references card '{card_name}' with no processed data"
                     )
 
             if not card_objects:
-                logger.error(
-                    "Supercycle '%s' has no valid card data; skipping from results",
-                    name,
+                self.warnings.append(
+                    f"Error: Supercycle '{name}' has no valid card data; skipping from results"
                 )
                 continue
 
