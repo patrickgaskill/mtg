@@ -209,8 +209,8 @@ class PromoTypesAggregator(Aggregator):
             },
             {"field": "promoTypes", "headerName": "Promo Types", "width": 320},
             {
-                "field": "count",
-                "headerName": "Count",
+                "field": "numPromoTypes",
+                "headerName": "Promo Type Count",
                 "type": "numericColumn",
                 "sort": "desc",
             },
@@ -232,7 +232,7 @@ class PromoTypesAggregator(Aggregator):
             {
                 "name": name,
                 "promoTypes": ", ".join(sorted(promo_types)),
-                "count": len(promo_types),
+                "numPromoTypes": len(promo_types),
                 **self.cards.get(name, {}),
             }
             for name, promo_types in self.data.items()
@@ -255,8 +255,8 @@ class FoilTypesAggregator(Aggregator):
             },
             {"field": "foilTypes", "headerName": "Foil Types", "width": 400},
             {
-                "field": "count",
-                "headerName": "Count",
+                "field": "numFoilTypes",
+                "headerName": "Foil Type Count",
                 "type": "numericColumn",
                 "sort": "desc",
             },
@@ -311,7 +311,7 @@ class FoilTypesAggregator(Aggregator):
             {
                 "name": name,
                 "foilTypes": ", ".join(sorted(foil_types)),
-                "count": len(foil_types),
+                "numFoilTypes": len(foil_types),
                 **self.cards.get(name, {}),
             }
             for name, foil_types in self.data.items()

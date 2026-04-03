@@ -36,6 +36,7 @@ from aggregators import (
     PromoTypesAggregator,
     SupercycleTimeAggregator,
 )
+from constants import REQUEST_TIMEOUT
 from type_updater import fetch_and_parse_types
 
 DATA_FOLDER = Path("data").resolve()
@@ -207,16 +208,17 @@ def status():
     else:
         logger.warning("Type files not found. Run 'update-types' command.")
 
-    agg_count = len(create_all_aggregators())
-    logger.info("Available aggregators: {} (use 'list' command to see details)", agg_count)
+    aggregators = create_all_aggregators()
+    logger.info("Available aggregators: {} (use 'list' command to see details)", len(aggregators))
 
 
 @app.command(name="list")
 def list_aggregators():
     """List all available aggregators"""
-    for agg in create_all_aggregators():
+    aggregators = create_all_aggregators()
+    for agg in aggregators:
         logger.info("{}: {} - {}", agg.name, agg.display_name, agg.description)
-    logger.info("Total: {} aggregators", len(create_all_aggregators()))
+    logger.info("Total: {} aggregators", len(aggregators))
 
 
 @app.command()
@@ -261,7 +263,7 @@ def download():
     logger.info("Downloading bulk data files from Scryfall...")
 
     try:
-        response = requests.get("https://api.scryfall.com/bulk-data", timeout=30)
+        response = requests.get("https://api.scryfall.com/bulk-data", timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
         bulk_data_files = response.json()["data"]
     except (ConnectionError, Timeout) as e:
@@ -289,12 +291,12 @@ def download():
         raise typer.Exit(1) from None
 
     download_url = default_cards_file["download_uri"]
-    file_name = Path(download_url).name
+    file_name = f"default-cards-{default_cards_file['updated_at'][:10]}.json"
     DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
     file_path = DOWNLOADED_DATA_FOLDER / file_name
 
     try:
-        response = requests.get(download_url, stream=True, timeout=30)
+        response = requests.get(download_url, stream=True, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
         logger.error("Network error while downloading file: {}", e)
@@ -345,6 +347,14 @@ def download():
         logger.error("Unexpected error during download: {}", e)
         if file_path.exists():
             file_path.unlink()
+        raise typer.Exit(1) from None
+
+    actual_size = file_path.stat().st_size
+    if actual_size != total_size:
+        logger.error(
+            "Download size mismatch: got {} bytes, expected {} bytes", actual_size, total_size
+        )
+        file_path.unlink()
         raise typer.Exit(1) from None
 
     logger.info("Download complete: {}", file_path)
@@ -485,13 +495,21 @@ def run_internal(
         return
 
     logger.info("Processing cards through {} aggregators...", len(aggregators))
+    error_count = 0
+    max_errors = 100
     with input_file.open("rb") as file:
         for card in ijson.items(file, "item"):
             for aggregator in aggregators:
                 try:
                     aggregator.process_card(card)
                 except Exception as e:
+                    error_count += 1
                     logger.error("Error processing card {}: {}", card.get("name", "Unknown"), e)
+                    if error_count >= max_errors:
+                        logger.critical("Too many processing errors ({}), aborting", error_count)
+                        raise typer.Exit(1) from e
+    if error_count > 0:
+        logger.warning("Completed with {} processing error(s)", error_count)
 
     template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
     template_env.globals.update(zip=zip)

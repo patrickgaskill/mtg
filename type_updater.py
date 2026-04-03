@@ -1,16 +1,19 @@
 import re
+import time
 from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup, Tag
 from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
+from constants import REQUEST_TIMEOUT, RULES_FILE_TIMEOUT
+
 
 def fetch_and_parse_types() -> tuple[set[str], set[str]]:
     url = "https://magic.wizards.com/en/rules"
 
     try:
-        response = requests.get(url, timeout=30)
+        response = requests.get(url, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
         raise ValueError(f"Network error while fetching rules page: {e}") from None
@@ -33,7 +36,7 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
     rules_text = None
     errors = []
 
-    for txt_link in txt_links:
+    for i, txt_link in enumerate(txt_links):
         # Handle relative URLs; assume hrefs are already properly URL-encoded
         # Type check: ensure we have a Tag object with an href attribute
         if not isinstance(txt_link, Tag):
@@ -44,20 +47,26 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
         txt_url = urljoin(url, href)
 
         try:
-            res = requests.get(txt_url, timeout=60)  # Longer timeout for large file
+            res = requests.get(txt_url, timeout=RULES_FILE_TIMEOUT)
             res.raise_for_status()
             res.encoding = "utf-8"
-            rules_text = res.text.replace("'", "'")
+            rules_text = (
+                res.text.replace("\u2018", "'")
+                .replace("\u2019", "'")
+                .replace("\u201c", '"')
+                .replace("\u201d", '"')
+            )
             break  # Success, stop trying other links
         except HTTPError as e:
             errors.append(f"HTTP error while downloading from {txt_url}: {e}")
-            continue  # Try next link
         except (ConnectionError, Timeout) as e:
             errors.append(f"Network error while downloading from {txt_url}: {e}")
-            continue  # Try next link
         except RequestException as e:
             errors.append(f"Request error while downloading from {txt_url}: {e}")
-            continue  # Try next link
+
+        # Brief delay before retrying next link
+        if i < len(txt_links) - 1:
+            time.sleep(1)
 
     if rules_text is None:
         error_summary = "\n".join(f"  - {error}" for error in errors)
@@ -98,5 +107,16 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
 
     # Handle land types, preserving "Power-Plant" and "Urza's"
     land_types = {type.strip().replace("and ", "") for type in land_types_text.split(",")}
+
+    if len(creature_types) < 50:
+        raise ValueError(
+            f"Suspiciously few creature types extracted ({len(creature_types)}); "
+            "the rules page format may have changed"
+        )
+    if len(land_types) < 5:
+        raise ValueError(
+            f"Suspiciously few land types extracted ({len(land_types)}); "
+            "the rules page format may have changed"
+        )
 
     return creature_types, land_types

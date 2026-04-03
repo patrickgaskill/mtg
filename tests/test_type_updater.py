@@ -6,6 +6,28 @@ from requests.exceptions import ConnectionError, RequestException, Timeout
 
 import type_updater
 
+# 50+ creature types to satisfy validation threshold
+SAMPLE_CREATURE_TYPES = (
+    "Advisor, Aetherborn, Ally, Angel, Antelope, Ape, Archer, Archon, Army, Assassin, "
+    "Assembly-Worker, Astartes, Atog, Aurochs, Avatar, Azra, Badger, Balloon, Barbarian, "
+    "Bard, Basilisk, Bat, Bear, Beast, Beholder, Berserker, Bird, Blinkmoth, Boar, Bringer, "
+    "Brushwagg, Camarid, Camel, Caribou, Carrier, Cat, Centaur, Cephalid, Chimera, Citizen, "
+    "Cleric, Clown, Cockatrice, Construct, Coward, Crab, Crocodile, Cyclops, Dauthi, "
+    "Demigod, Demon, Deserter, and Devil"
+)
+SAMPLE_LAND_TYPES = "Desert, Forest, Gate, Island, Lair, Locus, Mine, Mountain, Plains, Power-Plant, Swamp, Tower, and Urza's"
+
+
+def make_rules_text(creature_types=SAMPLE_CREATURE_TYPES, land_types=SAMPLE_LAND_TYPES):
+    """Build a mock comprehensive rules text with the given types."""
+    return f"""
+        Some text before...
+        All other creature types are one word long: {creature_types}.
+        More text...
+        205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are {land_types}. Of that list, the basic land types are Forest, Island, Mountain, Plains, and Swamp.
+        More text...
+    """
+
 
 class TestFetchAndParseTypes:
     """Tests for fetch_and_parse_types function."""
@@ -31,17 +53,10 @@ class TestFetchAndParseTypes:
         )
 
         # Mock the rules text file
-        rules_text = """
-        Some text before...
-        All other creature types are one word long: Advisor, Aetherborn, Ally, Angel.
-        More text...
-        205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are Desert, Forest, Gate, Island, and Mountain. Of that list, the basic land types are Forest, Island, Mountain, Plains, and Swamp.
-        More text...
-        """
         responses.add(
             responses.GET,
             "https://media.wizards.com/2023/downloads/MagicCompRules_20231117.txt",
-            body=rules_text,
+            body=make_rules_text(),
             status=200,
         )
 
@@ -53,6 +68,7 @@ class TestFetchAndParseTypes:
         assert "Aetherborn" in creature_types
         assert "Ally" in creature_types
         assert "Angel" in creature_types
+        assert len(creature_types) >= 50
 
         # Check land types
         assert "Desert" in land_types
@@ -145,14 +161,10 @@ class TestFetchAndParseTypes:
         )
 
         # Second TXT link succeeds
-        rules_text = """
-        All other creature types are one word long: Advisor.
-        205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are Desert. Of that list
-        """
         responses.add(
             responses.GET,
             "https://media.wizards.com/CompRules_working.txt",
-            body=rules_text,
+            body=make_rules_text(),
             status=200,
         )
 
@@ -243,9 +255,9 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        # Rules text missing land types section
-        rules_text = """
-        All other creature types are one word long: Advisor.
+        # Rules text with creature types but missing land types section
+        rules_text = f"""
+        All other creature types are one word long: {SAMPLE_CREATURE_TYPES}.
         Some text but no land types section.
         """
         responses.add(
@@ -275,14 +287,10 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        rules_text = """
-        All other creature types are one word long: Advisor.
-        205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are Desert. Of that list
-        """
         responses.add(
             responses.GET,
             "https://magic.wizards.com/downloads/CompRules.txt",
-            body=rules_text,
+            body=make_rules_text(),
             status=200,
         )
 
@@ -309,14 +317,13 @@ class TestFetchAndParseTypes:
         )
 
         # Use curly quote in rules text (as in actual MTG comprehensive rules)
-        rules_text = """
-        All other creature types are one word long: Advisor, Urza's.
-        205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are Desert, Urza's. Of that list
-        """
         responses.add(
             responses.GET,
             "https://media.wizards.com/CompRules.txt",
-            body=rules_text,
+            body=make_rules_text(
+                creature_types=SAMPLE_CREATURE_TYPES + ", Urza\u2019s",
+                land_types=SAMPLE_LAND_TYPES + ", Urza\u2019s",
+            ),
             status=200,
         )
 

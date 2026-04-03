@@ -1,5 +1,5 @@
 import re
-from datetime import date, datetime
+from datetime import date
 from typing import Any
 
 from constants import (
@@ -39,7 +39,7 @@ def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
         parsed collector number, and original collector number string.
     """
     released_at = card.get("released_at")
-    release_date = date.fromisoformat(released_at) if released_at else datetime.max.date()
+    release_date = date.fromisoformat(released_at) if released_at else date.max
 
     collector_number = card.get("collector_number", "")
     try:

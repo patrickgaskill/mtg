@@ -2,6 +2,10 @@
 
 from datetime import datetime
 
+# Network timeouts (seconds)
+REQUEST_TIMEOUT = 30
+RULES_FILE_TIMEOUT = 60
+
 # Card filtering constants
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}

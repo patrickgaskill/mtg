@@ -1,5 +1,6 @@
 """Aggregators for supercycle completion times."""
 
+import calendar
 import json
 from datetime import date
 from pathlib import Path
@@ -12,10 +13,21 @@ from card_utils import get_card_link_data
 from .base import Aggregator
 
 
-def format_time_difference(days: int) -> str:
-    """Format a time difference in days into a human-readable string."""
-    years, remaining_days = divmod(days, 365)
-    months, days = divmod(remaining_days, 30)
+def format_time_difference(start_date: date, end_date: date) -> str:
+    """Format a time difference between two dates into a human-readable string."""
+    years = end_date.year - start_date.year
+    months = end_date.month - start_date.month
+    days = end_date.day - start_date.day
+
+    if days < 0:
+        months -= 1
+        prev_month = end_date.month - 1 if end_date.month > 1 else 12
+        prev_year = end_date.year if end_date.month > 1 else end_date.year - 1
+        days += calendar.monthrange(prev_year, prev_month)[1]
+
+    if months < 0:
+        years -= 1
+        months += 12
 
     parts = []
     if years > 0:
@@ -107,9 +119,9 @@ class SupercycleTimeAggregator(Aggregator):
             earliest_date = min(card_dates)
             latest_date = max(card_dates) if cycle["finished"] else today
 
-            days = (latest_date - earliest_date).days
+            total_days = (latest_date - earliest_date).days
             status = "Finished" if cycle["finished"] else "Unfinished"
-            formatted_time = format_time_difference(days)
+            formatted_time = format_time_difference(earliest_date, latest_date)
 
             # Collect card objects with Scryfall data for tooltips
             card_objects = []
@@ -138,7 +150,7 @@ class SupercycleTimeAggregator(Aggregator):
                     "endDate": latest_date.strftime("%B %d, %Y")
                     if cycle["finished"]
                     else "Ongoing",
-                    "days": days,  # Store for sorting
+                    "days": total_days,  # Store for sorting
                 }
             )
 

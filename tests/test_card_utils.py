@@ -1,6 +1,6 @@
 """Tests for card_utils.py utility functions."""
 
-from datetime import date, datetime
+from datetime import date
 
 import card_utils
 
@@ -89,7 +89,7 @@ class TestGetSortKey:
         """Test handling of card without release date."""
         card = {"set": "woe", "collector_number": "123"}
         result = card_utils.get_sort_key(card)
-        assert result == (datetime.max.date(), "woe", 123, "123")
+        assert result == (date.max, "woe", 123, "123")
 
     def test_missing_collector_number(self):
         """Test handling of missing collector number."""
@@ -345,3 +345,51 @@ class TestGetCardImageUri:
         }
         result = card_utils.get_card_image_uri(card)
         assert result == "https://example.com/fallback.jpg"
+
+
+class TestGetCardLinkData:
+    """Tests for get_card_link_data function."""
+
+    def test_single_faced_card(self):
+        """Test link data extraction for single-faced card."""
+        card = {
+            "scryfall_uri": "https://scryfall.com/card/woe/123",
+            "image_uris": {"normal": "https://example.com/normal.jpg"},
+        }
+        result = card_utils.get_card_link_data(card)
+        assert result == {
+            "scryfall_uri": "https://scryfall.com/card/woe/123",
+            "image_uri": "https://example.com/normal.jpg",
+        }
+
+    def test_missing_scryfall_uri(self):
+        """Test handling of card without scryfall_uri."""
+        card = {"image_uris": {"normal": "https://example.com/normal.jpg"}}
+        result = card_utils.get_card_link_data(card)
+        assert result["scryfall_uri"] == ""
+        assert result["image_uri"] == "https://example.com/normal.jpg"
+
+    def test_missing_image_uris(self):
+        """Test handling of card without image URIs."""
+        card = {"scryfall_uri": "https://scryfall.com/card/woe/123"}
+        result = card_utils.get_card_link_data(card)
+        assert result["scryfall_uri"] == "https://scryfall.com/card/woe/123"
+        assert result["image_uri"] == ""
+
+    def test_empty_card(self):
+        """Test handling of card with no relevant fields."""
+        result = card_utils.get_card_link_data({})
+        assert result == {"scryfall_uri": "", "image_uri": ""}
+
+    def test_double_faced_card(self):
+        """Test link data extraction for double-faced card."""
+        card = {
+            "scryfall_uri": "https://scryfall.com/card/mid/1",
+            "card_faces": [
+                {"image_uris": {"normal": "https://example.com/front.jpg"}},
+                {"image_uris": {"normal": "https://example.com/back.jpg"}},
+            ],
+        }
+        result = card_utils.get_card_link_data(card)
+        assert result["scryfall_uri"] == "https://scryfall.com/card/mid/1"
+        assert result["image_uri"] == "https://example.com/front.jpg"

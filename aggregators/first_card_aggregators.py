@@ -69,6 +69,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             description,
         )
         self.data: dict[str, dict[str, Any]] = {}
+        self.original_mana_costs: dict[str, str] = {}
         self.count: dict[str, int] = defaultdict(int)
         self.column_defs = [
             {
@@ -99,6 +100,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             self.data[generalized_cost]
         ):
             self.data[generalized_cost] = card
+            self.original_mana_costs[generalized_cost] = mana_cost
 
     def process_card(self, card: dict[str, Any]) -> None:
         card_faces = card.get("card_faces")
@@ -119,7 +121,7 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
-                "originalManaCost": card.get("mana_cost", ""),
+                "originalManaCost": self.original_mana_costs.get(generalized_cost, ""),
                 "count": self.count[generalized_cost],
                 **get_card_link_data(card),
             }
