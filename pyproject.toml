@@ -4,7 +4,7 @@ version = "0.0.1"
 requires-python = ">= 3.12"
 dependencies = [
     "typer",
-    "rich",
+    "loguru",
     "ijson",
     "requests",
     "jinja2",
@@ -22,7 +22,7 @@ dev = [
     "ty>=0.0.14",
     "pytest>=8.0.0",
     "pytest-cov>=6.0.0",
-    "pytest-mock>=3.14.0",
+
     "responses>=0.25.0",
     "pre-commit>=4.0.0",
 ]
