@@ -1,77 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Magic: The Gathering Card Data Reports</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Data Reports</title>
     <style>
-      body {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        margin: 2rem;
-        line-height: 1.6;
+      :root {
+        --bg: #ffffff;
+        --bg-card: #f6f8fa;
+        --border: #d0d7de;
+        --text: #1f2328;
+        --text-muted: #656d76;
+        --link: #0969da;
+        --link-hover: #0550ae;
+        --accent: #0969da;
       }
 
-      .nav-select {
-        padding: 8px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background-color: #f8f8f8;
-        min-width: 200px;
-        margin-bottom: 2rem;
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #0d1117;
+          --bg-card: #161b22;
+          --border: #30363d;
+          --text: #e6edf3;
+          --text-muted: #8b949e;
+          --link: #58a6ff;
+          --link-hover: #79c0ff;
+          --accent: #58a6ff;
+        }
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        max-width: 960px;
+        margin: 0 auto;
+        line-height: 1.6;
+        color: var(--text);
+        background-color: var(--bg);
       }
 
       h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-top: 2rem;
         margin-bottom: 1rem;
+      }
+
+      p { color: var(--text-muted); }
+
+      .nav-select {
+        padding: 6px 12px;
+        font-size: 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background-color: var(--bg-card);
+        color: var(--text);
+        min-width: 200px;
+        margin-bottom: 1.5rem;
       }
 
       .reports-list {
         list-style-type: none;
         padding: 0;
-        margin: 2rem 0;
+        display: grid;
+        gap: 0.75rem;
       }
 
       .report-item {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 1rem;
-        padding: 1rem;
-        background-color: #f9f9f9;
-        transition: transform 0.1s ease-in-out;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        background-color: var(--bg-card);
+        transition: border-color 0.15s;
       }
 
       .report-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-color: var(--accent);
       }
 
       .report-item a {
-        color: #0066cc;
-        font-weight: bold;
+        color: var(--link);
+        font-weight: 600;
         text-decoration: none;
-        font-size: 1.2rem;
+        font-size: 1rem;
       }
 
       .report-item a:hover {
+        color: var(--link-hover);
         text-decoration: underline;
       }
 
       .report-description {
-        color: #444;
-        margin-top: 0.5rem;
+        color: var(--text-muted);
+        margin: 0.25rem 0 0 0;
+        font-size: 0.875rem;
       }
 
       .generation-info {
         margin-top: 3rem;
-        color: #666;
-        font-style: italic;
-        border-top: 1px solid #eee;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        border-top: 1px solid var(--border);
         padding-top: 1rem;
       }
+
+      .generation-info p { margin: 0; }
     </style>
   </head>
   <body>
     <main>
-      <h1>Magic: The Gathering Card Data Reports</h1>
+      <h1>MTG Card Data Reports</h1>
 
       <select class="nav-select" onchange="window.location.href=this.value">
         <option value="">Select a report...</option>
@@ -81,12 +128,10 @@
       </select>
 
       <p>
-        Welcome to the Magic: The Gathering card data reports. This site
-        provides various aggregated data reports about Magic: The Gathering
-        cards.
+        Aggregated data reports generated from the Scryfall card database.
       </p>
 
-      <h2>Available Reports</h2>
+      <h2>Reports</h2>
       <ul class="reports-list">
         {% for link in nav_links %}
         <li class="report-item">
@@ -97,10 +142,7 @@
       </ul>
 
       <div class="generation-info">
-        <p>
-          The data used in these reports is based on the Scryfall database as of
-          {{ generation_date }}.
-        </p>
+        <p>Data from Scryfall as of {{ generation_date }}.</p>
       </div>
     </main>
   </body>
