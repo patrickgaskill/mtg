@@ -31,6 +31,7 @@ from aggregators import (
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
     MaximalTypesWithEffectsAggregator,
+    MostPrintingsSameArtAggregator,
     PromoTypesAggregator,
     SupercycleTimeAggregator,
 )
@@ -157,6 +158,9 @@ This helps identify which printings have multiple finish options available.
         ),
         FirstCardByGeneralizedManaCostAggregator(
             description="First card for each generalized mana cost"
+        ),
+        MostPrintingsSameArtAggregator(
+            description="Cards with the most printings using the same illustration"
         ),
     ]
 

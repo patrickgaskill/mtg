@@ -63,6 +63,74 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         ]
 
 
+class MostPrintingsSameArtAggregator(Aggregator):
+    """Find cards with the most printings that all use the same illustration."""
+
+    def __init__(self, description: str = ""):
+        super().__init__(
+            "most_printings_same_art",
+            "Most Printings with Same Art",
+            description,
+            explanation="""
+## What does this report show?
+
+This report finds cards that have been printed the most times while always using
+the **exact same piece of art** across every printing. For example, a card printed
+in 30 different sets but always with the same illustration would rank highly here.
+
+Cards that have received alternate art in any printing are excluded — every printing
+must share a single `illustration_id` in the Scryfall data.
+
+Inspired by [this Reddit discussion](https://www.reddit.com/r/magicTCG/comments/1sbk27u/)
+about Krosan Tusker's many printings with the same art.
+            """,
+        )
+        self.printings: dict[str, int] = defaultdict(int)
+        self.illustrations: dict[str, set[str]] = defaultdict(set)
+        self.cards: dict[str, dict[str, Any]] = {}
+        self.column_defs = [
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 250,
+                "cellRenderer": "cardLinkRenderer",
+            },
+            {
+                "field": "printings",
+                "headerName": "Printings",
+                "width": 110,
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
+
+    def process_card(self, card: dict[str, Any]) -> None:
+        name = card.get("name")
+        illustration_id = card.get("illustration_id")
+        if name is None:
+            return
+        self.printings[name] += 1
+        if illustration_id is not None:
+            self.illustrations[name].add(illustration_id)
+        if name not in self.cards:
+            self.cards[name] = get_card_link_data(card)
+
+    def get_sorted_data(self) -> list[dict[str, Any]]:
+        return sorted(
+            [
+                {
+                    "name": name,
+                    "printings": count,
+                    **self.cards.get(name, {}),
+                }
+                for name, count in self.printings.items()
+                if len(self.illustrations.get(name, set())) == 1
+            ],
+            key=lambda x: x["printings"],
+            reverse=True,
+        )
+
+
 class PromoTypesAggregator(Aggregator):
     """Aggregate promo types by card name."""
 
