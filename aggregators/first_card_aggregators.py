@@ -92,15 +92,25 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
             {"field": "count", "headerName": "Count", "width": 100, "type": "numericColumn"},
         ]
 
+    def _process_mana_cost(self, mana_cost: str, card: dict[str, Any]) -> None:
+        generalized_cost = generalize_mana_cost(mana_cost)
+        self.count[generalized_cost] += 1
+        if generalized_cost not in self.data or get_sort_key(card) < get_sort_key(
+            self.data[generalized_cost]
+        ):
+            self.data[generalized_cost] = card
+
     def process_card(self, card: dict[str, Any]) -> None:
-        mana_cost = card.get("mana_cost")
-        if mana_cost:
-            generalized_cost = generalize_mana_cost(mana_cost)
-            self.count[generalized_cost] += 1
-            if generalized_cost not in self.data or get_sort_key(card) < get_sort_key(
-                self.data[generalized_cost]
-            ):
-                self.data[generalized_cost] = card
+        card_faces = card.get("card_faces")
+        if card_faces:
+            for face in card_faces:
+                mana_cost = face.get("mana_cost")
+                if mana_cost:
+                    self._process_mana_cost(mana_cost, card)
+        else:
+            mana_cost = card.get("mana_cost")
+            if mana_cost:
+                self._process_mana_cost(mana_cost, card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
