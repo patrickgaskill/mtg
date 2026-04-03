@@ -119,6 +119,20 @@
         padding-top: 8px;
         padding-bottom: 8px;
       }
+
+      .filter-toggles {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .filter-toggles label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
     </style>
   </head>
   <body>
@@ -135,6 +149,17 @@
       {% if explanation %}
       <div class="explanation">
         {{ explanation | safe }}
+      </div>
+      {% endif %}
+
+      {% if type_filters %}
+      <div class="filter-toggles">
+        {% for f in type_filters %}
+        <label>
+          <input type="checkbox" class="type-filter" data-field="{{ f.field }}" data-keyword="{{ f.keyword }}" checked>
+          Show {{ f.label }}
+        </label>
+        {% endfor %}
       </div>
       {% endif %}
 
@@ -322,6 +347,55 @@
           params.api.autoSizeAllColumns(false);
         }
       };
+
+      {% if type_filters %}
+      // External filter state from toggle checkboxes
+      const typeFilterState = {};
+      document.querySelectorAll('.type-filter').forEach(cb => {
+        const key = cb.dataset.field + ':' + cb.dataset.keyword;
+        typeFilterState[key] = true;
+        cb.addEventListener('change', () => {
+          typeFilterState[key] = cb.checked;
+          gridApi.onFilterChanged();
+
+          // Update URL params for sharing
+          const params = new URLSearchParams(window.location.search);
+          for (const [k, v] of Object.entries(typeFilterState)) {
+            if (!v) params.set(k, '0');
+            else params.delete(k);
+          }
+          const qs = params.toString();
+          const newUrl = window.location.pathname + (qs ? '?' + qs : '');
+          history.replaceState(null, '', newUrl);
+        });
+      });
+
+      // Restore filter state from URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      for (const [key, val] of urlParams.entries()) {
+        if (val === '0' && key in typeFilterState) {
+          typeFilterState[key] = false;
+          const cb = document.querySelector(`.type-filter[data-field="${key.split(':')[0]}"][data-keyword="${key.split(':')[1]}"]`);
+          if (cb) cb.checked = false;
+        }
+      }
+
+      gridOptions.isExternalFilterPresent = () => {
+        return Object.values(typeFilterState).some(v => !v);
+      };
+
+      gridOptions.doesExternalFilterPass = (node) => {
+        for (const [key, shown] of Object.entries(typeFilterState)) {
+          if (shown) continue;
+          const [field, keyword] = key.split(':');
+          const value = node.data[field] || '';
+          // Match whole word: "Plane" shouldn't match "Planeswalker"
+          const regex = new RegExp(`\\b${keyword}\\b`);
+          if (regex.test(value)) return false;
+        }
+        return true;
+      };
+      {% endif %}
 
       const gridDiv = document.querySelector('#myGrid');
       const gridApi = agGrid.createGrid(gridDiv, gridOptions);

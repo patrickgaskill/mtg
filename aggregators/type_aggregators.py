@@ -65,6 +65,10 @@ this card without removing at least one existing type.
             {"field": "set", "headerName": "Set", "width": 80},
             {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
+        self.type_filters = [
+            {"field": "types", "label": "Planes", "keyword": "Plane"},
+            {"field": "types", "label": "Planeswalkers", "keyword": "Planeswalker"},
+        ]
         self.all_creature_types = self.load_types(all_creature_types_file)
         self.all_land_types = self.load_types(all_land_types_file)
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
@@ -202,6 +206,10 @@ This shows the theoretical maximum types achievable through card combinations!
             },
             {"field": "set", "headerName": "Set", "width": 80},
             {"field": "releaseDate", "headerName": "Release Date", "width": 120},
+        ]
+        self.type_filters = [
+            {"field": "originalTypes", "label": "Planes", "keyword": "Plane"},
+            {"field": "originalTypes", "label": "Planeswalkers", "keyword": "Planeswalker"},
         ]
 
     def define_global_effects(self):

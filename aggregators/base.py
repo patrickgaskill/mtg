@@ -25,6 +25,7 @@ class Aggregator(ABC):
         self.explanation = explanation
         self.column_defs = []
         self.warnings: list[str] = []
+        self.type_filters: list[dict[str, str]] = []
 
     @abstractmethod
     def process_card(self, card: dict[str, Any]) -> None:
@@ -62,6 +63,7 @@ class Aggregator(ABC):
             nav_links=nav_links,
             data_file=json_filename,
             column_defs=self.column_defs,
+            type_filters=self.type_filters,
         )
 
         output_file = output_folder / f"{self.name}.html"
