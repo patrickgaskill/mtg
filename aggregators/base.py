@@ -1,16 +1,12 @@
 """Base aggregator class and shared utilities."""
 
 import json
-import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
 import markdown
 from jinja2 import Template
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class Aggregator(ABC):
@@ -28,6 +24,7 @@ class Aggregator(ABC):
         self.description = description
         self.explanation = explanation
         self.column_defs = []
+        self.warnings: list[str] = []
 
     @abstractmethod
     def process_card(self, card: dict[str, Any]) -> None:
