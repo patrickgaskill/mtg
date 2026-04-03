@@ -44,8 +44,6 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
             self.data[key] = card
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        # Scryfall data (scryfall_uri, image_uri) added directly to output.
-        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "power": power,
@@ -105,8 +103,6 @@ class FirstCardByGeneralizedManaCostAggregator(Aggregator):
                 self.data[generalized_cost] = card
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        # Scryfall data (scryfall_uri, image_uri) added directly to output.
-        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "generalizedManaCost": generalized_cost,

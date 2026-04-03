@@ -45,10 +45,12 @@ this card without removing at least one existing type.
 - Only traditional Magic cards are included (no silver-bordered, tokens, etc.)
 
 **Important notes:**
-- This differs from "Maximal Types with Global Effects" which considers what types cards could have when affected by other cards in play
-- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules.
-  During this time, cards with Changeling or similar effects may not show the new types in this report.
-  Types are updated via the `update-types` command.
+- This differs from "Maximal Types with Global Effects" which considers what types
+  cards could have when affected by other cards in play
+- **Type lag:** There may be a delay between when new creature or land types appear
+  on cards and when they're officially added to the comprehensive rules. During this
+  time, cards with Changeling or similar effects may not show the new types in this
+  report. Types are updated via the `update-types` command.
             """,
         )
         self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
@@ -71,7 +73,7 @@ this card without removing at least one existing type.
         """Load types from a text file."""
         try:
             with file_path.resolve().open("r") as f:
-                return set(line.strip() for line in f if line.strip())
+                return {line.strip() for line in f if line.strip()}
         except OSError as e:
             self.warnings.append(f"Error: Failed to load types from {file_path}: {e}")
             return set()
@@ -108,14 +110,13 @@ this card without removing at least one existing type.
             return
 
         is_maximal = all(
-            not set(type_key).issubset(set(existing_key))
-            for existing_key in self.maximal_types.keys()
+            not set(type_key).issubset(set(existing_key)) for existing_key in self.maximal_types
         )
 
         if is_maximal:
             keys_to_remove = [
                 existing_key
-                for existing_key in self.maximal_types.keys()
+                for existing_key in self.maximal_types
                 if set(existing_key).issubset(set(type_key))
             ]
             for key in keys_to_remove:
@@ -123,8 +124,6 @@ this card without removing at least one existing type.
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        # Scryfall data (scryfall_uri, image_uri) added directly to output.
-        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "types": card.get("type_line", ""),
@@ -185,7 +184,11 @@ The following cards and their effects are included in the calculation:
 This shows the theoretical maximum types achievable through card combinations!
 
 **Important note:**
-- **Type lag:** There may be a delay between when new creature or land types appear on cards and when they're officially added to the comprehensive rules. Cards that grant "all creature types" or "all land types" will only include types that have been updated via the `update-types` command, which fetches the official type lists from the comprehensive rules
+- **Type lag:** There may be a delay between when new creature or land types appear
+  on cards and when they're officially added to the comprehensive rules. Cards that
+  grant "all creature types" or "all land types" will only include types that have
+  been updated via the `update-types` command, which fetches the official type lists
+  from the comprehensive rules.
         """
         self.global_effects = self.define_global_effects()
         self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
@@ -270,14 +273,13 @@ This shows the theoretical maximum types achievable through card combinations!
             return
 
         is_maximal = all(
-            not set(type_key).issubset(set(existing_key))
-            for existing_key in self.maximal_types.keys()
+            not set(type_key).issubset(set(existing_key)) for existing_key in self.maximal_types
         )
 
         if is_maximal:
             keys_to_remove = [
                 existing_key
-                for existing_key in self.maximal_types.keys()
+                for existing_key in self.maximal_types
                 if set(existing_key).issubset(set(type_key))
             ]
             for key in keys_to_remove:
@@ -285,8 +287,6 @@ This shows the theoretical maximum types achievable through card combinations!
             self.maximal_types[type_key] = parent_card
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        # Scryfall data (scryfall_uri, image_uri) added directly to output.
-        # Empty strings for missing data are handled by JavaScript renderer fallback.
         return [
             {
                 "originalTypes": card.get("type_line", ""),

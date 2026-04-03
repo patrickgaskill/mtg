@@ -36,7 +36,11 @@ class SupercycleTimeAggregator(Aggregator):
             name="supercycle_completion_time",
             display_name="Supercycle Completion Times",
             description="Time to complete supercycles",
-            explanation='Learn more about supercycles on the <a href="https://mtg.fandom.com/wiki/Mega_mega_cycle" target="_blank" rel="noopener noreferrer">MTG Wiki</a>.',
+            explanation=(
+                "Learn more about supercycles on the"
+                ' <a href="https://mtg.fandom.com/wiki/Mega_mega_cycle"'
+                ' target="_blank" rel="noopener noreferrer">MTG Wiki</a>.'
+            ),
         )
         self.supercycles = self.load_supercycles(supercycles_file)
         self.card_dates: dict[str, date] = {}

@@ -13,16 +13,16 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
-        raise ValueError(f"Network error while fetching rules page: {e}")
+        raise ValueError(f"Network error while fetching rules page: {e}") from None
     except HTTPError as e:
-        raise ValueError(f"HTTP error while fetching rules page: {e}")
+        raise ValueError(f"HTTP error while fetching rules page: {e}") from None
     except RequestException as e:
-        raise ValueError(f"Request error while fetching rules page: {e}")
+        raise ValueError(f"Request error while fetching rules page: {e}") from None
 
     try:
         soup = BeautifulSoup(response.text, "html.parser")
     except Exception as e:
-        raise ValueError(f"Error parsing rules page HTML: {e}")
+        raise ValueError(f"Error parsing rules page HTML: {e}") from None
 
     # Find all links to txt versions of the rules
     txt_links = soup.find_all("a", href=re.compile(r".*CompRules.*\.txt$"))
@@ -62,7 +62,8 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
     if rules_text is None:
         error_summary = "\n".join(f"  - {error}" for error in errors)
         raise ValueError(
-            f"Failed to download comprehensive rules after trying {len(txt_links)} link(s):\n{error_summary}"
+            f"Failed to download comprehensive rules after trying"
+            f" {len(txt_links)} link(s):\n{error_summary}"
         )
 
     # Extract creature types
@@ -84,7 +85,9 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
 
     # Extract land types
     land_types_match = re.search(
-        r"205\.3i Lands have their own unique set of subtypes; these subtypes are called land types\. The land types are (.*?)\. Of that list",
+        r"205\.3i Lands have their own unique set of subtypes;"
+        r" these subtypes are called land types\."
+        r" The land types are (.*?)\. Of that list",
         rules_text,
         re.DOTALL,
     )

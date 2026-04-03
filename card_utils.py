@@ -24,7 +24,7 @@ def extract_types(card: dict[str, Any]) -> set[str]:
     """
     text = card.get("type_line", "").replace("Time Lord", "Time-Lord")
     words = re.findall(r"\b[\w\-']+\b", text)
-    return set(word.replace("Time-Lord", "Time Lord") for word in words)
+    return {word.replace("Time-Lord", "Time Lord") for word in words}
 
 
 def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
@@ -109,9 +109,7 @@ def is_traditional_card(
         return False
     if card.get("set") == "past":
         return False
-    if card.get("border_color") in non_traditional_borders:
-        return False
-    return True
+    return card.get("border_color") not in non_traditional_borders
 
 
 def generalize_mana_cost(mana_cost: str) -> str:

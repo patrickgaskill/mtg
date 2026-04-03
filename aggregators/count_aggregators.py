@@ -50,18 +50,13 @@ class CountAggregator(Aggregator):
             return
         key = tuple(key_values)
         self.data[key] += len(card.get("finishes", [])) if self.count_finishes else 1
-        # Keep minimal Scryfall data to reduce memory usage (only when "name" is a key field)
-        # Note: Stores first encountered printing's link/image. For count aggregators,
-        # showing any printing is acceptable since the focus is on counts, not specific versions.
-        # Empty strings are stored for missing data - this is intentional as the JavaScript
-        # CardLinkRenderer handles null/empty values by falling back to Scryfall search.
         if self.needs_card_links and key not in self.cards:
             self.cards[key] = get_card_link_data(card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         result = []
         for key, count in self.data.items():
-            row_data = {**dict(zip(self.key_fields, key)), "count": count}
+            row_data = {**dict(zip(self.key_fields, key, strict=False)), "count": count}
             # Add scryfall data if available
             if key in self.cards:
                 row_data.update(self.cards[key])
