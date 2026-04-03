@@ -32,6 +32,7 @@ from aggregators import (
     MaximalPrintedTypesAggregator,
     MaximalTypesWithEffectsAggregator,
     MostPrintingsSameArtAggregator,
+    MostUniqueIllustrationsAggregator,
     PromoTypesAggregator,
     SupercycleTimeAggregator,
 )
@@ -161,6 +162,9 @@ This helps identify which printings have multiple finish options available.
         ),
         MostPrintingsSameArtAggregator(
             description="Cards with the most printings using the same illustration"
+        ),
+        MostUniqueIllustrationsAggregator(
+            description="Cards with the most unique illustrations across printings"
         ),
     ]
 

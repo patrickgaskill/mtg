@@ -131,6 +131,68 @@ about Krosan Tusker's many printings with the same art.
         )
 
 
+class MostUniqueIllustrationsAggregator(Aggregator):
+    """Find cards with the most unique illustrations across all printings."""
+
+    def __init__(self, description: str = ""):
+        super().__init__(
+            "most_unique_illustrations",
+            "Most Unique Illustrations",
+            description,
+            explanation="""
+## What does this report show?
+
+This report finds cards that have been illustrated by the most different artists
+or received the most alternate art treatments across all their printings. Each
+unique `illustration_id` in the Scryfall data represents a distinct piece of art.
+
+Cards that have been reprinted many times with new art (like Lightning Bolt or
+Birds of Paradise) will rank highly here.
+            """,
+        )
+        self.illustrations: dict[str, set[str]] = defaultdict(set)
+        self.cards: dict[str, dict[str, Any]] = {}
+        self.column_defs = [
+            {
+                "field": "name",
+                "headerName": "Name",
+                "width": 250,
+                "cellRenderer": "cardLinkRenderer",
+            },
+            {
+                "field": "illustrations",
+                "headerName": "Unique Illustrations",
+                "width": 160,
+                "type": "numericColumn",
+                "sort": "desc",
+            },
+        ]
+
+    def process_card(self, card: dict[str, Any]) -> None:
+        name = card.get("name")
+        illustration_id = card.get("illustration_id")
+        if name is None or illustration_id is None:
+            return
+        self.illustrations[name].add(illustration_id)
+        if name not in self.cards:
+            self.cards[name] = get_card_link_data(card)
+
+    def get_sorted_data(self) -> list[dict[str, Any]]:
+        return sorted(
+            [
+                {
+                    "name": name,
+                    "illustrations": len(ids),
+                    **self.cards.get(name, {}),
+                }
+                for name, ids in self.illustrations.items()
+                if len(ids) > 1
+            ],
+            key=lambda x: x["illustrations"],
+            reverse=True,
+        )
+
+
 class PromoTypesAggregator(Aggregator):
     """Aggregate promo types by card name."""
 

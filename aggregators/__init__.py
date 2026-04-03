@@ -10,6 +10,7 @@ from .metadata_aggregators import (
     CountCardIllustrationsBySetAggregator,
     FoilTypesAggregator,
     MostPrintingsSameArtAggregator,
+    MostUniqueIllustrationsAggregator,
     PromoTypesAggregator,
 )
 from .supercycle_aggregators import SupercycleTimeAggregator
@@ -29,6 +30,7 @@ __all__ = [
     "MaximalPrintedTypesAggregator",
     "MaximalTypesWithEffectsAggregator",
     "MostPrintingsSameArtAggregator",
+    "MostUniqueIllustrationsAggregator",
     "PromoTypesAggregator",
     "SupercycleTimeAggregator",
 ]
