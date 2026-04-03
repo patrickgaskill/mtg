@@ -90,6 +90,14 @@
         font-size: 0.9rem;
       }
 
+      .explanation a {
+        color: var(--link);
+      }
+
+      .explanation a:hover {
+        color: var(--link-hover);
+      }
+
       .explanation h2 {
         margin-top: 0;
         font-size: 1.1rem;
@@ -140,7 +148,12 @@
         padding: 0;
       }
 
-      .tippy-box[data-theme~='card'] .tippy-content { padding: 0; }
+      .tippy-box[data-theme~='card'] .tippy-content {
+        padding: 0;
+        background: #171717;
+        border-radius: 13px;
+        overflow: hidden;
+      }
 
       .card-tooltip-image {
         display: block;
@@ -148,6 +161,7 @@
         height: auto;
         border-radius: 13px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        background: transparent;
       }
 
       .compact-cell {
