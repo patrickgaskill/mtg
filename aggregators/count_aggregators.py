@@ -3,7 +3,7 @@
 from collections import defaultdict
 from typing import Any
 
-from card_utils import get_card_image_uri
+from card_utils import get_card_link_data
 
 from .base import Aggregator
 
@@ -56,10 +56,7 @@ class CountAggregator(Aggregator):
         # Empty strings are stored for missing data - this is intentional as the JavaScript
         # CardLinkRenderer handles null/empty values by falling back to Scryfall search.
         if self.needs_card_links and key not in self.cards:
-            self.cards[key] = {
-                "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": get_card_image_uri(card),
-            }
+            self.cards[key] = get_card_link_data(card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         result = []

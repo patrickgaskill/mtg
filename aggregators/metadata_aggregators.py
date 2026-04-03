@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any
 
-from card_utils import get_card_image_uri
+from card_utils import get_card_link_data
 from constants import FOIL_PROMO_TYPES, MODERN_FOIL_CUTOFF_DATE, SPECIAL_FOIL_SETS
 
 from .base import Aggregator
@@ -54,10 +54,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
         # Empty strings are stored for missing data - the JavaScript renderer handles this
         # by falling back to Scryfall search.
         if key not in self.cards:
-            self.cards[key] = {
-                "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": get_card_image_uri(card),
-            }
+            self.cards[key] = get_card_link_data(card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
@@ -107,10 +104,7 @@ class PromoTypesAggregator(Aggregator):
             # Shows any representative printing; promo type aggregation is the focus, not specific versions.
             # Empty strings for missing data are handled by JavaScript renderer fallback.
             if name not in self.cards:
-                self.cards[name] = {
-                    "scryfall_uri": card.get("scryfall_uri", ""),
-                    "image_uri": get_card_image_uri(card),
-                }
+                self.cards[name] = get_card_link_data(card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
@@ -158,10 +152,7 @@ class FoilTypesAggregator(Aggregator):
         # Note: Stores first encountered printing's link/image per card name.
         # Shows any representative printing; foil type aggregation is the focus, not specific versions.
         if name not in self.cards:
-            self.cards[name] = {
-                "scryfall_uri": card.get("scryfall_uri", ""),
-                "image_uri": get_card_image_uri(card),
-            }
+            self.cards[name] = get_card_link_data(card)
 
         # Handle special foil sets
         if set_ in SPECIAL_FOIL_SETS:

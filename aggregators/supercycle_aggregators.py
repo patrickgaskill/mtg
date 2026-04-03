@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from card_utils import get_card_image_uri
+from card_utils import get_card_link_data
 
 from .base import Aggregator
 
@@ -87,11 +87,7 @@ class SupercycleTimeAggregator(Aggregator):
                 self.card_dates[name] = card_date
                 # Keep minimal Scryfall data to reduce memory usage.
                 # Empty strings for missing data are handled by JavaScript renderer fallback.
-                self.card_data[name] = {
-                    "name": name,
-                    "scryfall_uri": card.get("scryfall_uri", ""),
-                    "image_uri": get_card_image_uri(card),
-                }
+                self.card_data[name] = {"name": name, **get_card_link_data(card)}
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         today = date.today()

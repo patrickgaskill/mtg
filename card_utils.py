@@ -181,3 +181,11 @@ def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
         return image_uris.get(size, "")
 
     return ""
+
+
+def get_card_link_data(card: dict[str, Any]) -> dict[str, str]:
+    """Extract Scryfall URI and image URI from a card for use in report links."""
+    return {
+        "scryfall_uri": card.get("scryfall_uri", ""),
+        "image_uri": get_card_image_uri(card),
+    }
