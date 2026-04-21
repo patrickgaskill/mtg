@@ -25,8 +25,13 @@ from aggregators import (
     Aggregator,
     CountAggregator,
     CountCardIllustrationsBySetAggregator,
+    CreatureTypeCombinationCountAggregator,
+    CreatureTypeCountAggregator,
+    FirstCardByCreatureTypeAggregator,
     FirstCardByGeneralizedManaCostAggregator,
     FirstCardByPowerToughnessAggregator,
+    FirstCreatureTypeByColorAggregator,
+    FirstLegendaryByCreatureTypeAggregator,
     FoilTypesAggregator,
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
@@ -34,7 +39,9 @@ from aggregators import (
     MostPrintingsSameArtAggregator,
     MostUniqueIllustrationsAggregator,
     PromoTypesAggregator,
+    RulesOnlyCreatureTypesAggregator,
     SupercycleTimeAggregator,
+    TokenOnlyCreatureTypesAggregator,
 )
 from constants import REQUEST_TIMEOUT
 from type_updater import fetch_and_parse_types
@@ -166,6 +173,24 @@ This helps identify which printings have multiple finish options available.
         ),
         MostUniqueIllustrationsAggregator(
             description="Cards with the most unique illustrations across printings"
+        ),
+        CreatureTypeCountAggregator(description="Count of cards for each creature subtype"),
+        FirstCardByCreatureTypeAggregator(
+            description="First card printed for each creature subtype"
+        ),
+        CreatureTypeCombinationCountAggregator(
+            description="Unique creature subtype combinations and their first cards"
+        ),
+        FirstCreatureTypeByColorAggregator(
+            description="First card for each creature type in each color"
+        ),
+        FirstLegendaryByCreatureTypeAggregator(
+            description="First legendary creature for each creature subtype"
+        ),
+        TokenOnlyCreatureTypesAggregator(description="Creature types that only exist on tokens"),
+        RulesOnlyCreatureTypesAggregator(
+            all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
+            description="Creature types in the rules but never on any card",
         ),
     ]
 
@@ -623,6 +648,7 @@ def serve_and_open_browser(directory: Path):
 
     os.chdir(directory.resolve())
 
+    socketserver.TCPServer.allow_reuse_address = True
     httpd = socketserver.TCPServer(("", port), handler)
 
     url = f"http://localhost:{port}/index.html"

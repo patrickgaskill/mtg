@@ -2,6 +2,15 @@
 
 from .base import Aggregator
 from .count_aggregators import CountAggregator, MaxCollectorNumberBySetAggregator
+from .creature_type_aggregators import (
+    CreatureTypeCombinationCountAggregator,
+    CreatureTypeCountAggregator,
+    FirstCardByCreatureTypeAggregator,
+    FirstCreatureTypeByColorAggregator,
+    FirstLegendaryByCreatureTypeAggregator,
+    RulesOnlyCreatureTypesAggregator,
+    TokenOnlyCreatureTypesAggregator,
+)
 from .first_card_aggregators import (
     FirstCardByGeneralizedManaCostAggregator,
     FirstCardByPowerToughnessAggregator,
@@ -23,8 +32,13 @@ __all__ = [
     "Aggregator",
     "CountAggregator",
     "CountCardIllustrationsBySetAggregator",
+    "CreatureTypeCombinationCountAggregator",
+    "CreatureTypeCountAggregator",
+    "FirstCardByCreatureTypeAggregator",
     "FirstCardByGeneralizedManaCostAggregator",
     "FirstCardByPowerToughnessAggregator",
+    "FirstCreatureTypeByColorAggregator",
+    "FirstLegendaryByCreatureTypeAggregator",
     "FoilTypesAggregator",
     "MaxCollectorNumberBySetAggregator",
     "MaximalPrintedTypesAggregator",
@@ -32,5 +46,7 @@ __all__ = [
     "MostPrintingsSameArtAggregator",
     "MostUniqueIllustrationsAggregator",
     "PromoTypesAggregator",
+    "RulesOnlyCreatureTypesAggregator",
     "SupercycleTimeAggregator",
+    "TokenOnlyCreatureTypesAggregator",
 ]
