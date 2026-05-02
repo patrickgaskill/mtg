@@ -71,19 +71,10 @@ class MostPrintingsSameArtAggregator(Aggregator):
             "most_printings_same_art",
             "Most Printings with Same Art",
             description,
-            explanation="""
-## What does this report show?
-
-This report finds cards that have been printed the most times while always using
-the **exact same piece of art** across every printing. For example, a card printed
-in 30 different sets but always with the same illustration would rank highly here.
-
-Cards that have received alternate art in any printing are excluded — every printing
-must share a single `illustration_id` in the Scryfall data.
-
-Inspired by [this Reddit discussion](https://www.reddit.com/r/magicTCG/comments/1sbk27u/)
-about Krosan Tusker's many printings with the same art.
-            """,
+            explanation=(
+                "Cards with the most printings that all share the exact same illustration."
+                " Cards with any alternate art across printings are excluded."
+            ),
         )
         self.printings: dict[str, int] = defaultdict(int)
         self.illustrations: dict[str, set[str]] = defaultdict(set)
@@ -139,16 +130,10 @@ class MostUniqueIllustrationsAggregator(Aggregator):
             "most_unique_illustrations",
             "Most Unique Illustrations",
             description,
-            explanation="""
-## What does this report show?
-
-This report finds cards that have been illustrated by the most different artists
-or received the most alternate art treatments across all their printings. Each
-unique `illustration_id` in the Scryfall data represents a distinct piece of art.
-
-Cards that have been reprinted many times with new art (like Lightning Bolt or
-Birds of Paradise) will rank highly here.
-            """,
+            explanation=(
+                "Cards with the most unique illustrations across all their printings, ranked by"
+                " distinct illustration count."
+            ),
         )
         self.illustrations: dict[str, set[str]] = defaultdict(set)
         self.cards: dict[str, dict[str, Any]] = {}
