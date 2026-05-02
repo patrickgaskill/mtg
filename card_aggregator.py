@@ -89,29 +89,11 @@ def create_all_aggregators() -> list[Aggregator]:
             key_fields=["name"],
             count_finishes=True,
             description="Count of card finishes by name",
-            explanation="""
-## What are Card Finishes?
-
-A **finish** refers to the physical treatment applied to a Magic card. Each printing of a card
-can be available in different finishes, and Scryfall tracks which finishes are available for
-each printing.
-
-**Types of finishes:**
-- **Nonfoil** - Standard non-reflective card stock (the traditional finish)
-- **Foil** - Premium reflective treatment with a shiny surface
-- **Etched** - Textured finish available on select printings
-
-## About This Report
-
-This report counts the total number of **finish variations** available for each unique card name
-across all printings. For example, if a card was printed in three different sets, and each
-printing is available in both foil and nonfoil, that card would have a count of 6 finish variations.
-
-**Note:** Each card object in Scryfall represents a specific printing, not the abstract card
-concept.
-The same card name printed in different sets or with different finishes appears as separate card
-objects in the data.
-            """,
+            explanation=(
+                "Counts the total number of finish variations (nonfoil, foil, etched) across all"
+                " printings of each card name. A card printed in three sets with both foil and"
+                " nonfoil would show a count of 6."
+            ),
         ),
         CountAggregator(
             name="count_cards_by_set_name",
@@ -125,25 +107,10 @@ objects in the data.
             key_fields=["set", "name"],
             count_finishes=True,
             description="Count of card finishes by set and name",
-            explanation="""
-## What are Card Finishes?
-
-A **finish** refers to the physical treatment applied to a Magic card. The available finish
-types are:
-
-- **Nonfoil** - Standard non-reflective card stock
-- **Foil** - Premium reflective treatment
-- **Etched** - Textured finish available on select printings
-
-## About This Report
-
-This report shows how many finish variations exist for each card within each specific set.
-For example, if "Lightning Bolt" in Alpha is available in nonfoil only, it would show a
-count of 1. If "Lightning Bolt" in a modern set is available in both foil and nonfoil,
-it would show a count of 2.
-
-This helps identify which printings have multiple finish options available.
-            """,
+            explanation=(
+                "Counts how many finish variations (nonfoil, foil, etched) exist for each card"
+                " within each specific set."
+            ),
         ),
         CountCardIllustrationsBySetAggregator(
             description="Count of unique card illustrations by set"

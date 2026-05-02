@@ -62,20 +62,11 @@ class CreatureTypeCountAggregator(Aggregator):
             "creature_type_count",
             "Creature Type Census",
             description,
-            explanation="""
-## Creature Type Census
-
-This report counts how many distinct cards exist for each creature subtype. A card is
-counted once per creature type it has — a "Human Wizard" adds one to both Human and Wizard.
-
-**Filtering:**
-- Only traditional cards are included (no silver-bordered, tokens, etc.)
-- Changelings and similar "all creature types" cards are excluded from counts,
-  since they would inflate every type equally
-
-The count column shows the total number of cards with that creature type, sorted
-ascending to highlight the rarest types.
-            """,
+            explanation=(
+                "Counts how many distinct cards exist for each creature subtype, sorted ascending"
+                " to highlight the rarest types. Excludes Changelings and other"
+                ' "all creature types" cards.'
+            ),
         )
         self.counts: dict[str, int] = defaultdict(int)
         self.example_cards: dict[str, dict[str, Any]] = {}
@@ -135,18 +126,10 @@ class FirstCardByCreatureTypeAggregator(Aggregator):
             "first_card_by_creature_type",
             "First Card by Creature Type",
             description,
-            explanation="""
-## First Card by Creature Type
-
-This report shows the earliest printed card for each creature subtype, revealing when
-each type was introduced to Magic: The Gathering.
-
-**Filtering:**
-- Only traditional cards are included (no silver-bordered, tokens, etc.)
-- Changelings and similar "all creature types" cards are excluded
-
-Sorted by release date to show the history of creature type introductions.
-            """,
+            explanation=(
+                "The earliest printed card for each creature subtype, showing when each type was"
+                ' introduced. Excludes Changelings and other "all creature types" cards.'
+            ),
         )
         self.first_cards: dict[str, dict[str, Any]] = {}
         self.column_defs = [
@@ -197,19 +180,10 @@ class CreatureTypeCombinationCountAggregator(Aggregator):
             "creature_type_combinations",
             "Creature Type Combinations",
             description,
-            explanation="""
-## Creature Type Combinations
-
-This report tracks every unique combination of creature subtypes that has appeared on a
-card. For example, "Human Wizard" and "Elf Warrior" are different combinations.
-
-**Filtering:**
-- Only traditional cards are included (no silver-bordered, tokens, etc.)
-- Changelings and similar "all creature types" cards are excluded
-
-Shows the first card printed with each combination and how many total cards share it.
-Sorted by release date to highlight when new combinations were introduced.
-            """,
+            explanation=(
+                "Every unique combination of creature subtypes (e.g., Human Wizard, Elf Warrior),"
+                " with the first card printed for each combination and how many cards share it."
+            ),
         )
         self.counts: dict[tuple[str, ...], int] = defaultdict(int)
         self.first_cards: dict[tuple[str, ...], dict[str, Any]] = {}
@@ -270,21 +244,11 @@ class FirstCreatureTypeByColorAggregator(Aggregator):
             "first_creature_type_by_color",
             "First Creature Type by Color",
             description,
-            explanation="""
-## First Creature Type by Color
-
-This report shows the first card printed for each combination of creature type and color.
-For example, it tracks when the first red Whale or the first green Giraffe appeared.
-
-**Colors tracked:** White (W), Blue (U), Black (B), Red (R), Green (G), and Colorless.
-
-**Filtering:**
-- Only traditional cards are included (no silver-bordered, tokens, etc.)
-- Changelings and similar "all creature types" cards are excluded
-- A card's colors come from the Scryfall `colors` field
-
-This helps track "first time colors" — when a creature type first appeared in a new color.
-            """,
+            explanation=(
+                "The first card printed for each combination of creature type and color (e.g.,"
+                " the first red Whale, the first green Giraffe), tracking when each type first"
+                " appeared in each color."
+            ),
         )
         # Key: (creature_type, color)
         self.first_cards: dict[tuple[str, str], dict[str, Any]] = {}
@@ -354,19 +318,10 @@ class FirstLegendaryByCreatureTypeAggregator(Aggregator):
             "first_legendary_by_creature_type",
             "First Legendary by Creature Type",
             description,
-            explanation="""
-## First Legendary by Creature Type
-
-This report shows the first legendary creature printed for each creature subtype.
-Many creature types existed for years before getting their first legendary representative.
-
-**Filtering:**
-- Only traditional cards are included (no silver-bordered, tokens, etc.)
-- Changelings and similar "all creature types" cards are excluded
-- Only cards with "Legendary" in their type line are considered
-
-Sorted by release date to show the progression of legendary creature type coverage.
-            """,
+            explanation=(
+                "The first legendary creature printed for each creature subtype. Many types"
+                " existed for years before getting their first legendary representative."
+            ),
         )
         self.first_cards: dict[str, dict[str, Any]] = {}
         self.column_defs = [
@@ -421,20 +376,10 @@ class TokenOnlyCreatureTypesAggregator(Aggregator):
             "token_only_creature_types",
             "Token-Only Creature Types",
             description,
-            explanation="""
-## Token-Only Creature Types
-
-This report identifies creature types that have been printed on token cards but have
-never appeared on a non-token card. These types exist in the game only as tokens.
-
-Examples include types like Pentavite, Germ, Servo, and others that have only ever
-been created by other cards' effects.
-
-**How it works:**
-- Scans all cards (including tokens) for creature subtypes
-- Identifies types that appear on tokens but never on non-token traditional cards
-- Changelings and similar "all creature types" cards are excluded
-            """,
+            explanation=(
+                "Creature types that have only been printed on tokens, never on a non-token card"
+                " (e.g., Pentavite, Germ, Servo)."
+            ),
         )
         self.token_types: dict[str, dict[str, Any]] = {}
         self.card_types: set[str] = set()
@@ -494,24 +439,10 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
             "rules_only_creature_types",
             "Rules-Only Creature Types",
             description,
-            explanation="""
-## Rules-Only Creature Types
-
-This report identifies creature types that exist in the MTG comprehensive rules but
-have never been printed on any card — not even as a token. These types currently only
-exist in rules text (e.g., as types created by specific card effects).
-
-Examples include types like Camarid, Tetravite, Caribou, and others that are defined
-in the rules but have never appeared on a physical or digital card.
-
-**How it works:**
-- Loads the official creature type list from the comprehensive rules
-- Scans all cards (including tokens) for creature subtypes
-- Reports types that are in the rules but never found on any card
-- Changelings and similar "all creature types" cards are excluded from the scan
-
-**Note:** The creature type list is updated via the `update-types` command.
-            """,
+            explanation=(
+                "Creature types defined in the comprehensive rules that have never appeared on"
+                " any card, not even as a token (e.g., Camarid, Tetravite, Caribou)."
+            ),
         )
         self.all_creature_types = self._load_types(all_creature_types_file)
         self.seen_types: set[str] = set()
