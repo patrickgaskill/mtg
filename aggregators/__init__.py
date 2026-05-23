@@ -22,6 +22,7 @@ from .metadata_aggregators import (
     MostUniqueIllustrationsAggregator,
     PromoTypesAggregator,
 )
+from .reprint_aggregators import FunctionalReprintsAggregator
 from .supercycle_aggregators import SupercycleTimeAggregator
 from .type_aggregators import (
     MaximalPrintedTypesAggregator,
@@ -40,6 +41,7 @@ __all__ = [
     "FirstCreatureTypeByColorAggregator",
     "FirstLegendaryByCreatureTypeAggregator",
     "FoilTypesAggregator",
+    "FunctionalReprintsAggregator",
     "MaxCollectorNumberBySetAggregator",
     "MaximalPrintedTypesAggregator",
     "MaximalTypesWithEffectsAggregator",
