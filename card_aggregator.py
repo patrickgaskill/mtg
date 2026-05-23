@@ -33,6 +33,7 @@ from aggregators import (
     FirstCreatureTypeByColorAggregator,
     FirstLegendaryByCreatureTypeAggregator,
     FoilTypesAggregator,
+    FunctionalReprintsAggregator,
     MaxCollectorNumberBySetAggregator,
     MaximalPrintedTypesAggregator,
     MaximalTypesWithEffectsAggregator,
@@ -141,6 +142,7 @@ def create_all_aggregators() -> list[Aggregator]:
         MostUniqueIllustrationsAggregator(
             description="Cards with the most unique illustrations across printings"
         ),
+        FunctionalReprintsAggregator(description="Cards with the most functional reprints"),
         CreatureTypeCountAggregator(description="Count of cards for each creature subtype"),
         FirstCardByCreatureTypeAggregator(
             description="First card printed for each creature subtype"
