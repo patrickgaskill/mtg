@@ -6,14 +6,14 @@ import requests
 from bs4 import BeautifulSoup, Tag
 from requests.exceptions import ConnectionError, HTTPError, RequestException, Timeout
 
-from constants import REQUEST_TIMEOUT, RULES_FILE_TIMEOUT
+from constants import REQUEST_HEADERS, REQUEST_TIMEOUT, RULES_FILE_TIMEOUT
 
 
 def fetch_and_parse_types() -> tuple[set[str], set[str]]:
     url = "https://magic.wizards.com/en/rules"
 
     try:
-        response = requests.get(url, timeout=REQUEST_TIMEOUT)
+        response = requests.get(url, headers=REQUEST_HEADERS, timeout=REQUEST_TIMEOUT)
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
         raise ValueError(f"Network error while fetching rules page: {e}") from None
@@ -47,7 +47,7 @@ def fetch_and_parse_types() -> tuple[set[str], set[str]]:
         txt_url = urljoin(url, href)
 
         try:
-            res = requests.get(txt_url, timeout=RULES_FILE_TIMEOUT)
+            res = requests.get(txt_url, headers=REQUEST_HEADERS, timeout=RULES_FILE_TIMEOUT)
             res.raise_for_status()
             res.encoding = "utf-8"
             rules_text = (

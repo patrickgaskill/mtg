@@ -44,7 +44,7 @@ from aggregators import (
     SupercycleTimeAggregator,
     TokenOnlyCreatureTypesAggregator,
 )
-from constants import REQUEST_TIMEOUT
+from constants import REQUEST_HEADERS, REQUEST_TIMEOUT
 from type_updater import fetch_and_parse_types
 
 DATA_FOLDER = Path("data").resolve()
@@ -257,7 +257,11 @@ def download():
     logger.info("Downloading bulk data files from Scryfall...")
 
     try:
-        response = requests.get("https://api.scryfall.com/bulk-data", timeout=REQUEST_TIMEOUT)
+        response = requests.get(
+            "https://api.scryfall.com/bulk-data",
+            headers=REQUEST_HEADERS,
+            timeout=REQUEST_TIMEOUT,
+        )
         response.raise_for_status()
         bulk_data_files = response.json()["data"]
     except (ConnectionError, Timeout) as e:
@@ -290,7 +294,9 @@ def download():
     file_path = DOWNLOADED_DATA_FOLDER / file_name
 
     try:
-        response = requests.get(download_url, stream=True, timeout=REQUEST_TIMEOUT)
+        response = requests.get(
+            download_url, headers=REQUEST_HEADERS, stream=True, timeout=REQUEST_TIMEOUT
+        )
         response.raise_for_status()
     except (ConnectionError, Timeout) as e:
         logger.error("Network error while downloading file: {}", e)

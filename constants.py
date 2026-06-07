@@ -6,6 +6,16 @@ from datetime import datetime
 REQUEST_TIMEOUT = 30
 RULES_FILE_TIMEOUT = 60
 
+# HTTP request headers. Scryfall (and some other endpoints) reject requests
+# that use the default python-requests User-Agent, returning HTTP 400/403.
+# Scryfall's API guidelines require clients to send a User-Agent and Accept
+# header; see https://scryfall.com/docs/api.
+USER_AGENT = "mtg-card-aggregator/1.0 (+https://github.com/patrickgaskill/mtg)"
+REQUEST_HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "*/*",
+}
+
 # Card filtering constants
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
