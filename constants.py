@@ -10,7 +10,7 @@ RULES_FILE_TIMEOUT = 60
 # that use the default python-requests User-Agent, returning HTTP 400/403.
 # Scryfall's API guidelines require clients to send a User-Agent and Accept
 # header; see https://scryfall.com/docs/api.
-USER_AGENT = "mtg-card-aggregator/1.0 (+https://github.com/patrickgaskill/mtg)"
+USER_AGENT = "mtg-card-aggregator/1.0"
 REQUEST_HEADERS = {
     "User-Agent": USER_AGENT,
     "Accept": "*/*",
