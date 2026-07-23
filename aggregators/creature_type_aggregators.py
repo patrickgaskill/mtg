@@ -377,8 +377,9 @@ class TokenOnlyCreatureTypesAggregator(Aggregator):
             "Token-Only Creature Types",
             description,
             explanation=(
-                "Creature types that have only been printed on tokens, never on a non-token card"
-                " (e.g., Pentavite, Germ, Servo)."
+                "Creature types that have only appeared on printed token cards, never on a"
+                " non-token card (e.g., Pentavite, Germ, Servo). Only tokens printed as physical"
+                " token cards count — tokens that exist solely as in-game objects do not."
             ),
         )
         self.token_types: dict[str, dict[str, Any]] = {}
@@ -441,7 +442,9 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
             description,
             explanation=(
                 "Creature types defined in the comprehensive rules that have never appeared on"
-                " any card, not even as a token (e.g., Camarid, Tetravite, Caribou)."
+                " any card, not even on a printed token card (e.g., Camarid, Tetravite, Caribou)."
+                " A type whose token exists only as an in-game object, never as a printed token"
+                " card, still qualifies."
             ),
         )
         self.all_creature_types = self._load_types(all_creature_types_file)

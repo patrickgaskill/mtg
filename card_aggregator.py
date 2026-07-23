@@ -156,7 +156,9 @@ def create_all_aggregators() -> list[Aggregator]:
         FirstLegendaryByCreatureTypeAggregator(
             description="First legendary creature for each creature subtype"
         ),
-        TokenOnlyCreatureTypesAggregator(description="Creature types that only exist on tokens"),
+        TokenOnlyCreatureTypesAggregator(
+            description="Creature types that only exist on printed token cards"
+        ),
         RulesOnlyCreatureTypesAggregator(
             all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             description="Creature types in the rules but never on any card",
