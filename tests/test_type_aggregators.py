@@ -162,6 +162,28 @@ class TestGlobalEffects:
         assert "Land" not in key
 
 
+class TestPlaceholderTypes:
+    def test_card_placeholder_type_is_skipped(self, aggregator):
+        aggregator.process_card(make_card(type_line="Card"))
+        assert len(aggregator.maximal_types) == 0
+
+    def test_card_placeholder_face_is_skipped(self, aggregator):
+        card = make_card(
+            type_line="Card // Creature — Human",
+            card_faces=[
+                {"name": "Front", "type_line": "Card"},
+                {"name": "Back", "type_line": "Creature — Human"},
+            ],
+        )
+        aggregator.process_card(card)
+        assert list(aggregator.maximal_types) == [("Creature", "Human")]
+
+    def test_effects_aggregator_also_skips_card_placeholder(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Card"))
+        assert len(aggregator.maximal_types) == 0
+
+
 class TestNameBasedTypes:
     def test_grist_counts_as_insect_creature(self, aggregator):
         aggregator.process_card(

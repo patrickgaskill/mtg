@@ -87,7 +87,9 @@ class MaximalPrintedTypesAggregator(Aggregator):
         """Process a single face of a card."""
         card_types = extract_types(face)
 
-        if "Token" in card_types or "Emblem" in card_types:
+        # Scryfall uses "Card" as a placeholder type on substitute cards,
+        # art series, and similar non-playable objects.
+        if "Token" in card_types or "Emblem" in card_types or "Card" in card_types:
             return
 
         unknown_subtypes = self._get_unknown_subtypes(face, card_types)
