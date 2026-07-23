@@ -15,6 +15,10 @@ from card_utils import (
 
 from .base import Aggregator
 
+# Card types whose subtypes are creature or land types, and therefore verifiable
+# against the comprehensive rules type lists.
+SUBTYPE_VERIFIABLE_TYPES = {"Creature", "Kindred", "Tribal", "Land"}
+
 
 class MaximalPrintedTypesAggregator(Aggregator):
     """Find cards with maximal printed type combinations."""
@@ -32,10 +36,13 @@ class MaximalPrintedTypesAggregator(Aggregator):
             explanation=(
                 "Cards whose printed types form a maximum set — no other card's printed types"
                 " are a strict superset. Changelings count as having all creature types and"
-                " Planar Nexus counts as having all nonbasic land types."
+                " Planar Nexus counts as having all nonbasic land types. Cards with creature or"
+                " land subtypes that are not yet in the comprehensive rules (e.g. from newly"
+                " previewed sets) are excluded until the rules are updated."
             ),
         )
         self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
+        self._unknown_subtypes_seen: set[str] = set()
         self._types_field = "types"
         self.column_defs = [
             {"field": "types", "headerName": "Types", "width": 300},
@@ -82,6 +89,18 @@ class MaximalPrintedTypesAggregator(Aggregator):
         if "Token" in card_types or "Emblem" in card_types:
             return
 
+        unknown_subtypes = self._get_unknown_subtypes(face, card_types)
+        if unknown_subtypes:
+            for subtype in sorted(unknown_subtypes):
+                if subtype not in self._unknown_subtypes_seen:
+                    self._unknown_subtypes_seen.add(subtype)
+                    self.warnings.append(
+                        f"Skipping cards with subtype '{subtype}'"
+                        f" (e.g. {face.get('name', 'Unknown')}):"
+                        " not yet in the comprehensive rules type lists"
+                    )
+            return
+
         if is_all_creature_types(face):
             card_types |= self.all_creature_types
 
@@ -111,6 +130,26 @@ class MaximalPrintedTypesAggregator(Aggregator):
             for key in keys_to_remove:
                 del self.maximal_types[key]
             self.maximal_types[type_key] = parent_card
+
+    def _get_unknown_subtypes(self, face: dict[str, Any], card_types: set[str]) -> set[str]:
+        """
+        Find creature/land subtypes on a face that aren't in the comprehensive rules yet.
+
+        Scryfall publishes card data for newly previewed sets before the comprehensive
+        rules (and thus the type lists) are updated, which would otherwise produce
+        spurious maximal rows. Only creature and land subtypes can be verified, so
+        subtypes of other card types (spells, artifacts, etc.) are not checked.
+        """
+        if not self.all_creature_types or not self.all_land_types:
+            # Type lists failed to load; load_types already warned.
+            return set()
+        if not card_types & SUBTYPE_VERIFIABLE_TYPES:
+            return set()
+        type_line = face.get("type_line", "")
+        if "—" not in type_line:
+            return set()
+        subtypes = extract_types({"type_line": type_line.split("—", 1)[1]})
+        return subtypes - self.all_creature_types - self.all_land_types
 
     def _modify_types(self, card_types: set[str]) -> set[str]:
         """Hook for subclasses to modify types before maximality check."""
@@ -147,7 +186,9 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         self.explanation = (
             "Cards that reach the maximum number of types when global effects from other cards"
             " in play are applied (e.g., In Bolas's Clutches grants Legendary, Maskwood Nexus"
-            " grants all creature types, Omo grants all land and creature types)."
+            " grants all creature types, Omo grants all land and creature types). Cards with"
+            " creature or land subtypes that are not yet in the comprehensive rules (e.g. from"
+            " newly previewed sets) are excluded until the rules are updated."
         )
         self._types_field = "originalTypes"
         self.global_effects = self._define_global_effects()

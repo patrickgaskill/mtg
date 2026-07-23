@@ -16,6 +16,22 @@ REQUEST_HEADERS = {
     "Accept": "*/*",
 }
 
+# Sets where Scryfall invents collector numbers because the cards don't have
+# real ones printed — e.g. Magic Online catalog IDs or event years. These are
+# excluded from the max-collector-number report.
+EXCLUDED_COLLECTOR_NUMBER_SETS = {
+    "ana",  # Arena New Player Experience — Arena IDs
+    "olgc",  # Legacy Championship — event years
+    "ovnt",  # Vintage Championship — event years
+    "pgpx",  # Grand Prix Promos — event years
+    "pnat",  # Nationals Promos — event years
+    "ppro",  # Pro Tour Promos — event years
+    "prm",  # Magic Online Promos — Magic Online catalog IDs
+    "pwor",  # World Championship Promos — event years
+    "pz2",  # Treasure Chest — Magic Online catalog IDs
+    "wmc",  # World Magic Cup Qualifiers — event years
+}
+
 # Card filtering constants
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
