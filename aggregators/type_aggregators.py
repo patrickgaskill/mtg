@@ -47,7 +47,8 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 " previewed sets) are excluded until the rules are updated."
             ),
         )
-        self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
+        # Maps a sorted type tuple to the (face, card) pair that produced it.
+        self.maximal_types: dict[tuple[str, ...], tuple[dict[str, Any], dict[str, Any]]] = {}
         self._unknown_subtypes_seen: set[str] = set()
         self._types_field = "types"
         self.column_defs = [
@@ -122,9 +123,9 @@ class MaximalPrintedTypesAggregator(Aggregator):
         type_key = tuple(sorted(card_types))
 
         if type_key in self.maximal_types:
-            existing_card = self.maximal_types[type_key]
+            _existing_face, existing_card = self.maximal_types[type_key]
             if get_sort_key(parent_card) < get_sort_key(existing_card):
-                self.maximal_types[type_key] = parent_card
+                self.maximal_types[type_key] = (face, parent_card)
             return
 
         is_maximal = all(
@@ -139,7 +140,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
             ]
             for key in keys_to_remove:
                 del self.maximal_types[key]
-            self.maximal_types[type_key] = parent_card
+            self.maximal_types[type_key] = (face, parent_card)
 
     def _get_unknown_subtypes(self, face: dict[str, Any], card_types: set[str]) -> set[str]:
         """
@@ -172,10 +173,10 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
-                **get_card_link_data(card),
+                **get_card_link_data(card, face),
             }
-            for _key, card in sorted(
-                self.maximal_types.items(), key=lambda item: get_sort_key(item[1])
+            for _key, (face, card) in sorted(
+                self.maximal_types.items(), key=lambda item: get_sort_key(item[1][1])
             )
         ]
 
@@ -203,7 +204,8 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         )
         self._types_field = "originalTypes"
         self.global_effects = self._define_global_effects()
-        self.maximal_types: dict[tuple[str, ...], dict[str, Any]] = {}
+        # Maps a sorted type tuple to the (face, card) pair that produced it.
+        self.maximal_types: dict[tuple[str, ...], tuple[dict[str, Any], dict[str, Any]]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 300},
             {
