@@ -162,6 +162,25 @@ class TestGlobalEffects:
         assert "Land" not in key
 
 
+class TestNameBasedTypes:
+    def test_grist_counts_as_insect_creature(self, aggregator):
+        aggregator.process_card(
+            make_card(
+                name="Grist, the Hunger Tide",
+                type_line="Legendary Planeswalker — Grist",
+            )
+        )
+        assert list(aggregator.maximal_types) == [
+            ("Creature", "Grist", "Insect", "Legendary", "Planeswalker")
+        ]
+
+    def test_other_planeswalkers_are_unchanged(self, aggregator):
+        aggregator.process_card(
+            make_card(name="Jace Beleren", type_line="Legendary Planeswalker — Jace")
+        )
+        assert list(aggregator.maximal_types) == [("Jace", "Legendary", "Planeswalker")]
+
+
 class TestMaximality:
     def test_subset_is_replaced_by_superset(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human"))
