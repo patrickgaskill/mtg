@@ -147,6 +147,14 @@ class TestGlobalEffects:
         (key,) = aggregator.maximal_types
         assert "Clue" in key
 
+    def test_armed_with_proof_chains_clues_into_equipment(self, type_files):
+        # Senator Peacock makes artifacts Clues, then Armed with Proof
+        # makes Clues Equipment.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Equipment" in key
+
     def test_ashaya_ignores_noncreatures(self, type_files):
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
         aggregator.process_card(make_card(type_line="Instant"))
