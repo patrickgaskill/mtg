@@ -133,7 +133,7 @@ supercycles:
       - Foratog
 
   - name: Forces
-    finished: true # Creatures with "Force" in name from Time Spiral
+    finished: true # 7/7 Elementals with upkeep triggers, from Commander decks plus Tempest's Verdant Force
     cards:
       - Celestial Force
       - Tidal Force
@@ -167,7 +167,7 @@ supercycles:
       - Western Paladin
 
   - name: Elder Titans
-    finished: false # Needs a white titan to complete
+    finished: false # More two-color titans may still be printed
     cards:
       - Phlage, Titan of Fire's Fury # Red/White
       - Kroxa, Titan of Death's Hunger # Black/Red
@@ -446,3 +446,10 @@ supercycles:
       - Thirst for Meaning
       - Thirst for Discovery
       - Thirst for Identity
+
+  - name: Poxes
+    finished: false # All-black-pip sorceries with symmetric life/discard/sacrifice effects
+    cards:
+      - Pox
+      - Smallpox
+      - Pox Plague
