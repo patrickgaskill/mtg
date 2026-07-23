@@ -236,6 +236,9 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
             "Ragost, Deft Gastronaut": lambda card_types: card_types.union({"Food"})
             if "Artifact" in card_types
             else card_types,
+            "Senator Peacock": lambda card_types: card_types.union({"Clue"})
+            if "Artifact" in card_types
+            else card_types,
             "March of the Machines": lambda card_types: card_types.union({"Creature"})
             if "Artifact" in card_types and "Creature" not in card_types
             else card_types,

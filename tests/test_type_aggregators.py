@@ -141,6 +141,12 @@ class TestGlobalEffects:
         (key,) = aggregator.maximal_types
         assert "Food" in key
 
+    def test_senator_peacock_makes_artifacts_clues(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Clue" in key
+
     def test_ashaya_ignores_noncreatures(self, type_files):
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
         aggregator.process_card(make_card(type_line="Instant"))
