@@ -3,7 +3,7 @@
 from collections import defaultdict
 from typing import Any
 
-from card_utils import get_card_link_data
+from card_utils import get_card_link_data, is_traditional_card
 
 from .base import Aggregator
 
@@ -72,6 +72,12 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
             "max_collector_number_by_set",
             "Maximum Collector Number by Set",
             description,
+            explanation=(
+                "The highest numeric collector number printed in each set. Digital cards and"
+                " non-traditional sets (memorabilia, funny) are excluded because Scryfall uses"
+                " placeholder values as collector numbers there — e.g. Magic Online catalog IDs"
+                " for the prm set and event years for World/Vintage Championship prints."
+            ),
         )
         self.data: dict[str, int] = defaultdict(int)
         self.column_defs = [
@@ -86,6 +92,10 @@ class MaxCollectorNumberBySetAggregator(Aggregator):
         ]
 
     def process_card(self, card: dict[str, Any]) -> None:
+        # Digital cards use Magic Online/Arena catalog IDs as collector numbers, and
+        # memorabilia sets use values like event years — neither is a real number.
+        if card.get("digital") or not is_traditional_card(card):
+            return
         collector_number = card.get("collector_number")
         key = card.get("set")
         if collector_number is not None and collector_number.isdigit() and key is not None:
