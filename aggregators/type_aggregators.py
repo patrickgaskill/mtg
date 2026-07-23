@@ -224,7 +224,13 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         return card_types
 
     def _define_global_effects(self):
-        """Define global effects that modify card types."""
+        """
+        Define global effects that modify card types.
+
+        Keep this list minimal: an effect belongs here only if it grants a type
+        no combination of the other effects can reach (e.g. Life and Limb and
+        Prismatic Omen were removed once Ashaya and Omo covered their grants).
+        """
         return {
             "In Bolas's Clutches": lambda card_types: card_types.union({"Legendary"})
             if is_permanent({"type_line": " ".join(card_types)})
@@ -253,16 +259,8 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
             "Maskwood Nexus": lambda card_types: card_types.union(self.all_creature_types)
             if "Creature" in card_types
             else card_types,
-            "Life and Limb": lambda card_types: card_types.union(
-                {"Creature", "Land", "Saproling", "Forest"}
-            )
-            if "Forest" in card_types or "Saproling" in card_types
-            else card_types,
             "Ashaya, Soul of the Wild": lambda card_types: card_types.union({"Land", "Forest"})
             if "Creature" in card_types
-            else card_types,
-            "Prismatic Omen": lambda card_types: card_types.union(BASIC_LAND_TYPES)
-            if "Land" in card_types
             else card_types,
             "Omo, Queen of Vesuva": self._omo_effect,
         }

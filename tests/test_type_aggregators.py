@@ -120,8 +120,8 @@ class TestGlobalEffects:
         assert {"Land", "Forest"}.issubset(key)
 
     def test_ashaya_chains_into_land_type_effects(self, type_files):
-        # Ashaya grants Land before Prismatic Omen and Omo apply, so a
-        # creature ends up with every land type.
+        # Ashaya grants Land before Omo applies, so a creature ends up
+        # with every land type.
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
         aggregator.process_card(make_card(type_line="Creature — Bear"))
         (key,) = aggregator.maximal_types
