@@ -207,6 +207,36 @@ class TestNameBasedTypes:
         assert list(aggregator.maximal_types) == [("Jace", "Legendary", "Planeswalker")]
 
 
+class TestFaceImages:
+    def test_maximal_back_face_uses_its_own_image(self, aggregator):
+        # A row produced by the back face of a double-faced card must show
+        # that face's image, not the front face's.
+        card = make_card(
+            name="Front Face // Back Face",
+            type_line="Creature — Human // Creature — Human Wizard",
+            card_faces=[
+                {
+                    "name": "Front Face",
+                    "type_line": "Creature — Human",
+                    "image_uris": {"normal": "front.jpg"},
+                },
+                {
+                    "name": "Back Face",
+                    "type_line": "Creature — Human Wizard",
+                    "image_uris": {"normal": "back.jpg"},
+                },
+            ],
+        )
+        aggregator.process_card(card)
+        (row,) = aggregator.get_sorted_data()
+        assert row["image_uri"] == "back.jpg"
+
+    def test_single_faced_card_image_is_unchanged(self, aggregator):
+        aggregator.process_card(make_card(image_uris={"normal": "card.jpg"}))
+        (row,) = aggregator.get_sorted_data()
+        assert row["image_uri"] == "card.jpg"
+
+
 class TestMaximality:
     def test_subset_is_replaced_by_superset(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human"))

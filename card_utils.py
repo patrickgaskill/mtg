@@ -186,9 +186,17 @@ def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
     return ""
 
 
-def get_card_link_data(card: dict[str, Any]) -> dict[str, str]:
-    """Extract Scryfall URI and image URI from a card for use in report links."""
+def get_card_link_data(card: dict[str, Any], face: dict[str, Any] | None = None) -> dict[str, str]:
+    """
+    Extract Scryfall URI and image URI from a card for use in report links.
+
+    If a specific card face is provided, its image is preferred over the
+    card-level default (which falls back to the first face).
+    """
+    face_image_uri = ""
+    if face is not None:
+        face_image_uri = (face.get("image_uris") or {}).get("normal", "")
     return {
         "scryfall_uri": card.get("scryfall_uri", ""),
-        "image_uri": get_card_image_uri(card),
+        "image_uri": face_image_uri or get_card_image_uri(card),
     }
