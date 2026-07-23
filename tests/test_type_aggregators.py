@@ -112,6 +112,28 @@ class TestUnknownSubtypeHandling:
         assert len(aggregator.maximal_types) == 0
 
 
+class TestGlobalEffects:
+    def test_ashaya_makes_creatures_forest_lands(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Creature — Bear"))
+        (key,) = aggregator.maximal_types
+        assert {"Land", "Forest"}.issubset(key)
+
+    def test_ashaya_chains_into_land_type_effects(self, type_files):
+        # Ashaya grants Land before Prismatic Omen and Omo apply, so a
+        # creature ends up with every land type.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Creature — Bear"))
+        (key,) = aggregator.maximal_types
+        assert set(LAND_TYPES).issubset(key)
+
+    def test_ashaya_ignores_noncreatures(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Instant"))
+        (key,) = aggregator.maximal_types
+        assert "Land" not in key
+
+
 class TestMaximality:
     def test_subset_is_replaced_by_superset(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human"))

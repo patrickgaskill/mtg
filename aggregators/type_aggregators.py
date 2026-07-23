@@ -186,7 +186,8 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         self.explanation = (
             "Cards that reach the maximum number of types when global effects from other cards"
             " in play are applied (e.g., In Bolas's Clutches grants Legendary, Maskwood Nexus"
-            " grants all creature types, Omo grants all land and creature types). Cards with"
+            " grants all creature types, Ashaya makes creatures Forest lands, Omo grants all"
+            " land and creature types). Cards with"
             " creature or land subtypes that are not yet in the comprehensive rules (e.g. from"
             " newly previewed sets) are excluded until the rules are updated."
         )
@@ -242,6 +243,9 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
                 {"Creature", "Land", "Saproling", "Forest"}
             )
             if "Forest" in card_types or "Saproling" in card_types
+            else card_types,
+            "Ashaya, Soul of the Wild": lambda card_types: card_types.union({"Land", "Forest"})
+            if "Creature" in card_types
             else card_types,
             "Prismatic Omen": lambda card_types: card_types.union(BASIC_LAND_TYPES)
             if "Land" in card_types
