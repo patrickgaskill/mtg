@@ -32,20 +32,18 @@ class TestMaxCollectorNumberBySetAggregator:
         aggregator.process_card(make_card(collector_number="123a"))
         assert aggregator.get_sorted_data() == []
 
-    def test_skips_digital_cards(self):
-        # Scryfall uses Magic Online catalog IDs as collector numbers for
-        # digital sets like prm, which aren't real collector numbers.
+    def test_skips_sets_with_invented_collector_numbers(self):
+        # Scryfall invents collector numbers for some sets — e.g. Magic Online
+        # catalog IDs for prm, event years for Vintage Championship prints.
         aggregator = MaxCollectorNumberBySetAggregator()
-        aggregator.process_card(
-            make_card(set="prm", set_type="promo", collector_number="65961", digital=True)
-        )
+        aggregator.process_card(make_card(set="prm", collector_number="65961"))
+        aggregator.process_card(make_card(set="ovnt", collector_number="2018"))
         assert aggregator.get_sorted_data() == []
 
-    def test_skips_non_traditional_sets(self):
-        # Memorabilia prints like Vintage Championship use event years as
-        # collector numbers.
+    def test_counts_silver_border_and_funny_sets(self):
+        # Un-set cards have real printed collector numbers.
         aggregator = MaxCollectorNumberBySetAggregator()
         aggregator.process_card(
-            make_card(set="ovnt", set_type="memorabilia", collector_number="2018")
+            make_card(set="ust", set_type="funny", border_color="silver", collector_number="216")
         )
-        assert aggregator.get_sorted_data() == []
+        assert aggregator.get_sorted_data() == [{"set": "ust", "maxNumber": 216}]
