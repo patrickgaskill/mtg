@@ -5,6 +5,7 @@ from typing import Any
 from constants import (
     NON_TRADITIONAL_BORDERS,
     NON_TRADITIONAL_LAYOUTS,
+    NON_TRADITIONAL_PROMO_TYPES,
     NON_TRADITIONAL_SET_TYPES,
 )
 
@@ -90,6 +91,7 @@ def is_traditional_card(
     non_traditional_set_types: set[str] = NON_TRADITIONAL_SET_TYPES,
     non_traditional_layouts: set[str] = NON_TRADITIONAL_LAYOUTS,
     non_traditional_borders: set[str] = NON_TRADITIONAL_BORDERS,
+    non_traditional_promo_types: set[str] = NON_TRADITIONAL_PROMO_TYPES,
 ) -> bool:
     """
     Determine if a card is considered traditional.
@@ -99,6 +101,7 @@ def is_traditional_card(
         non_traditional_set_types (set[str], optional): Set of non-traditional set types.
         non_traditional_layouts (set[str], optional): Set of non-traditional layouts.
         non_traditional_borders (set[str], optional): Set of non-traditional border colors.
+        non_traditional_promo_types (set[str], optional): Set of non-traditional promo types.
 
     Returns:
         bool: True if the card is traditional, False otherwise.
@@ -108,6 +111,8 @@ def is_traditional_card(
     if card.get("layout") in non_traditional_layouts:
         return False
     if card.get("set") == "past":
+        return False
+    if non_traditional_promo_types.intersection(card.get("promo_types", [])):
         return False
     return card.get("border_color") not in non_traditional_borders
 

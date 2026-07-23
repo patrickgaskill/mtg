@@ -36,6 +36,9 @@ EXCLUDED_COLLECTOR_NUMBER_SETS = {
 NON_TRADITIONAL_SET_TYPES = {"memorabilia", "funny"}
 NON_TRADITIONAL_LAYOUTS = {"emblem", "token"}
 NON_TRADITIONAL_BORDERS = {"silver", "gold"}
+# Mystery Booster playtest cards (e.g. Orb of Origin) are mixed into the
+# otherwise-traditional mb2 set, so they must be filtered by promo type.
+NON_TRADITIONAL_PROMO_TYPES = {"playtest"}
 
 # Foil-related constants
 FOIL_PROMO_TYPES = {

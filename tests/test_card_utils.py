@@ -235,6 +235,17 @@ class TestIsTraditionalCard:
         }
         assert card_utils.is_traditional_card(card) is False
 
+    def test_playtest_promo_type_excluded(self):
+        """Test that Mystery Booster playtest cards are filtered."""
+        card = {
+            "set_type": "masters",
+            "layout": "normal",
+            "set": "mb2",
+            "border_color": "black",
+            "promo_types": ["playtest"],
+        }
+        assert card_utils.is_traditional_card(card) is False
+
     def test_custom_exclusion_sets(self):
         """Test that custom exclusion sets can be provided."""
         card = {
