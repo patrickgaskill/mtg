@@ -112,6 +112,56 @@ class TestUnknownSubtypeHandling:
         assert len(aggregator.maximal_types) == 0
 
 
+class TestGlobalEffects:
+    def test_ashaya_makes_creatures_forest_lands(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Creature — Bear"))
+        (key,) = aggregator.maximal_types
+        assert {"Land", "Forest"}.issubset(key)
+
+    def test_ashaya_chains_into_land_type_effects(self, type_files):
+        # Ashaya grants Land before Prismatic Omen and Omo apply, so a
+        # creature ends up with every land type.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Creature — Bear"))
+        (key,) = aggregator.maximal_types
+        assert set(LAND_TYPES).issubset(key)
+
+    def test_ragost_makes_artifacts_foods(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Food" in key
+
+    def test_ragost_applies_after_mycosynth_lattice(self, type_files):
+        # Every permanent becomes an artifact via Mycosynth Lattice, so
+        # Ragost grants Food to non-artifact permanents too.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Enchantment"))
+        (key,) = aggregator.maximal_types
+        assert "Food" in key
+
+    def test_senator_peacock_makes_artifacts_clues(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Clue" in key
+
+    def test_armed_with_proof_chains_clues_into_equipment(self, type_files):
+        # Senator Peacock makes artifacts Clues, then Armed with Proof
+        # makes Clues Equipment.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Equipment" in key
+
+    def test_ashaya_ignores_noncreatures(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Instant"))
+        (key,) = aggregator.maximal_types
+        assert "Land" not in key
+
+
 class TestMaximality:
     def test_subset_is_replaced_by_superset(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human"))
