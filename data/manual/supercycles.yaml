@@ -172,7 +172,6 @@ supercycles:
       - Phlage, Titan of Fire's Fury # Red/White
       - Kroxa, Titan of Death's Hunger # Black/Red
       - Uro, Titan of Nature's Wrath # Blue/Green
-      - Skotha, Titan of Eternal Dark
 
   - name: Tripled Creatures
     finished: false # Creatures that are three of the same thing
