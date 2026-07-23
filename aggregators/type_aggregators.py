@@ -233,6 +233,9 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
             "Mycosynth Lattice": lambda card_types: card_types.union({"Artifact"})
             if is_permanent({"type_line": " ".join(card_types)})
             else card_types,
+            "Ragost, Deft Gastronaut": lambda card_types: card_types.union({"Food"})
+            if "Artifact" in card_types
+            else card_types,
             "March of the Machines": lambda card_types: card_types.union({"Creature"})
             if "Artifact" in card_types and "Creature" not in card_types
             else card_types,

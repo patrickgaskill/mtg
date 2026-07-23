@@ -127,6 +127,20 @@ class TestGlobalEffects:
         (key,) = aggregator.maximal_types
         assert set(LAND_TYPES).issubset(key)
 
+    def test_ragost_makes_artifacts_foods(self, type_files):
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Artifact"))
+        (key,) = aggregator.maximal_types
+        assert "Food" in key
+
+    def test_ragost_applies_after_mycosynth_lattice(self, type_files):
+        # Every permanent becomes an artifact via Mycosynth Lattice, so
+        # Ragost grants Food to non-artifact permanents too.
+        aggregator = MaximalTypesWithEffectsAggregator(*type_files)
+        aggregator.process_card(make_card(type_line="Enchantment"))
+        (key,) = aggregator.maximal_types
+        assert "Food" in key
+
     def test_ashaya_ignores_noncreatures(self, type_files):
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
         aggregator.process_card(make_card(type_line="Instant"))
