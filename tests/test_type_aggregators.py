@@ -120,8 +120,8 @@ class TestGlobalEffects:
         assert {"Land", "Forest"}.issubset(key)
 
     def test_ashaya_chains_into_land_type_effects(self, type_files):
-        # Ashaya grants Land before Prismatic Omen and Omo apply, so a
-        # creature ends up with every land type.
+        # Ashaya grants Land before Omo applies, so a creature ends up
+        # with every land type.
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
         aggregator.process_card(make_card(type_line="Creature — Bear"))
         (key,) = aggregator.maximal_types
@@ -160,6 +160,25 @@ class TestGlobalEffects:
         aggregator.process_card(make_card(type_line="Instant"))
         (key,) = aggregator.maximal_types
         assert "Land" not in key
+
+
+class TestNameBasedTypes:
+    def test_grist_counts_as_insect_creature(self, aggregator):
+        aggregator.process_card(
+            make_card(
+                name="Grist, the Hunger Tide",
+                type_line="Legendary Planeswalker — Grist",
+            )
+        )
+        assert list(aggregator.maximal_types) == [
+            ("Creature", "Grist", "Insect", "Legendary", "Planeswalker")
+        ]
+
+    def test_other_planeswalkers_are_unchanged(self, aggregator):
+        aggregator.process_card(
+            make_card(name="Jace Beleren", type_line="Legendary Planeswalker — Jace")
+        )
+        assert list(aggregator.maximal_types) == [("Jace", "Legendary", "Planeswalker")]
 
 
 class TestMaximality:

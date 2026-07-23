@@ -35,8 +35,9 @@ class MaximalPrintedTypesAggregator(Aggregator):
             description,
             explanation=(
                 "Cards whose printed types form a maximum set — no other card's printed types"
-                " are a strict superset. Changelings count as having all creature types and"
-                " Planar Nexus counts as having all nonbasic land types. Cards with creature or"
+                " are a strict superset. Changelings count as having all creature types,"
+                " Planar Nexus counts as having all nonbasic land types, and Grist counts as"
+                " an Insect creature. Cards with creature or"
                 " land subtypes that are not yet in the comprehensive rules (e.g. from newly"
                 " previewed sets) are excluded until the rules are updated."
             ),
@@ -106,6 +107,10 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
         if face.get("name") == "Planar Nexus":
             card_types |= self.nonbasic_land_types
+
+        # Grist is a 1/1 Insect creature in every zone except the battlefield.
+        if face.get("name") == "Grist, the Hunger Tide":
+            card_types |= {"Creature", "Insect"}
 
         card_types = self._modify_types(card_types)
 
@@ -219,7 +224,13 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         return card_types
 
     def _define_global_effects(self):
-        """Define global effects that modify card types."""
+        """
+        Define global effects that modify card types.
+
+        Keep this list minimal: an effect belongs here only if it grants a type
+        no combination of the other effects can reach (e.g. Life and Limb and
+        Prismatic Omen were removed once Ashaya and Omo covered their grants).
+        """
         return {
             "In Bolas's Clutches": lambda card_types: card_types.union({"Legendary"})
             if is_permanent({"type_line": " ".join(card_types)})
@@ -248,16 +259,8 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
             "Maskwood Nexus": lambda card_types: card_types.union(self.all_creature_types)
             if "Creature" in card_types
             else card_types,
-            "Life and Limb": lambda card_types: card_types.union(
-                {"Creature", "Land", "Saproling", "Forest"}
-            )
-            if "Forest" in card_types or "Saproling" in card_types
-            else card_types,
             "Ashaya, Soul of the Wild": lambda card_types: card_types.union({"Land", "Forest"})
             if "Creature" in card_types
-            else card_types,
-            "Prismatic Omen": lambda card_types: card_types.union(BASIC_LAND_TYPES)
-            if "Land" in card_types
             else card_types,
             "Omo, Queen of Vesuva": self._omo_effect,
         }
