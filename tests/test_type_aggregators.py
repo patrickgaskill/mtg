@@ -167,6 +167,10 @@ class TestPlaceholderTypes:
         aggregator.process_card(make_card(type_line="Card"))
         assert len(aggregator.maximal_types) == 0
 
+    def test_stickers_placeholder_type_is_skipped(self, aggregator):
+        aggregator.process_card(make_card(type_line="Stickers"))
+        assert len(aggregator.maximal_types) == 0
+
     def test_card_placeholder_face_is_skipped(self, aggregator):
         card = make_card(
             type_line="Card // Creature — Human",

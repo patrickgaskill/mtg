@@ -19,6 +19,11 @@ from .base import Aggregator
 # against the comprehensive rules type lists.
 SUBTYPE_VERIFIABLE_TYPES = {"Creature", "Kindred", "Tribal", "Land"}
 
+# Types marking non-playable objects: Tokens and Emblems aren't cards, while
+# "Card" and "Stickers" are Scryfall placeholders for substitute cards, art
+# series, sticker sheets, and similar objects.
+SKIPPED_TYPES = {"Token", "Emblem", "Card", "Stickers"}
+
 
 class MaximalPrintedTypesAggregator(Aggregator):
     """Find cards with maximal printed type combinations."""
@@ -87,9 +92,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
         """Process a single face of a card."""
         card_types = extract_types(face)
 
-        # Scryfall uses "Card" as a placeholder type on substitute cards,
-        # art series, and similar non-playable objects.
-        if "Token" in card_types or "Emblem" in card_types or "Card" in card_types:
+        if card_types & SKIPPED_TYPES:
             return
 
         unknown_subtypes = self._get_unknown_subtypes(face, card_types)
