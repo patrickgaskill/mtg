@@ -101,8 +101,8 @@ uv run python card_aggregator.py all             # Full workflow: download → t
 
 ## Data Flow
 
-1. **Download** — Fetches bulk data from Scryfall API, saves to `data/downloads/`
-2. **Processing** — Streams JSON via `ijson`, calls `process_card()` on each aggregator
+1. **Download** — Fetches bulk data from Scryfall API (gzipped JSONL via `jsonl_download_uri`), saves to `data/downloads/`
+2. **Processing** — Streams cards via `iter_cards()` (gzipped JSONL line-by-line; legacy `.json` arrays via `ijson`), calls `process_card()` on each aggregator
 3. **Output** — Generates HTML via Jinja2, writes to `data/output/`
 4. **Deployment** — GitHub Actions runs daily, deploys to GitHub Pages
 
@@ -119,7 +119,8 @@ Package management via **uv**.
 2. **Collector Number Sorting** — May contain letters (e.g., "123a"); `get_sort_key()` strips non-digits.
 3. **Date Handling** — Cards without release dates get `datetime.max.date()` for sorting.
 4. **Supercycle Sorting** — Sort by `days` field, not the formatted time string (bug fix: a03c957).
-5. **Memory Efficiency** — Use `ijson` for streaming large JSON files.
+5. **Memory Efficiency** — Stream card data instead of loading it whole: gzipped JSONL is read line-by-line, legacy JSON arrays via `ijson`.
+6. **Scryfall Bulk Format** — As of July 2026, Scryfall only offers bulk data as gzipped JSONL (`jsonl_download_uri` / `compressed_size`); the old `download_uri` / `size` fields are gone.
 
 ## Before Committing
 

@@ -71,5 +71,5 @@ jobs:
         uses: actions/upload-artifact@v7.0.0
         with:
           name: card-data
-          path: ${{ env.DOWNLOAD_FOLDER }}/*.json
+          path: ${{ env.DOWNLOAD_FOLDER }}/*.jsonl.gz
           retention-days: 7
