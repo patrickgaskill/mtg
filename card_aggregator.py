@@ -1,6 +1,8 @@
+import gzip
 import http.server
 import json
 import os
+import re
 import socketserver
 import threading
 import webbrowser
@@ -53,7 +55,6 @@ MANUAL_DATA_FOLDER = DATA_FOLDER / "manual"
 OUTPUT_DATA_FOLDER = DATA_FOLDER / "output"
 ALL_CREATURE_TYPES_FILE = "all_creature_types.txt"
 ALL_LAND_TYPES_FILE = "all_land_types.txt"
-DEFAULT_INPUT_FILE = DOWNLOADED_DATA_FOLDER / "default-cards.json"
 DEFAULT_OUTPUT_FOLDER = OUTPUT_DATA_FOLDER
 
 app = typer.Typer(
@@ -290,8 +291,17 @@ def download():
         logger.error("Could not find default_cards file in bulk data list")
         raise typer.Exit(1) from None
 
-    download_url = default_cards_file["download_uri"]
-    file_name = f"default-cards-{default_cards_file['updated_at'][:10]}.json"
+    # Scryfall retired the plain-JSON download_uri in July 2026; bulk data is
+    # now only offered as gzipped JSONL via jsonl_download_uri.
+    try:
+        download_url = default_cards_file["jsonl_download_uri"]
+        total_size = int(default_cards_file["compressed_size"])
+    except KeyError as e:
+        logger.error("Bulk data entry is missing expected field: {}", e)
+        logger.warning("The Scryfall API response format may have changed.")
+        raise typer.Exit(1) from None
+
+    file_name = f"default-cards-{default_cards_file['updated_at'][:10]}.jsonl.gz"
     DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
     file_path = DOWNLOADED_DATA_FOLDER / file_name
 
@@ -314,9 +324,8 @@ def download():
         logger.error("Request error while downloading file: {}", e)
         raise typer.Exit(1) from None
 
-    total_size = int(default_cards_file["size"])
     logger.info(
-        "Downloading {} ({:.1f} MB)...",
+        "Downloading {} ({:.1f} MB compressed)...",
         default_cards_file["name"],
         total_size / (1024 * 1024),
     )
@@ -417,12 +426,34 @@ def find_latest_default_cards(data_folder: Path) -> Path | None:
     Returns:
         Optional[Path]: The path to the latest "default-cards" file, or None if not found.
     """
-    default_cards_files = list(data_folder.glob("default-cards-*.json"))
-    return (
-        max(default_cards_files, key=lambda f: f.stem.split("-")[-1])
-        if default_cards_files
-        else None
-    )
+    default_cards_files = [
+        file
+        for pattern in ("default-cards-*.json", "default-cards-*.jsonl.gz")
+        for file in data_folder.glob(pattern)
+    ]
+
+    def date_key(file: Path) -> str:
+        match = re.search(r"\d{4}-\d{2}-\d{2}", file.name)
+        return match.group() if match else ""
+
+    return max(default_cards_files, key=date_key, default=None)
+
+
+def iter_cards(input_file: Path):
+    """
+    Stream card objects from a Scryfall bulk data file.
+
+    Supports gzipped JSONL (.jsonl.gz, the current Scryfall format) and
+    legacy JSON arrays (.json).
+    """
+    if input_file.name.endswith(".jsonl.gz"):
+        with gzip.open(input_file, "rt", encoding="utf-8") as file:
+            for line in file:
+                if line.strip():
+                    yield json.loads(line)
+    else:
+        with input_file.open("rb") as file:
+            yield from ijson.items(file, "item")
 
 
 def generate_nav_links(aggregators: list[Aggregator]) -> list[dict[str, str]]:
@@ -499,17 +530,16 @@ def run_internal(
     logger.info("Processing cards through {} aggregators...", len(aggregators))
     error_count = 0
     max_errors = 100
-    with input_file.open("rb") as file:
-        for card in ijson.items(file, "item"):
-            for aggregator in aggregators:
-                try:
-                    aggregator.process_card(card)
-                except Exception as e:
-                    error_count += 1
-                    logger.error("Error processing card {}: {}", card.get("name", "Unknown"), e)
-                    if error_count >= max_errors:
-                        logger.critical("Too many processing errors ({}), aborting", error_count)
-                        raise typer.Exit(1) from e
+    for card in iter_cards(input_file):
+        for aggregator in aggregators:
+            try:
+                aggregator.process_card(card)
+            except Exception as e:
+                error_count += 1
+                logger.error("Error processing card {}: {}", card.get("name", "Unknown"), e)
+                if error_count >= max_errors:
+                    logger.critical("Too many processing errors ({}), aborting", error_count)
+                    raise typer.Exit(1) from e
     if error_count > 0:
         logger.warning("Completed with {} processing error(s)", error_count)
 

@@ -135,8 +135,8 @@ def mock_scryfall_response():
                 "updated_at": datetime.now().isoformat(),
                 "name": "Default Cards",
                 "description": "All cards in the default format",
-                "download_uri": "https://example.com/cards.json",
-                "size": 100000000,
+                "jsonl_download_uri": "https://example.com/cards.jsonl.gz",
+                "compressed_size": 100000000,
             }
         ],
     }
