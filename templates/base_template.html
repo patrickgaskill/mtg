@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
     <link
@@ -158,7 +159,7 @@
 
       .card-tooltip-image {
         display: block;
-        max-width: 488px;
+        max-width: min(488px, 90vw);
         height: auto;
         border-radius: 13px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -173,7 +174,8 @@
 
       .filter-toggles {
         display: flex;
-        gap: 1.5rem;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
         margin-bottom: 1rem;
       }
 
@@ -184,6 +186,67 @@
         cursor: pointer;
         font-size: 0.875rem;
         color: var(--text-muted);
+      }
+
+      /* Larger touch targets on devices without hover (phones/tablets) */
+      @media (hover: none) and (pointer: coarse) {
+        #myGrid {
+          --ag-row-height: 48px;
+          --ag-header-height: 48px;
+        }
+
+        .filter-toggles label {
+          min-height: 44px;
+        }
+
+        .filter-toggles input[type="checkbox"] {
+          width: 1.1rem;
+          height: 1.1rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 0.75rem;
+        }
+
+        h1 {
+          font-size: 1.25rem;
+        }
+
+        .nav-select {
+          width: 100%;
+          min-width: 0;
+          padding: 10px 12px;
+          font-size: 16px; /* prevents iOS Safari zoom-on-focus */
+          margin-bottom: 1rem;
+        }
+
+        .explanation {
+          padding: 0.6rem 0.9rem;
+          font-size: 0.85rem;
+        }
+
+        /* Fill most of the viewport so the grid, not the page, is what scrolls */
+        #myGrid {
+          height: 75dvh;
+          min-height: 420px;
+        }
+
+        /* The paging panel is a single row of controls that overflows
+           narrow screens; let it wrap and tighten its spacing */
+        .ag-paging-panel {
+          height: auto;
+          min-height: 40px;
+          flex-wrap: wrap;
+          justify-content: center;
+          row-gap: 4px;
+          padding: 6px 4px;
+        }
+
+        .ag-paging-panel > * {
+          margin: 0 6px;
+        }
       }
     </style>
   </head>
@@ -308,7 +371,11 @@
                 arrow: false,
                 maxWidth: 'none',
                 delay: [200, 0],
-                trigger: 'mouseenter focus'
+                trigger: 'mouseenter focus',
+                // On touch devices there is no hover: emulated mouseenter on tap
+                // would pop the tooltip while also following the link. Disable
+                // touch-triggered tooltips so a tap just opens Scryfall.
+                touch: false
               });
               this.tippyInstances.push(tippyInstance);
             }
