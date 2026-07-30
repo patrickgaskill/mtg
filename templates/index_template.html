@@ -114,6 +114,19 @@
       }
 
       .generation-info p { margin: 0; }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 1rem;
+        }
+
+        .nav-select {
+          width: 100%;
+          min-width: 0;
+          padding: 10px 12px;
+          font-size: 16px; /* prevents iOS Safari zoom-on-focus */
+        }
+      }
     </style>
   </head>
   <body>
