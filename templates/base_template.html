@@ -445,11 +445,17 @@
       // Initialize grid with loading state
       const columnDefs = {{ column_defs | tojson }};
 
+      // On touch devices, tapping a cell draws a focus ring that serves no
+      // purpose (there's no keyboard navigation); suppress it so taps only
+      // interact with links. Matches the touch media query used in the CSS.
+      const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
       const gridOptions = {
         theme: "legacy",
         columnDefs: columnDefs,
         rowData: null,
         loading: true,
+        suppressCellFocus: isTouchDevice,
         defaultColDef: {
           sortable: true,
           filter: true,
