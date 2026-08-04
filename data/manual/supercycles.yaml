@@ -453,3 +453,10 @@ supercycles:
       - Pox
       - Smallpox
       - Pox Plague
+
+  - name: Tarot Major Arcana
+    finished: false # Legendary creatures referencing tarot major arcana
+    cards:
+      - Flubs, the Fool
+      - Homer, the Hermit
+      - Massimo, the Magician
