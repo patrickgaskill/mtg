@@ -460,3 +460,10 @@ supercycles:
       - Flubs, the Fool
       - Homer, the Hermit
       - Massimo, the Magician
+
+  - name: Craterhoof Finishers
+    finished: false # Mythic creatures that pump your team by X and grant evasion on enter
+    cards:
+      - Craterhoof Behemoth # Green - trample, X is creatures you control
+      - Moonshaker Cavalry # White - flying, X is creatures you control
+      - Craterclaw Colossus # Red - trample, X is artifacts you control
