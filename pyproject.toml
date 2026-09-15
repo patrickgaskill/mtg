@@ -11,6 +11,7 @@ dependencies = [
     "beautifulsoup4>=4.13.3",
     "pyyaml>=6.0.2",
     "markdown>=3.7",
+    "anthropic>=1.6.0",
 ]
 
 [tool.uv]

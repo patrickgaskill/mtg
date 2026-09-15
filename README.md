@@ -182,6 +182,26 @@ This repository is set up with GitHub Actions to automatically update the data a
 4. Generates all reports
 5. Publishes the reports to GitHub Pages
 
+### Supercycle Candidate Scan
+
+A second workflow runs every Monday at 13:00 UTC (and on demand via **Run workflow**) to look for new cards that might belong to a supercycle:
+
+1. Fetches cards released or previewed since the last scan from the Scryfall search API (reprints and digital-only cards are skipped)
+2. Sends the compact card list plus `data/manual/supercycles.yaml` to Claude, which returns candidates with a confidence level and rationale
+3. Opens a GitHub issue labelled `supercycle-candidate` with a Scryfall link for each proposed card, grouped by cycle. No issue is opened on quiet weeks.
+4. Commits `data/manual/supercycle_scan_state.json`, which records the last scan date and the cards already evaluated so preview cards are not re-judged every week
+
+The workflow needs an `ANTHROPIC_API_KEY` repository secret. To run it locally:
+
+```bash
+export ANTHROPIC_API_KEY=...
+uv run supercycle_scanner.py scan --dry-run            # list the cards that would be sent, no API call
+uv run supercycle_scanner.py scan --issue-file out.md  # full run, writes the issue body if candidates are found
+uv run supercycle_scanner.py reject "Card Name" --cycle "Cycle Name" --reason "why it does not fit"
+```
+
+Rejections are stored in the state file and shown to the model on later runs as negative examples. The model can be overridden with `--model` or the `SUPERCYCLE_SCAN_MODEL` environment variable.
+
 ## Viewing the Reports
 
 The generated reports are available at: https://patrickgaskill.github.io/mtg/

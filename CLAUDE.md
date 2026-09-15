@@ -34,9 +34,10 @@ mtg/
 │   └── test_type_updater.py # Tests for type fetching
 ├── data/                    # Data files (mostly gitignored)
 │   ├── downloads/          # Scryfall JSON files (gitignored)
-│   ├── manual/             # supercycles.yaml (tracked in git)
+│   ├── manual/             # supercycles.yaml, supercycle_scan_state.json (tracked in git)
 │   └── output/             # Generated HTML reports (gitignored)
 ├── card_aggregator.py      # Main CLI application (Typer)
+├── supercycle_scanner.py   # Weekly scan of new cards for supercycle candidates (Claude API)
 ├── card_utils.py           # Utility functions for card processing
 ├── constants.py            # Shared constants (foil types, dates, filters)
 ├── type_updater.py         # Scrapes MTG comprehensive rules for types
@@ -97,6 +98,8 @@ uv run python card_aggregator.py download       # Download latest Scryfall bulk 
 uv run python card_aggregator.py update-types    # Update types from comprehensive rules
 uv run python card_aggregator.py run [--serve]   # Process cards and generate reports
 uv run python card_aggregator.py all             # Full workflow: download → types → run → serve
+uv run supercycle_scanner.py scan [--dry-run]    # Find supercycle candidates among new cards (needs ANTHROPIC_API_KEY)
+uv run supercycle_scanner.py reject NAME --cycle CYCLE  # Record a rejected candidate
 ```
 
 ## Data Flow
@@ -105,10 +108,11 @@ uv run python card_aggregator.py all             # Full workflow: download → t
 2. **Processing** — Streams cards via `iter_cards()` (gzipped JSONL line-by-line; legacy `.json` arrays via `ijson`), calls `process_card()` on each aggregator
 3. **Output** — Generates HTML via Jinja2, writes to `data/output/`
 4. **Deployment** — GitHub Actions runs daily, deploys to GitHub Pages
+5. **Supercycle scan** — `supercycle_scan.yml` runs weekly: `supercycle_scanner.py` fetches new cards via the Scryfall search API, asks Claude (`claude-opus-5`, structured JSON output) which fit an existing supercycle, and opens a labelled GitHub issue with Scryfall links. State lives in `data/manual/supercycle_scan_state.json`.
 
 ## Dependencies
 
-**Production:** typer, loguru, ijson, requests, jinja2, beautifulsoup4, pyyaml, markdown
+**Production:** typer, loguru, ijson, requests, jinja2, beautifulsoup4, pyyaml, markdown, anthropic
 **Dev:** ruff, ty, pytest, pytest-cov, responses
 
 Package management via **uv**.
