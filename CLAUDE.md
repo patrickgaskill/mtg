@@ -20,6 +20,7 @@ A Python-based Magic: The Gathering card data aggregation and reporting tool tha
 mtg/
 ├── aggregators/              # Modular aggregator classes
 │   ├── base.py              # Abstract base class for all aggregators
+│   ├── character_aggregators.py # Card appearances by character/planeswalker
 │   ├── count_aggregators.py # Generic counting, collector numbers
 │   ├── first_card_aggregators.py # First cards by power/toughness, mana cost
 │   ├── metadata_aggregators.py   # Illustrations, promo types, foil types
@@ -34,7 +35,7 @@ mtg/
 │   └── test_type_updater.py # Tests for type fetching
 ├── data/                    # Data files (mostly gitignored)
 │   ├── downloads/          # Scryfall JSON files (gitignored)
-│   ├── manual/             # supercycles.yaml (tracked in git)
+│   ├── manual/             # supercycles.yaml, characters.yaml (tracked in git)
 │   └── output/             # Generated HTML reports (gitignored)
 ├── card_aggregator.py      # Main CLI application (Typer)
 ├── card_utils.py           # Utility functions for card processing
@@ -81,6 +82,23 @@ Constants in `constants.py` define what counts as "traditional" cards:
 - `NON_TRADITIONAL_BORDERS` - silver/gold borders
 
 Use `card_utils.is_traditional_card()` to filter appropriately.
+
+### Character Identity
+
+Scryfall has no "which character is on this card" field, so the character
+appearance reports match cards to characters with two rules plus curated data in
+`data/manual/characters.yaml`:
+
+- A planeswalker card represents the character named by its planeswalker subtype
+- A legendary creature card represents the character its name starts with, after
+  the title is cut off ("Kaervek, the Spiteful", "Kaervek the Merciless")
+- `characters.yaml` holds the exceptions: cards whose name hides the character
+  (Blind Seer is Urza), names that need merging (planeswalker subtype `Bolas` vs
+  `Nicol Bolas, Dragon-God`), cards representing two characters, and cards that
+  represent none
+
+Curated entries that never match a card produce warnings during a run, so typos
+and renamed cards surface in the daily GitHub Actions log.
 
 ### Type Handling
 

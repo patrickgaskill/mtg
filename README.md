@@ -21,6 +21,8 @@ This project fetches Magic: The Gathering card data from Scryfall, processes it,
   - Foil types by card name
   - Supercycle completion times
   - First cards by generalized mana cost
+  - Most card appearances by a character
+  - Most card appearances by a planeswalker
 - Automatically updates and publishes reports daily
 
 ## Setup

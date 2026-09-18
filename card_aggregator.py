@@ -25,6 +25,7 @@ from requests.exceptions import (
 
 from aggregators import (
     Aggregator,
+    CharacterAppearanceAggregator,
     CountAggregator,
     CountCardIllustrationsBySetAggregator,
     CreatureTypeCombinationCountAggregator,
@@ -163,6 +164,15 @@ def create_all_aggregators() -> list[Aggregator]:
         RulesOnlyCreatureTypesAggregator(
             all_creature_types_file=DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE,
             description="Creature types in the rules but never on any card",
+        ),
+        CharacterAppearanceAggregator(
+            characters_file=MANUAL_DATA_FOLDER / "characters.yaml",
+            description="Characters with the most cards representing them",
+        ),
+        CharacterAppearanceAggregator(
+            characters_file=MANUAL_DATA_FOLDER / "characters.yaml",
+            planeswalkers_only=True,
+            description="Planeswalkers with the most cards representing them",
         ),
     ]
 

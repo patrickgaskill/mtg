@@ -1,0 +1,74 @@
+# Magic: The Gathering character identity data
+#
+# Scryfall records no "which character is this card" field, so the character
+# appearance reports match cards to characters with two automatic rules:
+#
+#   1. A planeswalker card represents the character named by its planeswalker
+#      subtype: "Legendary Planeswalker — Jace" is Jace.
+#   2. A legendary creature card represents the character its name starts with:
+#      "Kaervek, the Spiteful" and "Kaervek the Merciless" are both Kaervek.
+#
+# A card counts only when it *is* the character. Cards that merely depict a
+# character, or name a spell they cast, don't count, so "Urza's Rage" is not an
+# Urza card. Everything the two rules get wrong is curated below.
+
+# Cards whose name doesn't say which character they represent. A card name maps
+# to one character, or to a list for cards that represent several. These
+# entries override the automatic rules, and a card listed here counts even if
+# it is neither a planeswalker nor a legendary creature.
+card_characters:
+  # A card that is a character in disguise or under another title
+  Blind Seer: Urza # Urza disguised, Invasion
+  Captain Sisay: Sisay
+  Ghoulcaller Gisa: Gisa
+  Stitcher Geralf: Geralf
+  General Tazri: Tazri
+  Gerrard Capashen: Gerrard
+  Ertai Resurrected: Ertai
+  Tolsimir Wolfblood: Tolsimir
+  Greven il-Vec: Greven
+  Baron Sengir: Sengir
+  Arcades Sabboth: Arcades
+  Hazezon Tamar: Hazezon
+  Dakkon Blackblade: Dakkon
+  Sivitri Scarzam: Sivitri
+  Rasputin Dreamweaver: Rasputin
+  Anje Falkenrath: Anje
+  Glissa Sunseeker: Glissa
+  Glissa Sunslayer: Glissa
+  "Jaya Ballard, Task Mage": Jaya
+  "Kytheon, Hero of Akros // Gideon, Battle-Forged": Gideon # Kytheon's spark ignites
+
+  # Cards that represent two characters at once
+  Gisa and Geralf:
+    - Gisa
+    - Geralf
+  "Halana and Alena, Partners":
+    - Halana
+    - Alena
+  "Slimefoot and Squee":
+    - Slimefoot
+    - Squee
+  "Yargle and Multani, Aberrant Artists":
+    - Yargle
+    - Multani
+  "Pia and Kiran Nalaar":
+    - Pia Nalaar
+    - Kiran Nalaar
+
+# Canonical names for characters the automatic rules file under more than one
+# name, usually because a planeswalker subtype is shorter than the name used on
+# the character's creature cards. A derived name maps to its canonical name;
+# mappings are applied once and are not chained.
+character_names:
+  Bolas: Nicol Bolas # "Legendary Planeswalker — Bolas"
+  Szat: Tevesh Szat
+
+# Cards that match the automatic rules but represent no single character, for
+# example a legendary creature named after a group rather than an individual.
+non_character_cards: []
+
+# Characters who are planeswalkers in the story but have never had a card with
+# the planeswalker card type. Listed here so they appear in the planeswalker
+# report alongside the characters detected from planeswalker subtypes.
+planeswalker_characters: []

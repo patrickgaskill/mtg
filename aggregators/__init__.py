@@ -1,6 +1,7 @@
 """Aggregator classes for processing MTG card data."""
 
 from .base import Aggregator
+from .character_aggregators import CharacterAppearanceAggregator
 from .count_aggregators import CountAggregator, MaxCollectorNumberBySetAggregator
 from .creature_type_aggregators import (
     CreatureTypeCombinationCountAggregator,
@@ -31,6 +32,7 @@ from .type_aggregators import (
 
 __all__ = [
     "Aggregator",
+    "CharacterAppearanceAggregator",
     "CountAggregator",
     "CountCardIllustrationsBySetAggregator",
     "CreatureTypeCombinationCountAggregator",
