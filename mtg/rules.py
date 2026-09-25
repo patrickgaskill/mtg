@@ -78,6 +78,16 @@ class TypeLists:
 _FIELDS = ("creature", "land", "artifact", "enchantment", "spell")
 
 
+def straighten_quotes(text: str) -> str:
+    """Replace curly quotes, as in "Urza’s", with straight ones to match card data."""
+    return (
+        text.replace("\u2018", "'")
+        .replace("\u2019", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+    )
+
+
 def _split_type_list(text: str) -> set[str]:
     """Split "A, B (see rule 1.2), and C" into {"A", "B", "C"}."""
     text = re.sub(r"\s*\([^)]*\)", "", text)
@@ -132,12 +142,7 @@ def fetch_rules_text() -> str:
             res = requests.get(txt_url, headers=REQUEST_HEADERS, timeout=RULES_FILE_TIMEOUT)
             res.raise_for_status()
             res.encoding = "utf-8"
-            rules_text = (
-                res.text.replace("\u2018", "'")
-                .replace("\u2019", "'")
-                .replace("\u201c", '"')
-                .replace("\u201d", '"')
-            )
+            rules_text = straighten_quotes(res.text)
             break  # Success, stop trying other links
         except HTTPError as e:
             errors.append(f"HTTP error while downloading from {txt_url}: {e}")
@@ -162,6 +167,7 @@ def fetch_rules_text() -> str:
 
 def parse_types(rules_text: str) -> TypeLists:
     """Extract the creature, land, artifact, enchantment, and spell type lists."""
+    rules_text = straighten_quotes(rules_text)
     # Extract creature types
     creature_types_match = re.search(
         r"All other creature types are one word long: (.*?)" + _SENTENCE_END, rules_text

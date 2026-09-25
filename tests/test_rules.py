@@ -1,5 +1,7 @@
 """Tests for rules.py functions."""
 
+from pathlib import Path
+
 import pytest
 import responses
 from requests.exceptions import ConnectionError, RequestException, Timeout
@@ -492,3 +494,49 @@ class TestTypeListsStorage:
 
     def test_empty_lists_are_not_loaded(self):
         assert not rules.TypeLists().loaded
+
+
+class TestRealRulesText:
+    """Parse rules 205.3g-205.3q from the 2026-09-25 comprehensive rules."""
+
+    @pytest.fixture(scope="class")
+    def type_lists(self):
+        text = (Path(__file__).parent / "fixtures" / "comp_rules_205_3.txt").read_text(
+            encoding="utf-8"
+        )
+        return rules.parse_types(text)
+
+    def test_artifact_types(self, type_lists):
+        assert type_lists.artifact == {
+            "Attraction", "Blood", "Bobblehead", "Book", "Clue", "Contraption", "Equipment",
+            "Food", "Fortification", "Gold", "Heartwood", "Incubator", "Infinity", "Junk",
+            "Lander", "Map", "Mutagen", "Powerstone", "Spacecraft", "Stone", "Treasure",
+            "Vehicle", "Vibranium",
+        }  # fmt: skip
+
+    def test_enchantment_types(self, type_lists):
+        assert type_lists.enchantment == {
+            "Aura", "Background", "Cartouche", "Case", "Class", "Curse", "Plan", "Role",
+            "Room", "Rune", "Saga", "Shard", "Shrine",
+        }  # fmt: skip
+
+    def test_spell_types(self, type_lists):
+        assert type_lists.spell == {"Adventure", "Arcane", "Lesson", "Omen", "Trap"}
+
+    def test_land_types(self, type_lists):
+        assert type_lists.land == {
+            "Cave", "Desert", "Forest", "Gate", "Island", "Lair", "Locus", "Mine", "Mountain",
+            "Plains", "Planet", "Power-Plant", "Sphere", "Swamp", "Tower", "Town", "Urza's",
+        }  # fmt: skip
+
+    def test_creature_types(self, type_lists):
+        assert len(type_lists.creature) == 324
+        assert {"Time Lord", "C'tan", "Shi'ar", "Assembly-Worker", "Zubera"} <= type_lists.creature
+        assert not any("(" in t or "and " in t for t in type_lists.creature)
+
+    def test_built_in_lists_match_current_rules(self, type_lists):
+        # If this fails, the rules changed: update the lists in constants.py.
+        assert type_lists.artifact == rules.ARTIFACT_TYPES
+        assert type_lists.enchantment == rules.ENCHANTMENT_TYPES
+        assert type_lists.spell == rules.SPELL_TYPES
+        assert type_lists.land == rules.LAND_TYPES
