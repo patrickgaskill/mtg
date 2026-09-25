@@ -155,6 +155,28 @@ def generalize_mana_cost(mana_cost: str) -> str:
     return "".join(color_map.get(c, c) for c in mana_cost)
 
 
+def get_illustration_key(card: dict[str, Any]) -> str | None:
+    """
+    Identify the artwork of a printing.
+
+    Single-image cards carry a top-level illustration_id. Double-faced cards
+    (transform, modal DFC, etc.) carry one per face instead, so their face IDs
+    are joined into a single key identifying the printing's full set of art.
+
+    Returns:
+        str | None: The illustration key, or None if the card has no art IDs.
+    """
+    illustration_id = card.get("illustration_id")
+    if illustration_id:
+        return illustration_id
+    face_ids = [
+        face["illustration_id"]
+        for face in card.get("card_faces") or []
+        if isinstance(face, dict) and face.get("illustration_id")
+    ]
+    return "/".join(face_ids) if face_ids else None
+
+
 def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
     """
     Extract the image URI for a card.

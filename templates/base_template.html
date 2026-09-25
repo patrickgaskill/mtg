@@ -255,7 +255,7 @@
       <select class="nav-select" onchange="window.location.href=this.value">
         <option value="">Select a view...</option>
         {% for link in nav_links %}
-        <option value="{{ link.url }}" {% if link.url == data_file %}selected{% endif %}>{{ link.display_name }}</option>
+        <option value="{{ link.url }}" {% if link.url == page_url %}selected{% endif %}>{{ link.display_name }}</option>
         {% endfor %}
       </select>
 

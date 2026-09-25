@@ -4,7 +4,7 @@ from collections import defaultdict
 from datetime import datetime
 from typing import Any
 
-from card_utils import get_card_link_data
+from card_utils import get_card_link_data, get_illustration_key
 from constants import FOIL_PROMO_TYPES, MODERN_FOIL_CUTOFF_DATE, SPECIAL_FOIL_SETS
 
 from .base import Aggregator
@@ -41,7 +41,7 @@ class CountCardIllustrationsBySetAggregator(Aggregator):
     def process_card(self, card: dict[str, Any]) -> None:
         set_ = card.get("set")
         name = card.get("name")
-        illustration_id = card.get("illustration_id")
+        illustration_id = get_illustration_key(card)
         # Skip cards that lack a set or name to avoid aggregating them under (None, ...) keys.
         if set_ is None or name is None:
             return
@@ -97,7 +97,7 @@ class MostPrintingsSameArtAggregator(Aggregator):
 
     def process_card(self, card: dict[str, Any]) -> None:
         name = card.get("name")
-        illustration_id = card.get("illustration_id")
+        illustration_id = get_illustration_key(card)
         if name is None:
             return
         self.printings[name] += 1
@@ -155,7 +155,7 @@ class MostUniqueIllustrationsAggregator(Aggregator):
 
     def process_card(self, card: dict[str, Any]) -> None:
         name = card.get("name")
-        illustration_id = card.get("illustration_id")
+        illustration_id = get_illustration_key(card)
         if name is None or illustration_id is None:
             return
         self.illustrations[name].add(illustration_id)

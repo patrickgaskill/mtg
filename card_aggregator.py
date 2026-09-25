@@ -1,19 +1,20 @@
 import gzip
 import http.server
 import json
-import os
 import re
 import socketserver
+import sys
 import threading
 import webbrowser
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 from typing import Annotated
 
 import ijson
 import requests
 import typer
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from loguru import logger
 from requests.exceptions import (
     ChunkedEncodingError,
@@ -70,10 +71,9 @@ def main(
     quiet: Annotated[bool, typer.Option("--quiet", "-q", help="Minimal output")] = False,
 ):
     """MTG Card Aggregator - Process Scryfall data and generate interactive reports"""
-    if quiet:
-        logger.disable("__main__")
-    elif verbose:
-        logger.enable("__main__")
+    level = "WARNING" if quiet else "DEBUG" if verbose else "INFO"
+    logger.remove()
+    logger.add(sys.stderr, level=level)
 
 
 def create_all_aggregators() -> list[Aggregator]:
@@ -235,23 +235,18 @@ def update_types():
         logger.error("Unexpected error fetching types: {}", e)
         raise typer.Exit(1) from None
 
-    creature_types_file = DOWNLOADED_DATA_FOLDER / ALL_CREATURE_TYPES_FILE
-    try:
-        with creature_types_file.open("w") as f:
-            for creature_type in sorted(creature_types):
-                f.write(f"{creature_type}\n")
-        logger.info("Updated {} with {} types.", ALL_CREATURE_TYPES_FILE, len(creature_types))
-    except OSError as e:
-        logger.error("Error writing to {}: {}", ALL_CREATURE_TYPES_FILE, e)
-
-    land_types_file = DOWNLOADED_DATA_FOLDER / ALL_LAND_TYPES_FILE
-    try:
-        with land_types_file.open("w") as f:
-            for land_type in sorted(land_types):
-                f.write(f"{land_type}\n")
-        logger.info("Updated {} with {} types.", ALL_LAND_TYPES_FILE, len(land_types))
-    except OSError as e:
-        logger.error("Error writing to {}: {}", ALL_LAND_TYPES_FILE, e)
+    for file_name, types in (
+        (ALL_CREATURE_TYPES_FILE, creature_types),
+        (ALL_LAND_TYPES_FILE, land_types),
+    ):
+        try:
+            DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
+            with (DOWNLOADED_DATA_FOLDER / file_name).open("w", encoding="utf-8") as f:
+                f.writelines(f"{type_name}\n" for type_name in sorted(types))
+        except OSError as e:
+            logger.error("Error writing to {}: {}", file_name, e)
+            raise typer.Exit(1) from None
+        logger.info("Updated {} with {} types.", file_name, len(types))
 
 
 @app.command()
@@ -304,6 +299,9 @@ def download():
     file_name = f"default-cards-{default_cards_file['updated_at'][:10]}.jsonl.gz"
     DOWNLOADED_DATA_FOLDER.mkdir(parents=True, exist_ok=True)
     file_path = DOWNLOADED_DATA_FOLDER / file_name
+    # Download to a temporary name and rename only once complete, so an
+    # interrupted download never looks like a valid data file.
+    part_path = file_path.with_name(file_path.name + ".part")
 
     try:
         response = requests.get(
@@ -331,43 +329,38 @@ def download():
     )
 
     try:
-        downloaded = 0
-        with file_path.open("wb") as file:
-            for data in response.iter_content(chunk_size=1024):
-                size = file.write(data)
-                downloaded += size
+        with part_path.open("wb") as file:
+            for data in response.iter_content(chunk_size=1024 * 1024):
+                file.write(data)
     except ChunkedEncodingError as e:
         logger.error("Connection lost during download: {}", e)
         logger.warning("The download was interrupted. Please try again.")
-        if file_path.exists():
-            file_path.unlink()
+        part_path.unlink(missing_ok=True)
         raise typer.Exit(1) from None
     except (ConnectionError, Timeout) as e:
         logger.error("Network error during download: {}", e)
         logger.warning("The connection was lost during download. Please try again.")
-        if file_path.exists():
-            file_path.unlink()
+        part_path.unlink(missing_ok=True)
         raise typer.Exit(1) from None
     except OSError as e:
         logger.error("Error writing file to disk: {}", e)
         logger.warning("Please check disk space and write permissions.")
-        if file_path.exists():
-            file_path.unlink()
+        part_path.unlink(missing_ok=True)
         raise typer.Exit(1) from None
     except Exception as e:
         logger.error("Unexpected error during download: {}", e)
-        if file_path.exists():
-            file_path.unlink()
+        part_path.unlink(missing_ok=True)
         raise typer.Exit(1) from None
 
-    actual_size = file_path.stat().st_size
+    actual_size = part_path.stat().st_size
     if actual_size != total_size:
         logger.error(
             "Download size mismatch: got {} bytes, expected {} bytes", actual_size, total_size
         )
-        file_path.unlink()
+        part_path.unlink()
         raise typer.Exit(1) from None
 
+    part_path.replace(file_path)
     logger.info("Download complete: {}", file_path)
     return file_path
 
@@ -486,21 +479,11 @@ def run_internal(
     dry_run: bool,
 ) -> None:
     """Internal function that does the actual processing work."""
-    if input_file is None:
-        input_file = find_latest_default_cards(DOWNLOADED_DATA_FOLDER)
-        if input_file is None:
-            logger.error("No 'default-cards' file found. Please run the download command.")
-            raise typer.Exit()
-
-    if output_folder is None:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_folder = OUTPUT_DATA_FOLDER / timestamp
-
     if not dry_run:
         output_folder.mkdir(parents=True, exist_ok=True)
 
     logger.info("Input: {}", input_file.name)
-    logger.info("Output: {}", output_folder.name if output_folder else "N/A (dry run)")
+    logger.info("Output: {}", "N/A (dry run)" if dry_run else output_folder.name)
 
     all_aggregators = create_all_aggregators()
 
@@ -530,7 +513,9 @@ def run_internal(
     logger.info("Processing cards through {} aggregators...", len(aggregators))
     error_count = 0
     max_errors = 100
+    card_count = 0
     for card in iter_cards(input_file):
+        card_count += 1
         for aggregator in aggregators:
             try:
                 aggregator.process_card(card)
@@ -540,10 +525,14 @@ def run_internal(
                 if error_count >= max_errors:
                     logger.critical("Too many processing errors ({}), aborting", error_count)
                     raise typer.Exit(1) from e
+    logger.debug("Processed {} cards", card_count)
     if error_count > 0:
         logger.warning("Completed with {} processing error(s)", error_count)
 
-    template_env = Environment(loader=FileSystemLoader(searchpath="./templates"))
+    template_env = Environment(
+        loader=FileSystemLoader(searchpath="./templates"),
+        autoescape=select_autoescape(["html"]),
+    )
     template_env.globals.update(zip=zip)
     base_template = template_env.get_template("base_template.html")
     index_template = template_env.get_template("index_template.html")
@@ -559,22 +548,11 @@ def run_internal(
 
     for aggregator in aggregators:
         try:
-            aggregator.generate_html_file(output_folder, base_template, nav_links)
+            data = aggregator.get_sorted_data()
+            aggregator.generate_html_file(output_folder, base_template, nav_links, data)
+            logger.info("{}: {} records", aggregator.display_name, len(data))
         except Exception as e:
             logger.error("Error generating files for {}: {}", aggregator.name, e)
-
-        try:
-            json_filename = f"{aggregator.name.lower().replace(' ', '_')}.json"
-            json_filepath = output_folder / json_filename
-            with json_filepath.open("w", encoding="utf-8") as json_file:
-                json.dump(aggregator.get_sorted_data(), json_file)
-        except Exception as e:
-            logger.error("Error saving JSON data for {}: {}", aggregator.name, e)
-
-    # Log summary
-    for agg in aggregators:
-        data = agg.get_sorted_data()
-        logger.info("{}: {} records", agg.display_name, len(data))
 
     # Log warnings from aggregators (deduplicated)
     seen_warnings = set()
@@ -648,15 +626,17 @@ def run(
     )
 
 
-def serve_and_open_browser(directory: Path):
-    """Start an HTTP server in the given directory and open the browser."""
-    port = 8000
-    handler = http.server.SimpleHTTPRequestHandler
-
-    os.chdir(directory.resolve())
+def serve_and_open_browser(directory: Path, port: int = 8000):
+    """Serve the given directory on localhost and open the browser."""
+    handler = partial(http.server.SimpleHTTPRequestHandler, directory=str(directory.resolve()))
 
     socketserver.TCPServer.allow_reuse_address = True
-    httpd = socketserver.TCPServer(("", port), handler)
+    try:
+        httpd = socketserver.TCPServer(("127.0.0.1", port), handler)
+    except OSError as e:
+        logger.warning("Port {} unavailable ({}); using a free port instead", port, e)
+        httpd = socketserver.TCPServer(("127.0.0.1", 0), handler)
+    port = httpd.server_address[1]
 
     url = f"http://localhost:{port}/index.html"
 

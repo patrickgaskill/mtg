@@ -12,6 +12,7 @@ from card_utils import (
     is_permanent,
     is_traditional_card,
 )
+from constants import NON_CREATURE_LAND_SUBTYPES
 
 from .base import Aggregator
 
@@ -47,8 +48,8 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 " previewed sets) are excluded until the rules are updated."
             ),
         )
-        # Maps a sorted type tuple to the (face, card) pair that produced it.
-        self.maximal_types: dict[tuple[str, ...], tuple[dict[str, Any], dict[str, Any]]] = {}
+        # Maps a type set to the (face, card) pair that produced it.
+        self.maximal_types: dict[frozenset[str], tuple[dict[str, Any], dict[str, Any]]] = {}
         self._unknown_subtypes_seen: set[str] = set()
         self._types_field = "types"
         self.column_defs = [
@@ -69,15 +70,6 @@ class MaximalPrintedTypesAggregator(Aggregator):
         self.all_creature_types = self.load_types(all_creature_types_file)
         self.all_land_types = self.load_types(all_land_types_file)
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
-
-    def load_types(self, file_path: Path) -> set[str]:
-        """Load types from a text file."""
-        try:
-            with file_path.resolve().open("r") as f:
-                return {line.strip() for line in f if line.strip()}
-        except OSError as e:
-            self.warnings.append(f"Error: Failed to load types from {file_path}: {e}")
-            return set()
 
     def process_card(self, card: dict[str, Any]) -> None:
         if not is_traditional_card(card):
@@ -120,7 +112,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
         card_types = self._modify_types(card_types)
 
-        type_key = tuple(sorted(card_types))
+        type_key = frozenset(card_types)
 
         if type_key in self.maximal_types:
             _existing_face, existing_card = self.maximal_types[type_key]
@@ -128,19 +120,12 @@ class MaximalPrintedTypesAggregator(Aggregator):
                 self.maximal_types[type_key] = (face, parent_card)
             return
 
-        is_maximal = all(
-            not set(type_key).issubset(set(existing_key)) for existing_key in self.maximal_types
-        )
+        if any(type_key < existing_key for existing_key in self.maximal_types):
+            return
 
-        if is_maximal:
-            keys_to_remove = [
-                existing_key
-                for existing_key in self.maximal_types
-                if set(existing_key).issubset(set(type_key))
-            ]
-            for key in keys_to_remove:
-                del self.maximal_types[key]
-            self.maximal_types[type_key] = (face, parent_card)
+        for key in [k for k in self.maximal_types if k < type_key]:
+            del self.maximal_types[key]
+        self.maximal_types[type_key] = (face, parent_card)
 
     def _get_unknown_subtypes(self, face: dict[str, Any], card_types: set[str]) -> set[str]:
         """
@@ -148,8 +133,9 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
         Scryfall publishes card data for newly previewed sets before the comprehensive
         rules (and thus the type lists) are updated, which would otherwise produce
-        spurious maximal rows. Only creature and land subtypes can be verified, so
-        subtypes of other card types (spells, artifacts, etc.) are not checked.
+        spurious maximal rows. Only creature and land subtypes can be verified;
+        known artifact, enchantment, and spell subtypes sharing the type line (e.g.
+        the Saga in "Enchantment Land — Urza's Saga") are allowed through.
         """
         if not self.all_creature_types or not self.all_land_types:
             # Type lists failed to load; load_types already warned.
@@ -160,7 +146,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
         if "—" not in type_line:
             return set()
         subtypes = extract_types({"type_line": type_line.split("—", 1)[1]})
-        return subtypes - self.all_creature_types - self.all_land_types
+        return subtypes - self.all_creature_types - self.all_land_types - NON_CREATURE_LAND_SUBTYPES
 
     def _modify_types(self, card_types: set[str]) -> set[str]:
         """Hook for subclasses to modify types before maximality check."""
@@ -204,8 +190,8 @@ class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
         )
         self._types_field = "originalTypes"
         self.global_effects = self._define_global_effects()
-        # Maps a sorted type tuple to the (face, card) pair that produced it.
-        self.maximal_types: dict[tuple[str, ...], tuple[dict[str, Any], dict[str, Any]]] = {}
+        # Maps a type set to the (face, card) pair that produced it.
+        self.maximal_types: dict[frozenset[str], tuple[dict[str, Any], dict[str, Any]]] = {}
         self.column_defs = [
             {"field": "originalTypes", "headerName": "Original Types", "width": 300},
             {

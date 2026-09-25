@@ -37,15 +37,34 @@ class Aggregator(ABC):
         """Return sorted data for display."""
         pass
 
+    def load_types(self, file_path: Path) -> set[str]:
+        """Load one type per line from a text file, recording a warning on failure."""
+        try:
+            with file_path.resolve().open("r", encoding="utf-8") as f:
+                return {line.strip() for line in f if line.strip()}
+        except OSError as e:
+            self.warnings.append(f"Error: Failed to load types from {file_path}: {e}")
+            return set()
+
     def generate_html_file(
-        self, output_folder: Path, template: Template, nav_links: list[dict[str, str]]
+        self,
+        output_folder: Path,
+        template: Template,
+        nav_links: list[dict[str, str]],
+        data: list[dict[str, Any]] | None = None,
     ) -> None:
-        """Generate HTML and JSON files for this aggregator."""
+        """Generate HTML and JSON files for this aggregator.
+
+        Pass `data` when it was already computed to avoid sorting it again.
+        """
+        if data is None:
+            data = self.get_sorted_data()
+
         # Generate JSON file
         json_filename = f"{self.name}.json"
         json_filepath = output_folder / json_filename
         with json_filepath.open("w", encoding="utf-8") as json_file:
-            json.dump(self.get_sorted_data(), json_file)
+            json.dump(data, json_file)
 
         # Convert markdown explanation to HTML if present
         explanation_html = ""
@@ -62,6 +81,7 @@ class Aggregator(ABC):
             explanation=explanation_html,
             nav_links=nav_links,
             data_file=json_filename,
+            page_url=f"{self.name}.html",
             column_defs=self.column_defs,
             type_filters=self.type_filters,
         )
