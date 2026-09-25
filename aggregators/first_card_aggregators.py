@@ -3,7 +3,12 @@
 from collections import defaultdict
 from typing import Any
 
-from card_utils import generalize_mana_cost, get_card_link_data, get_sort_key
+from card_utils import (
+    generalize_mana_cost,
+    get_card_link_data,
+    get_sort_key,
+    is_traditional_card,
+)
 
 from .base import Aggregator
 
@@ -17,7 +22,8 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
             "First Cards by Power and Toughness",
             description,
         )
-        self.data: dict[tuple[str, str], dict[str, Any]] = {}
+        # Maps (power, toughness) to the (face, card) pair that first had it.
+        self.data: dict[tuple[str, str], tuple[dict[str, Any], dict[str, Any]]] = {}
         self.column_defs = [
             {"field": "power", "headerName": "Power", "width": 90},
             {"field": "toughness", "headerName": "Toughness", "width": 110},
@@ -32,16 +38,20 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
         ]
 
     def process_card(self, card: dict[str, Any]) -> None:
-        power = card.get("power", "")
-        toughness = card.get("toughness", "")
-
-        if power == "" or toughness == "":
+        if not is_traditional_card(card):
             return
 
-        key = (power, toughness)
+        # Multi-faced cards usually keep power/toughness on their faces rather
+        # than the card itself, so check both.
+        for face in [*(card.get("card_faces") or []), card]:
+            power = face.get("power", "")
+            toughness = face.get("toughness", "")
+            if power == "" or toughness == "":
+                continue
 
-        if key not in self.data or get_sort_key(card) < get_sort_key(self.data[key]):
-            self.data[key] = card
+            key = (power, toughness)
+            if key not in self.data or get_sort_key(card) < get_sort_key(self.data[key][1]):
+                self.data[key] = (face, card)
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
@@ -51,10 +61,10 @@ class FirstCardByPowerToughnessAggregator(Aggregator):
                 "name": card.get("name", ""),
                 "set": card.get("set", ""),
                 "releaseDate": card.get("released_at", ""),
-                **get_card_link_data(card),
+                **get_card_link_data(card, face if face is not card else None),
             }
-            for (power, toughness), card in sorted(
-                self.data.items(), key=lambda item: get_sort_key(item[1])
+            for (power, toughness), (face, card) in sorted(
+                self.data.items(), key=lambda item: get_sort_key(item[1][1])
             )
         ]
 

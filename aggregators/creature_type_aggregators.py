@@ -1,5 +1,6 @@
 """Aggregators for analyzing creature type statistics."""
 
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ from card_utils import (
     is_all_creature_types,
     is_traditional_card,
 )
+from constants import CREATURE_SUBTYPE_CARD_TYPES, LAND_TYPES, NON_CREATURE_LAND_SUBTYPES
 
 from .base import Aggregator
 
@@ -26,8 +28,10 @@ COLOR_NAMES = {
 def extract_creature_subtypes(card: dict[str, Any]) -> set[str]:
     """Extract creature subtypes from a card's type line.
 
-    Returns the set of subtypes for creature cards, or empty set if not a creature.
-    Handles "Time Lord" as a single type and multi-faced cards.
+    Returns the creature subtypes of Creature and Kindred (Tribal) faces, or an
+    empty set if no face has any. Artifact, enchantment, spell, and land
+    subtypes sharing the type line (e.g. "Artifact Creature — Equipment Lizard")
+    are dropped. Handles "Time Lord" as a single type and multi-faced cards.
     """
     type_line = card.get("type_line", "")
 
@@ -37,19 +41,25 @@ def extract_creature_subtypes(card: dict[str, Any]) -> set[str]:
     subtypes = set()
 
     for face in faces:
-        # Check if this face is a creature
         if "—" not in face:
             continue
 
         supertypes_and_types, subtype_str = face.split("—", 1)
+        card_types = set(supertypes_and_types.split())
 
-        if "Creature" not in supertypes_and_types:
+        if not card_types & CREATURE_SUBTYPE_CARD_TYPES:
             continue
+
+        excluded = NON_CREATURE_LAND_SUBTYPES
+        if "Land" in card_types:
+            excluded = excluded | LAND_TYPES
 
         # Handle "Time Lord" as a single type
         subtype_str = subtype_str.replace("Time Lord", "Time-Lord")
         for part in subtype_str.split():
-            subtypes.add(part.replace("Time-Lord", "Time Lord"))
+            subtype = part.replace("Time-Lord", "Time Lord")
+            if subtype not in excluded:
+                subtypes.add(subtype)
 
     return subtypes
 
@@ -447,9 +457,18 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
                 " card, still qualifies."
             ),
         )
-        self.all_creature_types = self._load_types(all_creature_types_file)
+        self.all_creature_types = self.load_types(all_creature_types_file)
         self.seen_types: set[str] = set()
         self.first_text_mention: dict[str, dict[str, Any]] = {}
+        # One whole-word pattern for every type (longest first so "Time Lord"
+        # wins over shorter overlaps), allowing simple plurals like "Camarids".
+        # Whole-word matching keeps "Elf" from matching "itself".
+        alternation = "|".join(
+            re.escape(t) for t in sorted(self.all_creature_types, key=lambda t: -len(t))
+        )
+        self._type_pattern = (
+            re.compile(rf"\b({alternation})(?:e?s)?\b") if self.all_creature_types else None
+        )
         self.column_defs = [
             {"field": "creatureType", "headerName": "Creature Type", "width": 160},
             {
@@ -461,15 +480,6 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
             {"field": "set", "headerName": "Set", "width": 80},
             {"field": "releaseDate", "headerName": "Release Date", "width": 120},
         ]
-
-    def _load_types(self, file_path: Path) -> set[str]:
-        """Load creature types from a text file."""
-        try:
-            with file_path.resolve().open("r") as f:
-                return {line.strip() for line in f if line.strip()}
-        except OSError as e:
-            self.warnings.append(f"Error: Failed to load types from {file_path}: {e}")
-            return set()
 
     def process_card(self, card: dict[str, Any]) -> None:
         if is_all_creature_types(card):
@@ -484,13 +494,12 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
         if card_faces:
             oracle_text = " ".join(face.get("oracle_text", "") for face in card_faces)
 
-        if not oracle_text:
+        if not oracle_text or self._type_pattern is None:
             return
 
-        for creature_type in self.all_creature_types:
-            if creature_type in oracle_text and (
-                creature_type not in self.first_text_mention
-                or get_sort_key(card) < get_sort_key(self.first_text_mention[creature_type])
+        for creature_type in set(self._type_pattern.findall(oracle_text)):
+            if creature_type not in self.first_text_mention or get_sort_key(card) < get_sort_key(
+                self.first_text_mention[creature_type]
             ):
                 self.first_text_mention[creature_type] = card
 

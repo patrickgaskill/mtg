@@ -404,3 +404,15 @@ class TestGetCardLinkData:
         result = card_utils.get_card_link_data(card)
         assert result["scryfall_uri"] == "https://scryfall.com/card/mid/1"
         assert result["image_uri"] == "https://example.com/front.jpg"
+
+
+class TestGetIllustrationKey:
+    def test_single_faced(self):
+        assert card_utils.get_illustration_key({"illustration_id": "a"}) == "a"
+
+    def test_double_faced_joins_face_ids(self):
+        card = {"card_faces": [{"illustration_id": "a"}, {"illustration_id": "b"}]}
+        assert card_utils.get_illustration_key(card) == "a/b"
+
+    def test_missing(self):
+        assert card_utils.get_illustration_key({"name": "No Art"}) is None

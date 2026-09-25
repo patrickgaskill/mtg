@@ -93,7 +93,7 @@ class TestUnknownSubtypeHandling:
             ],
         )
         aggregator.process_card(card)
-        assert list(aggregator.maximal_types) == [("Creature", "Human")]
+        assert list(aggregator.maximal_types) == [frozenset({"Creature", "Human"})]
 
     def test_check_disabled_when_type_files_missing(self, temp_dir):
         aggregator = MaximalPrintedTypesAggregator(
@@ -180,7 +180,7 @@ class TestPlaceholderTypes:
             ],
         )
         aggregator.process_card(card)
-        assert list(aggregator.maximal_types) == [("Creature", "Human")]
+        assert list(aggregator.maximal_types) == [frozenset({"Creature", "Human"})]
 
     def test_effects_aggregator_also_skips_card_placeholder(self, type_files):
         aggregator = MaximalTypesWithEffectsAggregator(*type_files)
@@ -197,14 +197,14 @@ class TestNameBasedTypes:
             )
         )
         assert list(aggregator.maximal_types) == [
-            ("Creature", "Grist", "Insect", "Legendary", "Planeswalker")
+            frozenset({"Creature", "Grist", "Insect", "Legendary", "Planeswalker"})
         ]
 
     def test_other_planeswalkers_are_unchanged(self, aggregator):
         aggregator.process_card(
             make_card(name="Jace Beleren", type_line="Legendary Planeswalker — Jace")
         )
-        assert list(aggregator.maximal_types) == [("Jace", "Legendary", "Planeswalker")]
+        assert list(aggregator.maximal_types) == [frozenset({"Jace", "Legendary", "Planeswalker"})]
 
 
 class TestFaceImages:
@@ -241,9 +241,39 @@ class TestMaximality:
     def test_subset_is_replaced_by_superset(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human"))
         aggregator.process_card(make_card(type_line="Creature — Human Wizard"))
-        assert list(aggregator.maximal_types) == [("Creature", "Human", "Wizard")]
+        assert list(aggregator.maximal_types) == [frozenset({"Creature", "Human", "Wizard"})]
 
     def test_incomparable_sets_are_both_kept(self, aggregator):
         aggregator.process_card(make_card(type_line="Creature — Human Wizard"))
         aggregator.process_card(make_card(type_line="Creature — Bear"))
         assert len(aggregator.maximal_types) == 2
+
+
+class TestMixedSubtypes:
+    @pytest.fixture
+    def aggregator(self, temp_dir):
+        creature_file = temp_dir / "all_creature_types.txt"
+        creature_file.write_text("Lizard\nWarrior\n")
+        land_file = temp_dir / "all_land_types.txt"
+        land_file.write_text("Forest\nUrza's\n")
+        return MaximalPrintedTypesAggregator(creature_file, land_file)
+
+    @pytest.mark.parametrize(
+        "type_line",
+        [
+            "Enchantment Land — Urza's Saga",
+            "Artifact Creature — Equipment Lizard",
+            "Tribal Artifact — Warrior Equipment",
+        ],
+    )
+    def test_known_non_creature_subtypes_are_not_unknown(self, aggregator, type_line):
+        aggregator.process_card(make_card(type_line=type_line))
+        assert len(aggregator.maximal_types) == 1
+        assert aggregator.warnings == []
+
+    def test_subset_is_replaced_by_superset(self, aggregator):
+        aggregator.process_card(make_card(type_line="Creature — Lizard"))
+        aggregator.process_card(make_card(type_line="Artifact Creature — Equipment Lizard"))
+        assert list(aggregator.maximal_types) == [
+            frozenset({"Artifact", "Creature", "Equipment", "Lizard"})
+        ]

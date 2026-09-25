@@ -19,23 +19,24 @@ A Python-based Magic: The Gathering card data aggregation and reporting tool tha
 ```
 mtg/
 ├── aggregators/              # Modular aggregator classes
-│   ├── base.py              # Abstract base class for all aggregators
+│   ├── base.py              # Abstract base class (HTML/JSON output, type-file loading)
 │   ├── count_aggregators.py # Generic counting, collector numbers
+│   ├── creature_type_aggregators.py # Creature type census, firsts, token/rules-only types
 │   ├── first_card_aggregators.py # First cards by power/toughness, mana cost
 │   ├── metadata_aggregators.py   # Illustrations, promo types, foil types
+│   ├── reprint_aggregators.py    # Functional reprints
 │   ├── supercycle_aggregators.py # Tracks completion times for card cycles
 │   └── type_aggregators.py       # Complex type analysis with global effects
-├── templates/               # Jinja2 HTML templates
+├── templates/               # Jinja2 HTML templates (autoescaped)
 │   ├── base_template.html  # AG Grid-based report page
 │   └── index_template.html # Landing page with report list
-├── tests/                   # Test suite
-│   ├── conftest.py         # Shared pytest fixtures
-│   ├── test_card_utils.py  # Tests for card utility functions
-│   └── test_type_updater.py # Tests for type fetching
+├── tests/                   # Test suite (one test_*.py per module)
+│   └── conftest.py         # Shared pytest fixtures
 ├── data/                    # Data files (mostly gitignored)
-│   ├── downloads/          # Scryfall JSON files (gitignored)
+│   ├── downloads/          # Scryfall JSONL files + type lists (gitignored)
 │   ├── manual/             # supercycles.yaml (tracked in git)
 │   └── output/             # Generated HTML reports (gitignored)
+├── .github/workflows/      # ci.yml (lint + tests on PRs), publish_html.yml (daily deploy)
 ├── card_aggregator.py      # Main CLI application (Typer)
 ├── card_utils.py           # Utility functions for card processing
 ├── constants.py            # Shared constants (foil types, dates, filters)
@@ -88,6 +89,8 @@ Special considerations for creature/land types:
 - "Time Lord" contains a space and requires special handling in regex
 - `is_all_creature_types()` detects Changelings and Mistform Ultimus
 - Types are extracted via `extract_types()` with careful word boundary matching
+- Creature subtypes come from `extract_creature_subtypes()`, which covers Kindred/Tribal cards and drops artifact, enchantment, spell, and land subtypes sharing the type line (e.g. "Artifact Creature — Equipment Lizard")
+- Those non-creature subtype lists live in `constants.py` and are hand-maintained; add new artifact/enchantment/spell types there when the rules add them, or cards carrying them get skipped by the maximal types reports
 - Type data is updated from comprehensive rules via `type_updater.py`
 
 ## CLI Commands
@@ -97,6 +100,7 @@ uv run python card_aggregator.py download       # Download latest Scryfall bulk 
 uv run python card_aggregator.py update-types    # Update types from comprehensive rules
 uv run python card_aggregator.py run [--serve]   # Process cards and generate reports
 uv run python card_aggregator.py all             # Full workflow: download → types → run → serve
+uv run python card_aggregator.py -v run          # -v for debug logging, -q for warnings only
 ```
 
 ## Data Flow
@@ -119,8 +123,10 @@ Package management via **uv**.
 2. **Collector Number Sorting** — May contain letters (e.g., "123a"); `get_sort_key()` strips non-digits.
 3. **Date Handling** — Cards without release dates get `datetime.max.date()` for sorting.
 4. **Supercycle Sorting** — Sort by `days` field, not the formatted time string (bug fix: a03c957).
-5. **Memory Efficiency** — Stream card data instead of loading it whole: gzipped JSONL is read line-by-line, legacy JSON arrays via `ijson`.
-6. **Scryfall Bulk Format** — As of July 2026, Scryfall only offers bulk data as gzipped JSONL (`jsonl_download_uri` / `compressed_size`); the old `download_uri` / `size` fields are gone.
+5. **Double-Faced Cards** — Transform/MDFC cards keep `illustration_id`, `power`, `toughness`, and images on `card_faces`, not the top level. Use `get_illustration_key()` for art.
+6. **Downloads** — Written to `*.part` and renamed on success, so interrupted downloads are never picked up.
+7. **Memory Efficiency** — Stream card data instead of loading it whole: gzipped JSONL is read line-by-line, legacy JSON arrays via `ijson`.
+8. **Scryfall Bulk Format** — As of July 2026, Scryfall only offers bulk data as gzipped JSONL (`jsonl_download_uri` / `compressed_size`); the old `download_uri` / `size` fields are gone.
 
 ## Before Committing
 
