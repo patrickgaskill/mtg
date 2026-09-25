@@ -1,0 +1,137 @@
+[
+  {
+    "creatureType": "Giant",
+    "count": 1,
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "creatureType": "Lizard",
+    "count": 1,
+    "name": "Lizard Blades",
+    "set": "neo",
+    "releaseDate": "2022-02-18",
+    "scryfall_uri": "https://scryfall.com/card/neo/153/lizard-blades",
+    "image_uri": "https://img.test/neo/153.jpg"
+  },
+  {
+    "creatureType": "Warrior",
+    "count": 1,
+    "name": "Obsidian Battle-Axe",
+    "set": "mor",
+    "releaseDate": "2008-02-01",
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg"
+  },
+  {
+    "creatureType": "Dryad",
+    "count": 1,
+    "name": "Dryad Arbor",
+    "set": "fut",
+    "releaseDate": "2007-05-04",
+    "scryfall_uri": "https://scryfall.com/card/fut/174/dryad-arbor",
+    "image_uri": "https://img.test/fut/174.jpg"
+  },
+  {
+    "creatureType": "Faerie",
+    "count": 1,
+    "name": "Faerie Trickery",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/63/faerie-trickery",
+    "image_uri": "https://img.test/lrw/63.jpg"
+  },
+  {
+    "creatureType": "Dog",
+    "count": 1,
+    "name": "Isamaru, Hound of Konda",
+    "set": "chk",
+    "releaseDate": "2004-10-01",
+    "scryfall_uri": "https://scryfall.com/card/chk/19/isamaru-hound-of-konda",
+    "image_uri": "https://img.test/chk/19.jpg"
+  },
+  {
+    "creatureType": "Time Lord",
+    "count": 1,
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  },
+  {
+    "creatureType": "Doctor",
+    "count": 1,
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  },
+  {
+    "creatureType": "Bear",
+    "count": 2,
+    "name": "Grizzly Bears",
+    "set": "2ed",
+    "releaseDate": "1993-12-01",
+    "scryfall_uri": "https://scryfall.com/card/2ed/199/grizzly-bears",
+    "image_uri": "https://img.test/2ed/199.jpg"
+  },
+  {
+    "creatureType": "Insect",
+    "count": 2,
+    "name": "Delver of Secrets // Insectile Aberration",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/302/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/mh2/302-front.jpg"
+  },
+  {
+    "creatureType": "Angel",
+    "count": 2,
+    "name": "Serra Angel",
+    "set": "prm",
+    "releaseDate": "2002-06-24",
+    "scryfall_uri": "https://scryfall.com/card/prm/36102/serra-angel",
+    "image_uri": "https://img.test/prm/36102.jpg"
+  },
+  {
+    "creatureType": "Elf",
+    "count": 3,
+    "name": "Llanowar Elves",
+    "set": "m10",
+    "releaseDate": "2009-07-17",
+    "scryfall_uri": "https://scryfall.com/card/m10/182/llanowar-elves",
+    "image_uri": "https://img.test/m10/182.jpg"
+  },
+  {
+    "creatureType": "Druid",
+    "count": 3,
+    "name": "Llanowar Elves",
+    "set": "m10",
+    "releaseDate": "2009-07-17",
+    "scryfall_uri": "https://scryfall.com/card/m10/182/llanowar-elves",
+    "image_uri": "https://img.test/m10/182.jpg"
+  },
+  {
+    "creatureType": "Human",
+    "count": 3,
+    "name": "Self Reflection",
+    "set": "fdn",
+    "releaseDate": "2024-11-15",
+    "scryfall_uri": "https://scryfall.com/card/fdn/77/self-reflection",
+    "image_uri": "https://img.test/fdn/77.jpg"
+  },
+  {
+    "creatureType": "Wizard",
+    "count": 3,
+    "name": "Self Reflection",
+    "set": "fdn",
+    "releaseDate": "2024-11-15",
+    "scryfall_uri": "https://scryfall.com/card/fdn/77/self-reflection",
+    "image_uri": "https://img.test/fdn/77.jpg"
+  }
+]

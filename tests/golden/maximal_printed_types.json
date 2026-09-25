@@ -1,0 +1,90 @@
+[
+  {
+    "types": "Basic Land — Forest",
+    "name": "Forest",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/294/forest",
+    "image_uri": "https://img.test/lea/294.jpg"
+  },
+  {
+    "types": "Legendary Creature — Illusion",
+    "name": "Mistform Ultimus",
+    "set": "lgn",
+    "releaseDate": "2003-02-03",
+    "scryfall_uri": "https://scryfall.com/card/lgn/45/mistform-ultimus",
+    "image_uri": "https://img.test/lgn/45.jpg"
+  },
+  {
+    "types": "Land Creature — Forest Dryad",
+    "name": "Dryad Arbor",
+    "set": "fut",
+    "releaseDate": "2007-05-04",
+    "scryfall_uri": "https://scryfall.com/card/fut/174/dryad-arbor",
+    "image_uri": "https://img.test/fut/174.jpg"
+  },
+  {
+    "types": "Legendary Planeswalker — Jace",
+    "name": "Jace Beleren",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/71/jace-beleren",
+    "image_uri": "https://img.test/lrw/71.jpg"
+  },
+  {
+    "types": "Tribal Instant — Shapeshifter",
+    "name": "Nameless Inversion",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/131/nameless-inversion",
+    "image_uri": "https://img.test/lrw/131.jpg"
+  },
+  {
+    "types": "Tribal Artifact — Warrior Equipment",
+    "name": "Obsidian Battle-Axe",
+    "set": "mor",
+    "releaseDate": "2008-02-01",
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg"
+  },
+  {
+    "types": "Creature — Giant // Instant — Adventure",
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "types": "Legendary Planeswalker — Grist",
+    "name": "Grist, the Hunger Tide",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/202/grist-the-hunger-tide",
+    "image_uri": "https://img.test/mh2/202.jpg"
+  },
+  {
+    "types": "Land",
+    "name": "Planar Nexus",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/256/planar-nexus",
+    "image_uri": "https://img.test/mh2/256.jpg"
+  },
+  {
+    "types": "Enchantment Land — Urza's Saga",
+    "name": "Urza's Saga",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/259/urzas-saga",
+    "image_uri": "https://img.test/mh2/259.jpg"
+  },
+  {
+    "types": "Artifact Creature — Equipment Lizard",
+    "name": "Lizard Blades",
+    "set": "neo",
+    "releaseDate": "2022-02-18",
+    "scryfall_uri": "https://scryfall.com/card/neo/153/lizard-blades",
+    "image_uri": "https://img.test/neo/153.jpg"
+  }
+]

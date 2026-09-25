@@ -1,0 +1,25 @@
+Angel
+Bear
+Camarid
+Construct
+Doctor
+Dog
+Druid
+Dryad
+Elemental
+Elf
+Faerie
+Germ
+Giant
+Human
+Illusion
+Insect
+Lizard
+Pentavite
+Phyrexian
+Rogue
+Shapeshifter
+Tetravite
+Time Lord
+Warrior
+Wizard

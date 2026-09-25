@@ -1,0 +1,12 @@
+supercycles:
+  - name: Green Staples
+    finished: true
+    cards:
+      - Llanowar Elves
+      - Grizzly Bears
+      - Dryad Arbor
+  - name: Unfinished Test Cycle
+    finished: false
+    cards:
+      - Lightning Bolt
+      - Nonexistent Card

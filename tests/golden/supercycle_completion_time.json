@@ -1,0 +1,42 @@
+[
+  {
+    "supercycle": "Unfinished Test Cycle",
+    "status": "Unfinished",
+    "cards": "Lightning Bolt, Nonexistent Card",
+    "cardObjects": [
+      {
+        "name": "Lightning Bolt",
+        "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
+        "image_uri": "https://img.test/lea/161.jpg"
+      }
+    ],
+    "startDate": "August 05, 1993",
+    "endDate": "Ongoing"
+  },
+  {
+    "supercycle": "Green Staples",
+    "status": "Finished",
+    "cards": "Llanowar Elves, Grizzly Bears, Dryad Arbor",
+    "cardObjects": [
+      {
+        "name": "Llanowar Elves",
+        "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+        "image_uri": "https://img.test/lea/210.jpg"
+      },
+      {
+        "name": "Grizzly Bears",
+        "scryfall_uri": "https://scryfall.com/card/lea/198/grizzly-bears",
+        "image_uri": "https://img.test/lea/198.jpg"
+      },
+      {
+        "name": "Dryad Arbor",
+        "scryfall_uri": "https://scryfall.com/card/fut/174/dryad-arbor",
+        "image_uri": "https://img.test/fut/174.jpg"
+      }
+    ],
+    "time": "13 years, 8 months, 29 days",
+    "startDate": "August 05, 1993",
+    "endDate": "May 04, 2007",
+    "days": 5020
+  }
+]

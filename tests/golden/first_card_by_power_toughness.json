@@ -1,0 +1,65 @@
+[
+  {
+    "power": "4",
+    "toughness": "4",
+    "name": "Serra Angel",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/40a/serra-angel",
+    "image_uri": "https://img.test/lea/40a.jpg"
+  },
+  {
+    "power": "2",
+    "toughness": "2",
+    "name": "Grizzly Bears",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/198/grizzly-bears",
+    "image_uri": "https://img.test/lea/198.jpg"
+  },
+  {
+    "power": "1",
+    "toughness": "1",
+    "name": "Llanowar Elves",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "power": "3",
+    "toughness": "3",
+    "name": "Mistform Ultimus",
+    "set": "lgn",
+    "releaseDate": "2003-02-03",
+    "scryfall_uri": "https://scryfall.com/card/lgn/45/mistform-ultimus",
+    "image_uri": "https://img.test/lgn/45.jpg"
+  },
+  {
+    "power": "3",
+    "toughness": "2",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "set": "isd",
+    "releaseDate": "2011-09-30",
+    "scryfall_uri": "https://scryfall.com/card/isd/51/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/isd/51-back.jpg"
+  },
+  {
+    "power": "4",
+    "toughness": "3",
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "power": "2",
+    "toughness": "4",
+    "name": "Self Reflection",
+    "set": "fdn",
+    "releaseDate": "2024-11-15",
+    "scryfall_uri": "https://scryfall.com/card/fdn/77/self-reflection",
+    "image_uri": "https://img.test/fdn/77.jpg"
+  }
+]

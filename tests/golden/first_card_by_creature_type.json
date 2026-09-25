@@ -1,0 +1,122 @@
+[
+  {
+    "creatureType": "Angel",
+    "name": "Serra Angel",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/40a/serra-angel",
+    "image_uri": "https://img.test/lea/40a.jpg"
+  },
+  {
+    "creatureType": "Bear",
+    "name": "Grizzly Bears",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/198/grizzly-bears",
+    "image_uri": "https://img.test/lea/198.jpg"
+  },
+  {
+    "creatureType": "Elf",
+    "name": "Llanowar Elves",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "creatureType": "Druid",
+    "name": "Llanowar Elves",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "creatureType": "Dog",
+    "name": "Isamaru, Hound of Konda",
+    "set": "chk",
+    "releaseDate": "2004-10-01",
+    "scryfall_uri": "https://scryfall.com/card/chk/19/isamaru-hound-of-konda",
+    "image_uri": "https://img.test/chk/19.jpg"
+  },
+  {
+    "creatureType": "Dryad",
+    "name": "Dryad Arbor",
+    "set": "fut",
+    "releaseDate": "2007-05-04",
+    "scryfall_uri": "https://scryfall.com/card/fut/174/dryad-arbor",
+    "image_uri": "https://img.test/fut/174.jpg"
+  },
+  {
+    "creatureType": "Faerie",
+    "name": "Faerie Trickery",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/63/faerie-trickery",
+    "image_uri": "https://img.test/lrw/63.jpg"
+  },
+  {
+    "creatureType": "Warrior",
+    "name": "Obsidian Battle-Axe",
+    "set": "mor",
+    "releaseDate": "2008-02-01",
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg"
+  },
+  {
+    "creatureType": "Insect",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "set": "isd",
+    "releaseDate": "2011-09-30",
+    "scryfall_uri": "https://scryfall.com/card/isd/51/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/isd/51-front.jpg"
+  },
+  {
+    "creatureType": "Human",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "set": "isd",
+    "releaseDate": "2011-09-30",
+    "scryfall_uri": "https://scryfall.com/card/isd/51/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/isd/51-front.jpg"
+  },
+  {
+    "creatureType": "Wizard",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "set": "isd",
+    "releaseDate": "2011-09-30",
+    "scryfall_uri": "https://scryfall.com/card/isd/51/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/isd/51-front.jpg"
+  },
+  {
+    "creatureType": "Giant",
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "creatureType": "Lizard",
+    "name": "Lizard Blades",
+    "set": "neo",
+    "releaseDate": "2022-02-18",
+    "scryfall_uri": "https://scryfall.com/card/neo/153/lizard-blades",
+    "image_uri": "https://img.test/neo/153.jpg"
+  },
+  {
+    "creatureType": "Time Lord",
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  },
+  {
+    "creatureType": "Doctor",
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  }
+]

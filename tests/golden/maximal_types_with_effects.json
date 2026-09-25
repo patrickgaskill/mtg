@@ -1,0 +1,58 @@
+[
+  {
+    "originalTypes": "Basic Land — Forest",
+    "name": "Forest",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/294/forest",
+    "image_uri": "https://img.test/lea/294.jpg"
+  },
+  {
+    "originalTypes": "Legendary Planeswalker — Jace",
+    "name": "Jace Beleren",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/71/jace-beleren",
+    "image_uri": "https://img.test/lrw/71.jpg"
+  },
+  {
+    "originalTypes": "Tribal Instant — Shapeshifter",
+    "name": "Nameless Inversion",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/131/nameless-inversion",
+    "image_uri": "https://img.test/lrw/131.jpg"
+  },
+  {
+    "originalTypes": "Tribal Artifact — Warrior Equipment",
+    "name": "Obsidian Battle-Axe",
+    "set": "mor",
+    "releaseDate": "2008-02-01",
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg"
+  },
+  {
+    "originalTypes": "Creature — Giant // Instant — Adventure",
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "originalTypes": "Legendary Planeswalker — Grist",
+    "name": "Grist, the Hunger Tide",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/202/grist-the-hunger-tide",
+    "image_uri": "https://img.test/mh2/202.jpg"
+  },
+  {
+    "originalTypes": "Enchantment Land — Urza's Saga",
+    "name": "Urza's Saga",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/259/urzas-saga",
+    "image_uri": "https://img.test/mh2/259.jpg"
+  }
+]

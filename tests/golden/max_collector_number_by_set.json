@@ -1,0 +1,102 @@
+[
+  {
+    "set": "mb2",
+    "maxNumber": 600
+  },
+  {
+    "set": "cmr",
+    "maxNumber": 472
+  },
+  {
+    "set": "mh2",
+    "maxNumber": 302
+  },
+  {
+    "set": "2ed",
+    "maxNumber": 295
+  },
+  {
+    "set": "lea",
+    "maxNumber": 294
+  },
+  {
+    "set": "ice",
+    "maxNumber": 236
+  },
+  {
+    "set": "m10",
+    "maxNumber": 182
+  },
+  {
+    "set": "znr",
+    "maxNumber": 174
+  },
+  {
+    "set": "fut",
+    "maxNumber": 174
+  },
+  {
+    "set": "neo",
+    "maxNumber": 153
+  },
+  {
+    "set": "mor",
+    "maxNumber": 143
+  },
+  {
+    "set": "lrw",
+    "maxNumber": 131
+  },
+  {
+    "set": "apc",
+    "maxNumber": 128
+  },
+  {
+    "set": "eld",
+    "maxNumber": 115
+  },
+  {
+    "set": "fdn",
+    "maxNumber": 77
+  },
+  {
+    "set": "unh",
+    "maxNumber": 66
+  },
+  {
+    "set": "isd",
+    "maxNumber": 51
+  },
+  {
+    "set": "lgn",
+    "maxNumber": 45
+  },
+  {
+    "set": "hml",
+    "maxNumber": 31
+  },
+  {
+    "set": "tfdn",
+    "maxNumber": 20
+  },
+  {
+    "set": "chk",
+    "maxNumber": 19
+  },
+  {
+    "set": "who",
+    "maxNumber": 12
+  },
+  {
+    "set": "tlrw",
+    "maxNumber": 4
+  },
+  {
+    "set": "pmei",
+    "maxNumber": 1
+  },
+  {
+    "set": "p30a",
+    "maxNumber": 1
+  }
+]
