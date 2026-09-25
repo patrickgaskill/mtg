@@ -2,7 +2,7 @@
 
 from datetime import date
 
-import card_utils
+from mtg import card_utils
 
 
 class TestExtractTypes:
@@ -122,25 +122,6 @@ class TestGetSortKey:
         key1 = card_utils.get_sort_key(card1)
         key2 = card_utils.get_sort_key(card2)
         assert key1 < key2
-
-
-class TestIsAllCreatureTypes:
-    """Tests for is_all_creature_types function."""
-
-    def test_mistform_ultimus_special_case(self):
-        """Test that Mistform Ultimus is recognized as all creature types."""
-        card = {"name": "Mistform Ultimus"}
-        assert card_utils.is_all_creature_types(card) is True
-
-    def test_changeling_keyword(self):
-        """Test that cards with Changeling keyword have all creature types."""
-        card = {"name": "Shapesharer", "keywords": ["Changeling"]}
-        assert card_utils.is_all_creature_types(card) is True
-
-    def test_regular_creature(self):
-        """Test that regular creatures don't have all creature types."""
-        card = {"name": "Grizzly Bears", "keywords": []}
-        assert card_utils.is_all_creature_types(card) is False
 
 
 class TestIsPermanent:
@@ -356,54 +337,6 @@ class TestGetCardImageUri:
         }
         result = card_utils.get_card_image_uri(card)
         assert result == "https://example.com/fallback.jpg"
-
-
-class TestGetCardLinkData:
-    """Tests for get_card_link_data function."""
-
-    def test_single_faced_card(self):
-        """Test link data extraction for single-faced card."""
-        card = {
-            "scryfall_uri": "https://scryfall.com/card/woe/123",
-            "image_uris": {"normal": "https://example.com/normal.jpg"},
-        }
-        result = card_utils.get_card_link_data(card)
-        assert result == {
-            "scryfall_uri": "https://scryfall.com/card/woe/123",
-            "image_uri": "https://example.com/normal.jpg",
-        }
-
-    def test_missing_scryfall_uri(self):
-        """Test handling of card without scryfall_uri."""
-        card = {"image_uris": {"normal": "https://example.com/normal.jpg"}}
-        result = card_utils.get_card_link_data(card)
-        assert result["scryfall_uri"] == ""
-        assert result["image_uri"] == "https://example.com/normal.jpg"
-
-    def test_missing_image_uris(self):
-        """Test handling of card without image URIs."""
-        card = {"scryfall_uri": "https://scryfall.com/card/woe/123"}
-        result = card_utils.get_card_link_data(card)
-        assert result["scryfall_uri"] == "https://scryfall.com/card/woe/123"
-        assert result["image_uri"] == ""
-
-    def test_empty_card(self):
-        """Test handling of card with no relevant fields."""
-        result = card_utils.get_card_link_data({})
-        assert result == {"scryfall_uri": "", "image_uri": ""}
-
-    def test_double_faced_card(self):
-        """Test link data extraction for double-faced card."""
-        card = {
-            "scryfall_uri": "https://scryfall.com/card/mid/1",
-            "card_faces": [
-                {"image_uris": {"normal": "https://example.com/front.jpg"}},
-                {"image_uris": {"normal": "https://example.com/back.jpg"}},
-            ],
-        }
-        result = card_utils.get_card_link_data(card)
-        assert result["scryfall_uri"] == "https://scryfall.com/card/mid/1"
-        assert result["image_uri"] == "https://example.com/front.jpg"
 
 
 class TestGetIllustrationKey:

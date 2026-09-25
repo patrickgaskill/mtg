@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Llanowar Elves",
+    "count": 1,
+    "reprints": "Fyndhorn Elves",
+    "reprintObjects": [
+      {
+        "name": "Fyndhorn Elves",
+        "scryfall_uri": "https://scryfall.com/card/ice/236/fyndhorn-elves",
+        "image_uri": "https://img.test/ice/236.jpg"
+      }
+    ],
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  }
+]

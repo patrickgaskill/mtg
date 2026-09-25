@@ -1,0 +1,26 @@
+[
+  {
+    "creatureType": "Dog",
+    "name": "Isamaru, Hound of Konda",
+    "set": "chk",
+    "releaseDate": "2004-10-01",
+    "scryfall_uri": "https://scryfall.com/card/chk/19/isamaru-hound-of-konda",
+    "image_uri": "https://img.test/chk/19.jpg"
+  },
+  {
+    "creatureType": "Doctor",
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  },
+  {
+    "creatureType": "Time Lord",
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  }
+]

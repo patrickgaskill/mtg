@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Lightning Bolt",
+    "illustrations": 3,
+    "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
+    "image_uri": "https://img.test/lea/161.jpg"
+  },
+  {
+    "name": "Llanowar Elves",
+    "illustrations": 2,
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "name": "Forest",
+    "illustrations": 2,
+    "scryfall_uri": "https://scryfall.com/card/lea/294/forest",
+    "image_uri": "https://img.test/lea/294.jpg"
+  },
+  {
+    "name": "Serra Angel",
+    "illustrations": 2,
+    "scryfall_uri": "https://scryfall.com/card/prm/36102/serra-angel",
+    "image_uri": "https://img.test/prm/36102.jpg"
+  }
+]

@@ -1,0 +1,282 @@
+[
+  {
+    "set": "m10",
+    "name": "Llanowar Elves",
+    "count": 2,
+    "scryfall_uri": "https://scryfall.com/card/m10/182/llanowar-elves",
+    "image_uri": "https://img.test/m10/182.jpg"
+  },
+  {
+    "set": "cmr",
+    "name": "Sol Ring",
+    "count": 2,
+    "scryfall_uri": "https://scryfall.com/card/cmr/472/sol-ring",
+    "image_uri": "https://img.test/cmr/472.jpg"
+  },
+  {
+    "set": "m10",
+    "name": "Lightning Bolt",
+    "count": 2,
+    "scryfall_uri": "https://scryfall.com/card/m10/146/lightning-bolt",
+    "image_uri": "https://img.test/m10/146.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Llanowar Elves",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "set": "ice",
+    "name": "Fyndhorn Elves",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/ice/236/fyndhorn-elves",
+    "image_uri": "https://img.test/ice/236.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Grizzly Bears",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/198/grizzly-bears",
+    "image_uri": "https://img.test/lea/198.jpg"
+  },
+  {
+    "set": "2ed",
+    "name": "Grizzly Bears",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/2ed/199/grizzly-bears",
+    "image_uri": "https://img.test/2ed/199.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Sol Ring",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/270/sol-ring",
+    "image_uri": "https://img.test/lea/270.jpg"
+  },
+  {
+    "set": "2ed",
+    "name": "Sol Ring",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/2ed/274/sol-ring",
+    "image_uri": "https://img.test/2ed/274.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Lightning Bolt",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
+    "image_uri": "https://img.test/lea/161.jpg"
+  },
+  {
+    "set": "pmei",
+    "name": "Lightning Bolt",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/pmei/1/lightning-bolt",
+    "image_uri": "https://img.test/pmei/1.jpg"
+  },
+  {
+    "set": "isd",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/isd/51/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/isd/51-front.jpg"
+  },
+  {
+    "set": "mh2",
+    "name": "Delver of Secrets // Insectile Aberration",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mh2/302/delver-of-secrets--insectile-aberration",
+    "image_uri": "https://img.test/mh2/302-front.jpg"
+  },
+  {
+    "set": "znr",
+    "name": "Valakut Awakening // Valakut Stoneforge",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/znr/174/valakut-awakening--valakut-stoneforge",
+    "image_uri": "https://img.test/znr/174-front.jpg"
+  },
+  {
+    "set": "eld",
+    "name": "Bonecrusher Giant // Stomp",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg"
+  },
+  {
+    "set": "apc",
+    "name": "Fire // Ice",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/apc/128/fire--ice",
+    "image_uri": "https://img.test/apc/128.jpg"
+  },
+  {
+    "set": "lgn",
+    "name": "Mistform Ultimus",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lgn/45/mistform-ultimus",
+    "image_uri": "https://img.test/lgn/45.jpg"
+  },
+  {
+    "set": "mor",
+    "name": "Changeling Outcast",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mor/56/changeling-outcast",
+    "image_uri": "https://img.test/mor/56.jpg"
+  },
+  {
+    "set": "lrw",
+    "name": "Nameless Inversion",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lrw/131/nameless-inversion",
+    "image_uri": "https://img.test/lrw/131.jpg"
+  },
+  {
+    "set": "mh2",
+    "name": "Urza's Saga",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mh2/259/urzas-saga",
+    "image_uri": "https://img.test/mh2/259.jpg"
+  },
+  {
+    "set": "neo",
+    "name": "Lizard Blades",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/neo/153/lizard-blades",
+    "image_uri": "https://img.test/neo/153.jpg"
+  },
+  {
+    "set": "mor",
+    "name": "Obsidian Battle-Axe",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg"
+  },
+  {
+    "set": "fut",
+    "name": "Dryad Arbor",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/fut/174/dryad-arbor",
+    "image_uri": "https://img.test/fut/174.jpg"
+  },
+  {
+    "set": "lrw",
+    "name": "Faerie Trickery",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lrw/63/faerie-trickery",
+    "image_uri": "https://img.test/lrw/63.jpg"
+  },
+  {
+    "set": "chk",
+    "name": "Isamaru, Hound of Konda",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/chk/19/isamaru-hound-of-konda",
+    "image_uri": "https://img.test/chk/19.jpg"
+  },
+  {
+    "set": "who",
+    "name": "The Tenth Doctor",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg"
+  },
+  {
+    "set": "mh2",
+    "name": "Grist, the Hunger Tide",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mh2/202/grist-the-hunger-tide",
+    "image_uri": "https://img.test/mh2/202.jpg"
+  },
+  {
+    "set": "lrw",
+    "name": "Jace Beleren",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lrw/71/jace-beleren",
+    "image_uri": "https://img.test/lrw/71.jpg"
+  },
+  {
+    "set": "mh2",
+    "name": "Planar Nexus",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mh2/256/planar-nexus",
+    "image_uri": "https://img.test/mh2/256.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Forest",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/294/forest",
+    "image_uri": "https://img.test/lea/294.jpg"
+  },
+  {
+    "set": "2ed",
+    "name": "Forest",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/2ed/295/forest",
+    "image_uri": "https://img.test/2ed/295.jpg"
+  },
+  {
+    "set": "hml",
+    "name": "Homarid Spawning Bed",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/hml/31/homarid-spawning-bed",
+    "image_uri": "https://img.test/hml/31.jpg"
+  },
+  {
+    "set": "fdn",
+    "name": "Self Reflection",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/fdn/77/self-reflection",
+    "image_uri": "https://img.test/fdn/77.jpg"
+  },
+  {
+    "set": "tlrw",
+    "name": "Faerie Rogue",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/tlrw/4/faerie-rogue",
+    "image_uri": "https://img.test/tlrw/4.jpg"
+  },
+  {
+    "set": "tfdn",
+    "name": "Pentavite",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/tfdn/20/pentavite",
+    "image_uri": "https://img.test/tfdn/20.jpg"
+  },
+  {
+    "set": "unh",
+    "name": "Infinity Elemental",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/unh/66/infinity-elemental",
+    "image_uri": "https://img.test/unh/66.jpg"
+  },
+  {
+    "set": "mb2",
+    "name": "Orb of Origin",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/mb2/600/orb-of-origin",
+    "image_uri": "https://img.test/mb2/600.jpg"
+  },
+  {
+    "set": "p30a",
+    "name": "Black Lotus",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/p30a/1/black-lotus",
+    "image_uri": "https://img.test/p30a/1.jpg"
+  },
+  {
+    "set": "prm",
+    "name": "Serra Angel",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/prm/36102/serra-angel",
+    "image_uri": "https://img.test/prm/36102.jpg"
+  },
+  {
+    "set": "lea",
+    "name": "Serra Angel",
+    "count": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/40a/serra-angel",
+    "image_uri": "https://img.test/lea/40a.jpg"
+  }
+]

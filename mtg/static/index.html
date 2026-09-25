@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Card Data Reports</title>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/dist/ag-grid-community.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-grid.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ag-grid-community@33.2.1/styles/ag-theme-quartz.css"
+    />
+    <script src="https://unpkg.com/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6.3.7"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6.3.7/dist/tippy.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <nav class="toolbar">
+        <a class="home-link" href="#/">All reports</a>
+        <select id="nav-select" class="nav-select" aria-label="Select a report">
+          <option value="">Select a report...</option>
+        </select>
+      </nav>
+
+      <p id="app-error" class="error-message" hidden></p>
+
+      <section id="home-view" class="home" hidden>
+        <h1>MTG Card Data Reports</h1>
+        <p class="muted">Aggregated data reports generated from the Scryfall card database.</p>
+        <h2>Reports</h2>
+        <ul id="report-list" class="reports-list"></ul>
+        <div class="generation-info">
+          <p id="generated-at"></p>
+        </div>
+      </section>
+
+      <section id="report-view" hidden>
+        <h1 id="report-title"></h1>
+        <div id="report-explanation" class="explanation" hidden></div>
+        <div id="report-filters" class="filter-toggles" hidden></div>
+        <div id="myGrid" class="ag-theme-quartz-auto-dark"></div>
+      </section>
+    </main>
+  </body>
+</html>

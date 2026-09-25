@@ -1,0 +1,46 @@
+[
+  {
+    "creatureType": "Camarid",
+    "name": "Homarid Spawning Bed",
+    "set": "hml",
+    "releaseDate": "1995-10-01",
+    "scryfall_uri": "https://scryfall.com/card/hml/31/homarid-spawning-bed",
+    "image_uri": "https://img.test/hml/31.jpg"
+  },
+  {
+    "creatureType": "Construct",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  },
+  {
+    "creatureType": "Germ",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  },
+  {
+    "creatureType": "Illusion",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  },
+  {
+    "creatureType": "Phyrexian",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  },
+  {
+    "creatureType": "Shapeshifter",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  },
+  {
+    "creatureType": "Tetravite",
+    "name": "",
+    "set": "",
+    "releaseDate": ""
+  }
+]

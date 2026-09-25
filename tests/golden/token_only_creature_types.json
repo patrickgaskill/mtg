@@ -1,0 +1,18 @@
+[
+  {
+    "creatureType": "Pentavite",
+    "name": "Pentavite",
+    "set": "tfdn",
+    "releaseDate": "2024-11-15",
+    "scryfall_uri": "https://scryfall.com/card/tfdn/20/pentavite",
+    "image_uri": "https://img.test/tfdn/20.jpg"
+  },
+  {
+    "creatureType": "Rogue",
+    "name": "Faerie Rogue",
+    "set": "tlrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/tlrw/4/faerie-rogue",
+    "image_uri": "https://img.test/tlrw/4.jpg"
+  }
+]

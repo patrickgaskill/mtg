@@ -1,0 +1,132 @@
+[
+  {
+    "generalizedManaCost": "{3}{M}{M}",
+    "name": "Serra Angel",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/40a/serra-angel",
+    "image_uri": "https://img.test/lea/40a.jpg",
+    "originalManaCost": "{3}{W}{W}",
+    "count": 2
+  },
+  {
+    "generalizedManaCost": "{M}",
+    "name": "Lightning Bolt",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
+    "image_uri": "https://img.test/lea/161.jpg",
+    "originalManaCost": "{R}",
+    "count": 10
+  },
+  {
+    "generalizedManaCost": "{1}{M}",
+    "name": "Grizzly Bears",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/198/grizzly-bears",
+    "image_uri": "https://img.test/lea/198.jpg",
+    "originalManaCost": "{1}{G}",
+    "count": 7
+  },
+  {
+    "generalizedManaCost": "{1}",
+    "name": "Sol Ring",
+    "set": "lea",
+    "releaseDate": "1993-08-05",
+    "scryfall_uri": "https://scryfall.com/card/lea/270/sol-ring",
+    "image_uri": "https://img.test/lea/270.jpg",
+    "originalManaCost": "{1}",
+    "count": 3
+  },
+  {
+    "generalizedManaCost": "{M}{M}",
+    "name": "Homarid Spawning Bed",
+    "set": "hml",
+    "releaseDate": "1995-10-01",
+    "scryfall_uri": "https://scryfall.com/card/hml/31/homarid-spawning-bed",
+    "image_uri": "https://img.test/hml/31.jpg",
+    "originalManaCost": "{U}{U}",
+    "count": 1
+  },
+  {
+    "generalizedManaCost": "{3}{M}",
+    "name": "Mistform Ultimus",
+    "set": "lgn",
+    "releaseDate": "2003-02-03",
+    "scryfall_uri": "https://scryfall.com/card/lgn/45/mistform-ultimus",
+    "image_uri": "https://img.test/lgn/45.jpg",
+    "originalManaCost": "{3}{U}",
+    "count": 2
+  },
+  {
+    "generalizedManaCost": "{4}{M}{M}{M}",
+    "name": "Infinity Elemental",
+    "set": "unh",
+    "releaseDate": "2004-11-20",
+    "scryfall_uri": "https://scryfall.com/card/unh/66/infinity-elemental",
+    "image_uri": "https://img.test/unh/66.jpg",
+    "originalManaCost": "{4}{R}{R}{R}",
+    "count": 1
+  },
+  {
+    "generalizedManaCost": "{1}{M}{M}",
+    "name": "Faerie Trickery",
+    "set": "lrw",
+    "releaseDate": "2007-10-12",
+    "scryfall_uri": "https://scryfall.com/card/lrw/63/faerie-trickery",
+    "image_uri": "https://img.test/lrw/63.jpg",
+    "originalManaCost": "{1}{U}{U}",
+    "count": 2
+  },
+  {
+    "generalizedManaCost": "{3}",
+    "name": "Obsidian Battle-Axe",
+    "set": "mor",
+    "releaseDate": "2008-02-01",
+    "scryfall_uri": "https://scryfall.com/card/mor/143/obsidian-battle-axe",
+    "image_uri": "https://img.test/mor/143.jpg",
+    "originalManaCost": "{3}",
+    "count": 2
+  },
+  {
+    "generalizedManaCost": "{2}{M}",
+    "name": "Bonecrusher Giant // Stomp",
+    "set": "eld",
+    "releaseDate": "2019-10-04",
+    "scryfall_uri": "https://scryfall.com/card/eld/115/bonecrusher-giant--stomp",
+    "image_uri": "https://img.test/eld/115.jpg",
+    "originalManaCost": "{2}{R}",
+    "count": 2
+  },
+  {
+    "generalizedManaCost": "{1}{M}{N}",
+    "name": "Grist, the Hunger Tide",
+    "set": "mh2",
+    "releaseDate": "2021-06-18",
+    "scryfall_uri": "https://scryfall.com/card/mh2/202/grist-the-hunger-tide",
+    "image_uri": "https://img.test/mh2/202.jpg",
+    "originalManaCost": "{1}{B}{G}",
+    "count": 1
+  },
+  {
+    "generalizedManaCost": "{0}",
+    "name": "Black Lotus",
+    "set": "p30a",
+    "releaseDate": "2022-09-02",
+    "scryfall_uri": "https://scryfall.com/card/p30a/1/black-lotus",
+    "image_uri": "https://img.test/p30a/1.jpg",
+    "originalManaCost": "{0}",
+    "count": 1
+  },
+  {
+    "generalizedManaCost": "{2}{M}{N}{O}",
+    "name": "The Tenth Doctor",
+    "set": "who",
+    "releaseDate": "2023-10-13",
+    "scryfall_uri": "https://scryfall.com/card/who/12/the-tenth-doctor",
+    "image_uri": "https://img.test/who/12.jpg",
+    "originalManaCost": "{2}{U}{R}{W}",
+    "count": 1
+  }
+]

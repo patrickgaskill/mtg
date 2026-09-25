@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Lightning Bolt",
+    "promoTypes": "datestamped, galaxyfoil",
+    "numPromoTypes": 2,
+    "scryfall_uri": "https://scryfall.com/card/pmei/1/lightning-bolt",
+    "image_uri": "https://img.test/pmei/1.jpg"
+  },
+  {
+    "name": "Orb of Origin",
+    "promoTypes": "playtest",
+    "numPromoTypes": 1,
+    "scryfall_uri": "https://scryfall.com/card/mb2/600/orb-of-origin",
+    "image_uri": "https://img.test/mb2/600.jpg"
+  }
+]

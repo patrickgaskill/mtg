@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Llanowar Elves",
+    "foilTypes": "modern_foil",
+    "numFoilTypes": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/210/llanowar-elves",
+    "image_uri": "https://img.test/lea/210.jpg"
+  },
+  {
+    "name": "Sol Ring",
+    "foilTypes": "etched",
+    "numFoilTypes": 1,
+    "scryfall_uri": "https://scryfall.com/card/lea/270/sol-ring",
+    "image_uri": "https://img.test/lea/270.jpg"
+  },
+  {
+    "name": "Lightning Bolt",
+    "foilTypes": "galaxyfoil, modern_foil, premodern_foil",
+    "numFoilTypes": 3,
+    "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
+    "image_uri": "https://img.test/lea/161.jpg"
+  }
+]
