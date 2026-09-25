@@ -54,6 +54,10 @@ jobs:
         continue-on-error: true
         run: uv run mtg update-types
 
+      # Print the type lists so they can be checked (and committed) from the run log.
+      - name: Show type lists
+        run: cat data/rules/types.json || true
+
       - name: Generate reports
         run: uv run mtg run --output ${{ env.OUTPUT_FOLDER }}
 

@@ -24,10 +24,10 @@ def make_rules_text(creature_types=SAMPLE_CREATURE_TYPES, land_types=SAMPLE_LAND
         Some text before...
         All other creature types are one word long: {creature_types}.
         More text...
-        205.3g Artifacts have their own unique set of subtypes; these subtypes are called artifact types. The artifact types are Clue, Equipment, Food, and Vehicle.
-        205.3h Enchantments have their own unique set of subtypes; these subtypes are called enchantment types. The enchantment types are Aura, Saga, and Shrine.
+        205.3g Artifacts have their own unique set of subtypes; these subtypes are called artifact types. The artifact types are Clue, Equipment (see rule 301.5), Food, Fortification (see rule 301.6), and Vehicle (see rule 301.7).
+        205.3h Enchantments have their own unique set of subtypes; these subtypes are called enchantment types. The enchantment types are Aura (see rule 303.4), Saga (see rule 714), and Shrine.
         205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are {land_types}. Of that list, the basic land types are Forest, Island, Mountain, Plains, and Swamp.
-        205.3k Instants and sorceries share their lists of subtypes; these subtypes are called spell types. The spell types are Adventure, Arcane, and Lesson.
+        205.3k Instants and sorceries share their lists of subtypes; these subtypes are called spell types. The spell types are Adventure (see rule 715), Arcane, and Lesson.
         More text...
     """
 
@@ -456,9 +456,13 @@ class TestParseTypes:
         assert "Time Lord" in type_lists.creature
         assert "Urza's" in type_lists.land
         assert "Power-Plant" in type_lists.land
-        assert type_lists.artifact == {"Clue", "Equipment", "Food", "Vehicle"}
-        assert type_lists.enchantment == {"Aura", "Saga", "Shrine"}
-        assert type_lists.spell == {"Adventure", "Arcane", "Lesson"}
+        # Cross-references such as "(see rule 301.5)" contain periods; they must not
+        # end the list early or end up in type names.
+        assert {"Clue", "Equipment", "Food", "Fortification", "Vehicle"} <= type_lists.artifact
+        assert {"Aura", "Saga", "Shrine"} <= type_lists.enchantment
+        assert {"Adventure", "Arcane", "Lesson"} <= type_lists.spell
+        for types in (type_lists.artifact, type_lists.enchantment, type_lists.spell):
+            assert not any("(" in t or "see rule" in t for t in types)
 
     def test_missing_optional_lists_fall_back_to_defaults(self):
         text = "\n".join(line for line in make_rules_text().splitlines() if "205.3g" not in line)
@@ -466,7 +470,15 @@ class TestParseTypes:
         type_lists = rules.parse_types(text)
 
         assert type_lists.artifact == rules.ARTIFACT_TYPES
-        assert type_lists.enchantment == {"Aura", "Saga", "Shrine"}
+        assert {"Aura", "Saga", "Shrine"} <= type_lists.enchantment
+
+    def test_built_in_types_are_kept_alongside_new_ones(self):
+        text = make_rules_text().replace("Aura (see rule 303.4)", "Aura, Plot")
+
+        type_lists = rules.parse_types(text)
+
+        assert "Plot" in type_lists.enchantment
+        assert type_lists.enchantment >= rules.ENCHANTMENT_TYPES
 
 
 class TestTypeListsStorage:
