@@ -187,6 +187,7 @@ uv run ty check          # type check
 ```
 
 - `tests/test_golden.py` runs every report over a hand-written fixture dataset (`tests/fixtures/sample_cards.jsonl`) and compares the output to `tests/golden/`. If you change a report's output on purpose, regenerate the expected files with `UPDATE_GOLDEN=1 uv run pytest tests/test_golden.py` and review the diff.
+- `tests/test_real_sample.py` checks invariants over `tests/fixtures/scryfall_sample.jsonl.gz`, a few hundred real Scryfall cards. To refresh it and `data/rules/types.json`, run the **Refresh rules and test data** workflow from the Actions tab; it opens a pull request with any changes. Locally, `uv run mtg make-sample` does the same from your latest download.
 - `tests/test_spa.py` drives the site in Chromium. Install it with `uv run playwright install chromium`; without it these tests are skipped locally (CI requires them).
 
 To add a report, subclass `Aggregator` (or `FirstCardByKeyAggregator` for "first card per key" reports) in `mtg/aggregators/`, set its `name`, `display_name`, `description`, and `column_defs`, and add the class to `AGGREGATOR_CLASSES` in `mtg/aggregators/registry.py`.

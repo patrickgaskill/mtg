@@ -28,6 +28,7 @@ mtg/
 │   ├── constants.py         # Shared constants and fallback subtype lists
 │   ├── pipeline.py          # Builds Cards, feeds aggregators, collects Reports
 │   ├── site.py              # Writes manifest.json, report JSON, static app, redirects
+│   ├── sample.py            # Cuts the real-card test sample from bulk data
 │   ├── static/              # The SPA: index.html, app.js, styles.css (no build step)
 │   └── aggregators/
 │       ├── base.py          # Aggregator, FirstCardByKeyAggregator, AggregatorContext
@@ -40,18 +41,21 @@ mtg/
 │       ├── supercycle_aggregators.py
 │       └── type_aggregators.py
 ├── tests/
-│   ├── fixtures/            # sample_cards.jsonl (edge-case cards), types.json, supercycles.yaml
+│   ├── fixtures/            # sample_cards.jsonl (hand-written edge cases), scryfall_sample.jsonl.gz
+│   │                        # (real cards, from the refresh workflow), types.json, supercycles.yaml
 │   ├── golden/              # Expected rows for every report over the fixture cards
 │   ├── helpers.py           # feed()/to_card()/type_context() for aggregator tests
 │   ├── test_golden.py       # End-to-end: all reports vs tests/golden
 │   ├── test_spa.py          # Playwright tests of the generated site
+│   ├── test_real_sample.py  # Invariants over the real-card sample (skipped until it exists)
 │   └── test_*.py            # Unit tests per module
 ├── data/
 │   ├── downloads/           # Scryfall bulk data (gitignored)
 │   ├── manual/              # supercycles.yaml (tracked)
 │   ├── rules/               # types.json from `mtg update-types` (tracked as a fallback)
 │   └── output/              # Generated sites (gitignored)
-└── .github/workflows/       # ci.yml (lint, types, tests incl. browser), publish_html.yml (daily deploy)
+└── .github/workflows/       # ci.yml (lint, types, tests incl. browser), publish_html.yml (daily deploy),
+                             # refresh_test_data.yml (manual: PR with fresh types.json + real sample)
 ```
 
 ## Key Architecture Patterns
@@ -119,8 +123,12 @@ Constants in `constants.py` define what counts as "traditional" cards:
 
 - Type lists come from the comprehensive rules via `mtg update-types` into `data/rules/types.json`
   (`TypeLists`: creature, land, artifact, enchantment, spell). The file is committed so runs work
-  when the rules site is down; CI refreshes it in the workspace but doesn't commit it.
-- Artifact/enchantment/spell/land lists fall back to `constants.py` when missing from the rules.
+  when the rules site is down; the daily publish refreshes it in the workspace (and prints it in
+  the log) but doesn't commit it. The "Refresh rules and test data" workflow opens a PR with it.
+- Rule lists contain cross-references like "Equipment (see rule 301.5)"; lists end at a
+  sentence-ending period and parentheticals are stripped.
+- Artifact/enchantment/spell lists always include the `constants.py` defaults as a floor, and
+  fall back to them entirely when missing from the rules.
 - `extract_creature_subtypes()` covers Kindred/Tribal cards and drops non-creature subtypes that
   share a type line (e.g. "Artifact Creature — Equipment Lizard").
 - "Time Lord" contains a space and needs special handling in regexes.
@@ -132,6 +140,7 @@ uv run mtg download        # Download latest Scryfall bulk data
 uv run mtg update-types    # Refresh data/rules/types.json from the comprehensive rules
 uv run mtg run [--serve]   # Process cards and generate the site
 uv run mtg serve           # Serve the latest generated site
+uv run mtg make-sample     # Cut tests/fixtures/scryfall_sample.jsonl.gz from the latest bulk data
 uv run mtg all             # Full workflow: download → types → run → serve
 uv run mtg -v run          # -v for debug logging, -q for warnings only, --data-dir to relocate data
 ```
