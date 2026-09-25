@@ -22,10 +22,16 @@ from mtg.constants import (
     SPELL_TYPES,
 )
 
+# End of a sentence: a period followed by whitespace or the end of the text. Lists
+# contain cross-references such as "Equipment (see rule 301.5)", whose periods
+# must not end the list.
+_SENTENCE_END = r"\.(?=\s|$)"
+
 # Matches rules such as 205.3g: "...these subtypes are called artifact types. The
-# artifact types are Attraction, Blood, ..., and Vehicle."
+# artifact types are Attraction, Blood, ..., and Vehicle (see rule 301.7)."
 _SUBTYPE_LIST_PATTERN = re.compile(
-    r"these subtypes are called (\w+) types\. The \1 types are (.*?)\.", re.DOTALL
+    r"these subtypes are called (\w+) types\. The \1 types are (.*?)" + _SENTENCE_END,
+    re.DOTALL,
 )
 
 
@@ -72,9 +78,21 @@ class TypeLists:
 _FIELDS = ("creature", "land", "artifact", "enchantment", "spell")
 
 
+def straighten_quotes(text: str) -> str:
+    """Replace curly quotes, as in "Urza’s", with straight ones to match card data."""
+    return (
+        text.replace("\u2018", "'")
+        .replace("\u2019", "'")
+        .replace("\u201c", '"')
+        .replace("\u201d", '"')
+    )
+
+
 def _split_type_list(text: str) -> set[str]:
-    """Split "A, B, and C" into {"A", "B", "C"}."""
-    return {part.strip().removeprefix("and ").strip() for part in text.split(",")}
+    """Split "A, B (see rule 1.2), and C" into {"A", "B", "C"}."""
+    text = re.sub(r"\s*\([^)]*\)", "", text)
+    parts = (part.strip().removeprefix("and ").strip() for part in text.split(","))
+    return {part for part in parts if part}
 
 
 def fetch_and_parse_types() -> TypeLists:
@@ -124,12 +142,7 @@ def fetch_rules_text() -> str:
             res = requests.get(txt_url, headers=REQUEST_HEADERS, timeout=RULES_FILE_TIMEOUT)
             res.raise_for_status()
             res.encoding = "utf-8"
-            rules_text = (
-                res.text.replace("\u2018", "'")
-                .replace("\u2019", "'")
-                .replace("\u201c", '"')
-                .replace("\u201d", '"')
-            )
+            rules_text = straighten_quotes(res.text)
             break  # Success, stop trying other links
         except HTTPError as e:
             errors.append(f"HTTP error while downloading from {txt_url}: {e}")
@@ -154,9 +167,10 @@ def fetch_rules_text() -> str:
 
 def parse_types(rules_text: str) -> TypeLists:
     """Extract the creature, land, artifact, enchantment, and spell type lists."""
+    rules_text = straighten_quotes(rules_text)
     # Extract creature types
     creature_types_match = re.search(
-        r"All other creature types are one word long: (.*?)\.", rules_text
+        r"All other creature types are one word long: (.*?)" + _SENTENCE_END, rules_text
     )
     if not creature_types_match:
         raise ValueError("Couldn't find creature types in the rules")
@@ -206,7 +220,16 @@ def parse_types(rules_text: str) -> TypeLists:
         if not found:
             logger.warning("Couldn't find {} types in the rules; using built-in defaults", category)
             return default
-        return frozenset(found)
+        # Keep the built-in types as a floor: they're real subtypes, and losing one
+        # makes cards carrying it look like they have unknown creature types.
+        missing = default - found
+        if missing:
+            logger.warning(
+                "Rules list of {} types lacks {}; keeping them. Check the rules parser.",
+                category,
+                ", ".join(sorted(missing)),
+            )
+        return frozenset(found) | default
 
     return TypeLists(
         creature=frozenset(creature_types),

@@ -18,6 +18,7 @@ from mtg.aggregators import AGGREGATOR_CLASSES, AggregatorContext, create_aggreg
 from mtg.config import Paths
 from mtg.pipeline import TooManyErrors, build_reports, load_type_lists, process_cards
 from mtg.rules import fetch_and_parse_types
+from mtg.sample import build_sample, write_sample
 from mtg.site import write_site
 
 app = typer.Typer(
@@ -238,6 +239,27 @@ def generate(
                 logger.warning(warning_text)
 
     logger.info("Output: {}", output_folder.resolve())
+
+
+@app.command()
+def make_sample(
+    input_file: Annotated[
+        Path | None,
+        typer.Option(help="Path to Scryfall bulk data file (default: latest downloaded)"),
+    ] = None,
+    output: Annotated[
+        Path, typer.Option("--output", "-o", help="Where to write the sample")
+    ] = Path("tests/fixtures/scryfall_sample.jsonl.gz"),
+):
+    """Save a small real-card sample from bulk data for tests"""
+    if input_file is None:
+        input_file = scryfall.find_latest_default_cards(get_paths().downloads)
+        if input_file is None:
+            logger.error("No 'default-cards' file found. Please run the download command.")
+            raise typer.Exit(1)
+    cards = build_sample(scryfall.iter_cards(input_file))
+    write_sample(cards, output)
+    logger.info("Wrote {} cards from {} to {}", len(cards), input_file.name, output)
 
 
 @app.command(name="all")

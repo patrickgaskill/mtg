@@ -70,22 +70,25 @@ SPECIAL_FOIL_SETS = {
     "dbl": "silverscreen",  # Innistrad Double Feature
 }
 
-# Fallback subtype lists for non-creature, non-land card types (CR 205.3g,
-# 205.3h, 205.3k), used only when `mtg update-types` couldn't extract them from
-# the comprehensive rules. They can share a type line with creature or land
-# subtypes, e.g. "Artifact Creature — Equipment Lizard" or "Enchantment Land —
-# Urza's Saga", so they must be told apart from creature and land types.
+# Built-in subtype lists for non-creature, non-land card types (CR 205.3g, 205.3h,
+# 205.3k, as of the 2026-09-25 rules). `mtg update-types` adds any new types from
+# the rules to these and falls back to them if a list can't be found. They can
+# share a type line with creature or land subtypes, e.g. "Artifact Creature —
+# Equipment Lizard" or "Enchantment Land — Urza's Saga", so they must be told
+# apart from creature and land types.
 ARTIFACT_TYPES = frozenset(
     {
         "Attraction",
         "Blood",
         "Bobblehead",
+        "Book",
         "Clue",
         "Contraption",
         "Equipment",
         "Food",
         "Fortification",
         "Gold",
+        "Heartwood",
         "Incubator",
         "Infinity",
         "Junk",
@@ -94,8 +97,10 @@ ARTIFACT_TYPES = frozenset(
         "Mutagen",
         "Powerstone",
         "Spacecraft",
+        "Stone",
         "Treasure",
         "Vehicle",
+        "Vibranium",
     }
 )
 ENCHANTMENT_TYPES = frozenset(
@@ -106,6 +111,7 @@ ENCHANTMENT_TYPES = frozenset(
         "Case",
         "Class",
         "Curse",
+        "Plan",
         "Role",
         "Room",
         "Rune",
@@ -114,12 +120,20 @@ ENCHANTMENT_TYPES = frozenset(
         "Shrine",
     }
 )
-SPELL_TYPES = frozenset({"Adventure", "Arcane", "Chorus", "Lesson", "Omen", "Trap"})
+SPELL_TYPES = frozenset(
+    {
+        "Adventure",
+        "Arcane",
+        "Lesson",
+        "Omen",
+        "Trap",
+    }
+)
 NON_CREATURE_LAND_SUBTYPES = ARTIFACT_TYPES | ENCHANTMENT_TYPES | SPELL_TYPES
 
-# Fallback land types (CR 205.3i), used when the rules type lists aren't loaded.
-# They can appear alongside creature types on land creatures such as Dryad
-# Arbor ("Land Creature — Forest Dryad").
+# Built-in land types (CR 205.3i, as of the 2026-09-25 rules), used when the rules
+# type lists aren't loaded. They can appear alongside creature types on land
+# creatures such as Dryad Arbor ("Land Creature — Forest Dryad").
 LAND_TYPES = frozenset(
     {
         "Cave",
@@ -132,6 +146,7 @@ LAND_TYPES = frozenset(
         "Mine",
         "Mountain",
         "Plains",
+        "Planet",
         "Power-Plant",
         "Sphere",
         "Swamp",
