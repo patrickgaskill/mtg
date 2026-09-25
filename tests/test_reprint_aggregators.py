@@ -1,10 +1,11 @@
 """Tests for the FunctionalReprintsAggregator."""
 
-from aggregators.reprint_aggregators import (
+from mtg.aggregators.reprint_aggregators import (
     FunctionalReprintsAggregator,
     _functional_signature,
     _normalize_oracle_text,
 )
+from tests.helpers import feed, to_card
 
 
 def make_card(**overrides):
@@ -62,7 +63,7 @@ class TestFunctionalSignature:
             colors=["G"],
             type_line="Creature — Elf Druid",
         )
-        assert _functional_signature(llanowar) == _functional_signature(fyndhorn)
+        assert _functional_signature(to_card(llanowar)) == _functional_signature(to_card(fyndhorn))
 
     def test_type_line_does_not_affect_signature(self):
         a = make_card(
@@ -83,7 +84,7 @@ class TestFunctionalSignature:
             colors=["G"],
             type_line="Creature — Bird",
         )
-        assert _functional_signature(a) == _functional_signature(b)
+        assert _functional_signature(to_card(a)) == _functional_signature(to_card(b))
 
     def test_name_in_oracle_text_normalized(self):
         a = make_card(
@@ -98,22 +99,22 @@ class TestFunctionalSignature:
             oracle_text="Bar deals 3 damage to any target.",
             colors=["R"],
         )
-        assert _functional_signature(a) == _functional_signature(b)
+        assert _functional_signature(to_card(a)) == _functional_signature(to_card(b))
 
     def test_different_mana_cost_different_signature(self):
         a = make_card(name="A", mana_cost="{G}", oracle_text="{T}: Add {G}.", colors=["G"])
         b = make_card(name="B", mana_cost="{1}{G}", oracle_text="{T}: Add {G}.", colors=["G"])
-        assert _functional_signature(a) != _functional_signature(b)
+        assert _functional_signature(to_card(a)) != _functional_signature(to_card(b))
 
     def test_different_oracle_text_different_signature(self):
         a = make_card(name="A", mana_cost="{R}", oracle_text="Deal 3 damage.", colors=["R"])
         b = make_card(name="B", mana_cost="{R}", oracle_text="Deal 2 damage.", colors=["R"])
-        assert _functional_signature(a) != _functional_signature(b)
+        assert _functional_signature(to_card(a)) != _functional_signature(to_card(b))
 
     def test_different_power_toughness_different_signature(self):
         a = make_card(name="A", mana_cost="{G}", power="1", toughness="1", colors=["G"])
         b = make_card(name="B", mana_cost="{G}", power="2", toughness="2", colors=["G"])
-        assert _functional_signature(a) != _functional_signature(b)
+        assert _functional_signature(to_card(a)) != _functional_signature(to_card(b))
 
     def test_multi_face_signature(self):
         a = make_card(
@@ -142,7 +143,7 @@ class TestFunctionalSignature:
                 },
             ],
         )
-        assert _functional_signature(a) == _functional_signature(b)
+        assert _functional_signature(to_card(a)) == _functional_signature(to_card(b))
 
     def test_multi_face_does_not_match_single_face(self):
         a = make_card(name="A", mana_cost="{R}", oracle_text="Deal 2.", colors=["R"])
@@ -159,7 +160,7 @@ class TestFunctionalSignature:
                 },
             ],
         )
-        assert _functional_signature(a) != _functional_signature(b)
+        assert _functional_signature(to_card(a)) != _functional_signature(to_card(b))
 
 
 class TestFunctionalReprintsAggregator:
@@ -187,8 +188,8 @@ class TestFunctionalReprintsAggregator:
             set="ice",
             released_at="1995-06-01",
         )
-        agg.process_card(llanowar)
-        agg.process_card(fyndhorn)
+        feed(agg, llanowar)
+        feed(agg, fyndhorn)
 
         data = agg.get_sorted_data()
         assert len(data) == 1
@@ -210,8 +211,8 @@ class TestFunctionalReprintsAggregator:
             type_line="Basic Snow Land — Forest",
             oracle_text="({T}: Add {G}.)",
         )
-        agg.process_card(forest)
-        agg.process_card(snow_forest)
+        feed(agg, forest)
+        feed(agg, snow_forest)
         assert agg.get_sorted_data() == []
 
     def test_excludes_non_traditional_cards(self):
@@ -229,8 +230,8 @@ class TestFunctionalReprintsAggregator:
             oracle_text="{T}: Add {G}.",
             colors=["G"],
         )
-        agg.process_card(silver)
-        agg.process_card(normal)
+        feed(agg, silver)
+        feed(agg, normal)
         assert agg.get_sorted_data() == []
 
     def test_does_not_count_same_name_as_reprint(self):
@@ -251,8 +252,8 @@ class TestFunctionalReprintsAggregator:
             set="m21",
             released_at="2020-07-03",
         )
-        agg.process_card(early)
-        agg.process_card(late)
+        feed(agg, early)
+        feed(agg, late)
         assert agg.get_sorted_data() == []
 
     def test_original_is_earliest_printing(self):
@@ -278,9 +279,9 @@ class TestFunctionalReprintsAggregator:
             colors=["R"],
             released_at="2020-01-01",
         )
-        agg.process_card(a)
-        agg.process_card(b)
-        agg.process_card(c)
+        feed(agg, a)
+        feed(agg, b)
+        feed(agg, c)
 
         data = agg.get_sorted_data()
         assert len(data) == 1
@@ -293,25 +294,27 @@ class TestFunctionalReprintsAggregator:
         agg = FunctionalReprintsAggregator()
         # First group: 1 original + 2 reprints
         for idx, name in enumerate(["Big1", "Big2", "Big3"]):
-            agg.process_card(
+            feed(
+                agg,
                 make_card(
                     name=name,
                     mana_cost="{R}",
                     oracle_text="Deal 3 damage.",
                     colors=["R"],
                     released_at=f"200{idx}-01-01",
-                )
+                ),
             )
         # Second group: 1 original + 1 reprint
         for idx, name in enumerate(["Small1", "Small2"]):
-            agg.process_card(
+            feed(
+                agg,
                 make_card(
                     name=name,
                     mana_cost="{G}",
                     oracle_text="Gain 3 life.",
                     colors=["G"],
                     released_at=f"200{idx}-01-01",
-                )
+                ),
             )
 
         data = agg.get_sorted_data()
@@ -338,8 +341,8 @@ class TestFunctionalReprintsAggregator:
             released_at="2010-01-01",
             scryfall_uri="https://scryfall.com/card/m11/2",
         )
-        agg.process_card(a)
-        agg.process_card(b)
+        feed(agg, a)
+        feed(agg, b)
 
         data = agg.get_sorted_data()
         assert data[0]["scryfall_uri"] == "https://scryfall.com/card/lea/1"

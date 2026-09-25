@@ -7,20 +7,7 @@ This project fetches Magic: The Gathering card data from Scryfall, processes it,
 - Fetches the latest MTG card data from Scryfall
 - Updates creature and land type lists from the latest MTG rules
 - Generates interactive reports with sortable, filterable tables using AG Grid
-- Reports include:
-  - Cards by name
-  - Finishes by name
-  - Cards by set and name
-  - Finishes by set and name
-  - Card illustrations by set
-  - Maximum collector number by set
-  - Cards with maximal printed types
-  - Cards with maximal types considering global effects
-  - Promo types by card name
-  - First card for each unique power/toughness combination
-  - Foil types by card name
-  - Supercycle completion times
-  - First cards by generalized mana cost
+- 23 reports, from card counts and foil types to creature type firsts, functional reprints, and maximal type lines (run `uv run mtg list` for all of them)
 - Automatically updates and publishes reports daily
 
 ## Setup
@@ -45,7 +32,7 @@ uv sync
 The easiest way to run the complete workflow is:
 
 ```bash
-uv run python card_aggregator.py all
+uv run mtg all
 ```
 
 This single command will:
@@ -58,37 +45,43 @@ This single command will:
 
 **📊 Check Status**
 ```bash
-uv run python card_aggregator.py status
+uv run mtg status
 ```
 Shows information about downloaded data, type files, and available aggregators.
 
 **📋 List Aggregators**
 ```bash
-uv run python card_aggregator.py list
+uv run mtg list
 ```
 Displays all available aggregators in a formatted table.
 
 **📥 Download Data**
 ```bash
-uv run python card_aggregator.py download
+uv run mtg download
 ```
 Downloads the latest Scryfall bulk data file.
 
 **🏷️ Update Types**
 ```bash
-uv run python card_aggregator.py update-types
+uv run mtg update-types
 ```
-Updates creature and land type lists from MTG comprehensive rules.
+Updates the creature, land, artifact, enchantment, and spell type lists from the MTG comprehensive rules and saves them to `data/rules/types.json`. That file is committed so reports still work when the rules site is unavailable; commit it again after running this.
 
 **⚙️ Generate Reports**
 ```bash
-uv run python card_aggregator.py run [OPTIONS]
+uv run mtg run [OPTIONS]
 ```
-Processes card data and generates HTML reports.
+Processes card data and generates the report site.
+
+**🌐 Serve Reports**
+```bash
+uv run mtg serve [FOLDER] [--port 8000]
+```
+Serves a generated site (default: the latest in `data/output/`) on localhost and opens it in your browser.
 
 **🚀 Complete Workflow**
 ```bash
-uv run python card_aggregator.py all [OPTIONS]
+uv run mtg all [OPTIONS]
 ```
 Runs the complete workflow: download → update-types → process → serve.
 
@@ -97,11 +90,11 @@ Runs the complete workflow: download → update-types → process → serve.
 #### `run` Command
 
 ```bash
-uv run python card_aggregator.py run --help
+uv run mtg run --help
 ```
 
 **Basic Options:**
-- `--input-file PATH`: Specify a custom Scryfall JSON file (auto-detects latest if not specified)
+- `--input-file PATH`: Specify a Scryfall bulk data file (`.jsonl.gz`, `.jsonl`, or `.json`; auto-detects latest if not specified)
 - `-o, --output PATH`: Specify output directory (default: timestamped folder in `data/output/`)
 - `-s, --serve`: Start HTTP server and open browser after generating files
 
@@ -114,63 +107,65 @@ uv run python card_aggregator.py run --help
 
 ```bash
 # Generate all reports and serve
-uv run python card_aggregator.py run --serve
+uv run mtg run --serve
 
 # Run only specific aggregators
-uv run python card_aggregator.py run --only supercycle_completion_time --only foil_types_by_name
+uv run mtg run --only supercycle_completion_time --only foil_types_by_name
 
 # Exclude certain aggregators
-uv run python card_aggregator.py run --exclude count_cards_by_name --exclude count_finishes_by_name
+uv run mtg run --exclude count_cards_by_name --exclude count_finishes_by_name
 
 # Preview what would be generated
-uv run python card_aggregator.py run --dry-run
+uv run mtg run --dry-run
 
 # Custom input and output
-uv run python card_aggregator.py run --input-file data/downloads/custom.json -o data/output/custom
+uv run mtg run --input-file data/downloads/custom.json -o data/output/custom
 ```
 
 #### `all` Command
 
 ```bash
-uv run python card_aggregator.py all --help
+uv run mtg all --help
 ```
 
 **Options:**
 - `--serve / --no-serve`: Start server after processing (default: enabled)
 - `--skip-download`: Skip downloading fresh data
-- `--skip-types`: Skip updating creature/land types
+- `--skip-types`: Skip updating type lists (if updating fails, the existing `data/rules/types.json` is used)
 
 **Examples:**
 
 ```bash
 # Complete workflow with all steps
-uv run python card_aggregator.py all
+uv run mtg all
 
 # Skip download if you already have fresh data
-uv run python card_aggregator.py all --skip-download
+uv run mtg all --skip-download
 
 # Process only (skip download and type updates)
-uv run python card_aggregator.py all --skip-download --skip-types
+uv run mtg all --skip-download --skip-types
 
 # Generate without serving
-uv run python card_aggregator.py all --no-serve
+uv run mtg all --no-serve
 ```
 
 #### Global Options
 
-Available for all commands:
-- `-v, --verbose`: Show detailed output
-- `-q, --quiet`: Minimal output
+Available for all commands (put them before the command name, e.g. `uv run mtg -v run`):
+- `-v, --verbose`: Show debug output
+- `-q, --quiet`: Only show warnings and errors
+- `--data-dir PATH`: Folder for downloaded and generated data (default: `data`)
 
 ### Output
 
-Generated HTML and JSON files are saved to `./data/output/[timestamp]/` by default.
+The report site is saved to `./data/output/[timestamp]/` by default. It's a static single-page app:
 
-The reports feature:
-- Interactive sortable and filterable tables powered by AG Grid
-- Responsive design for desktop and mobile
-- Navigation between different aggregator reports
-- Timestamped generation information
+- `index.html`, `app.js`, `styles.css`: the app, which lists the reports and shows each one in an AG Grid table
+- `manifest.json`: every report's name, description, explanation, and column definitions
+- `<report>.json`: each report's rows
+- `<report>.html`: redirects from the old one-page-per-report URLs
+
+Reports are addressed as `index.html#/<report>`, and type filter toggles are kept in the URL so filtered views can be shared. Tables are sortable and filterable, card names link to Scryfall with image previews, and the layout works on phones.
 
 ### Automated Updates
 
@@ -182,6 +177,20 @@ This repository is set up with GitHub Actions to automatically update the data a
 4. Generates all reports
 5. Publishes the reports to GitHub Pages
 
+## Development
+
+```bash
+uv run pytest            # all tests
+uv run ruff format .     # format
+uv run ruff check .      # lint
+uv run ty check          # type check
+```
+
+- `tests/test_golden.py` runs every report over a hand-written fixture dataset (`tests/fixtures/sample_cards.jsonl`) and compares the output to `tests/golden/`. If you change a report's output on purpose, regenerate the expected files with `UPDATE_GOLDEN=1 uv run pytest tests/test_golden.py` and review the diff.
+- `tests/test_spa.py` drives the site in Chromium. Install it with `uv run playwright install chromium`; without it these tests are skipped locally (CI requires them).
+
+To add a report, subclass `Aggregator` (or `FirstCardByKeyAggregator` for "first card per key" reports) in `mtg/aggregators/`, set its `name`, `display_name`, `description`, and `column_defs`, and add the class to `AGGREGATOR_CLASSES` in `mtg/aggregators/registry.py`.
+
 ## Viewing the Reports
 
 The generated reports are available at: https://patrickgaskill.github.io/mtg/
@@ -192,7 +201,7 @@ The generated reports are available at: https://patrickgaskill.github.io/mtg/
 - uv for dependency management
 - AG Grid for interactive tables
 - JSON for data storage
-- HTML/CSS for presentation
+- A static single-page app (HTML/CSS/JavaScript, no build step) for presentation
 - GitHub Actions for automation
 - GitHub Pages for hosting
 

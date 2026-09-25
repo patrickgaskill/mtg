@@ -168,3 +168,5 @@ data/*
 
 # Except for manually created data
 !data/manual/
+# and the rules type lists, kept as a fallback for when the rules site is down
+!data/rules/

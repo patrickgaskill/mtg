@@ -8,7 +8,7 @@
     "image_uri": "https://img.test/chk/19.jpg"
   },
   {
-    "creatureType": "Time Lord",
+    "creatureType": "Doctor",
     "name": "The Tenth Doctor",
     "set": "who",
     "releaseDate": "2023-10-13",
@@ -16,7 +16,7 @@
     "image_uri": "https://img.test/who/12.jpg"
   },
   {
-    "creatureType": "Doctor",
+    "creatureType": "Time Lord",
     "name": "The Tenth Doctor",
     "set": "who",
     "releaseDate": "2023-10-13",

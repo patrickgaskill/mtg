@@ -8,7 +8,7 @@ from typing import Any
 
 import yaml
 
-from card_utils import get_card_link_data
+from mtg.card import Card
 
 from .base import Aggregator
 
@@ -43,39 +43,41 @@ def format_time_difference(start_date: date, end_date: date) -> str:
 class SupercycleTimeAggregator(Aggregator):
     """Track completion times for card supercycles."""
 
-    def __init__(self, supercycles_file: Path):
-        super().__init__(
-            name="supercycle_completion_time",
-            display_name="Supercycle Completion Times",
-            description="Time to complete supercycles",
-            explanation=(
-                "Learn more about supercycles on the"
-                ' <a href="https://mtg.fandom.com/wiki/Mega_mega_cycle"'
-                ' target="_blank" rel="noopener noreferrer">MTG Wiki</a>.'
-            ),
-        )
-        self.supercycles = self.load_supercycles(supercycles_file)
+    name = "supercycle_completion_time"
+    display_name = "Supercycle Completion Times"
+    description = "Time to complete supercycles"
+    explanation = (
+        "Learn more about supercycles on the"
+        ' <a href="https://mtg.fandom.com/wiki/Mega_mega_cycle"'
+        ' target="_blank" rel="noopener noreferrer">MTG Wiki</a>.'
+    )
+    column_defs = [
+        {"field": "supercycle", "headerName": "Supercycle", "width": 220},
+        {"field": "status", "headerName": "Status", "width": 100},
+        {
+            "field": "cards",
+            "headerName": "Cards",
+            "width": 280,
+            "wrapText": True,
+            "autoHeight": True,
+            "suppressAutoSize": True,
+            "cellClass": "compact-cell",
+            "cellRenderer": "cardLinkRenderer",
+            "cardLinkData": "cardObjects",
+        },
+        {"field": "time", "headerName": "Time", "width": 150},
+        {"field": "startDate", "headerName": "Start Date", "width": 120},
+        {"field": "endDate", "headerName": "End Date", "width": 120},
+    ]
+
+    def __init__(self, context=None):
+        super().__init__(context)
+        supercycles_file = self.context.supercycles_file
+        self.supercycles = self.load_supercycles(supercycles_file) if supercycles_file else {}
+        if supercycles_file is None:
+            self.warnings.append("No supercycles file configured")
         self.card_dates: dict[str, date] = {}
         self.card_data: dict[str, dict[str, Any]] = {}
-        self.found_cards: set[str] = set()
-        self.column_defs = [
-            {"field": "supercycle", "headerName": "Supercycle", "width": 220},
-            {"field": "status", "headerName": "Status", "width": 100},
-            {
-                "field": "cards",
-                "headerName": "Cards",
-                "width": 280,
-                "wrapText": True,
-                "autoHeight": True,
-                "suppressAutoSize": True,
-                "cellClass": "compact-cell",
-                "cellRenderer": "cardLinkRenderer",
-                "cardLinkData": "cardObjects",
-            },
-            {"field": "time", "headerName": "Time", "width": 150},
-            {"field": "startDate", "headerName": "Start Date", "width": 120},
-            {"field": "endDate", "headerName": "End Date", "width": 120},
-        ]
 
     def load_supercycles(self, file_path: Path) -> dict[str, dict[str, Any]]:
         """Load supercycles from YAML or JSON file."""
@@ -94,19 +96,20 @@ class SupercycleTimeAggregator(Aggregator):
             self.warnings.append(f"Error: Failed to parse supercycles file {file_path}: {e}")
             return {}
 
-    def process_card(self, card: dict[str, Any]) -> None:
-        name = card.get("name")
-        released_at = card.get("released_at")
-        if name and released_at:
-            card_date = date.fromisoformat(released_at)
-            if name not in self.card_dates or card_date < self.card_dates[name]:
-                self.card_dates[name] = card_date
-                # Keep minimal Scryfall data to reduce memory usage.
-                # Empty strings for missing data are handled by JavaScript renderer fallback.
-                self.card_data[name] = {"name": name, **get_card_link_data(card)}
+    def process_card(self, card: Card) -> None:
+        name = card.name
+        card_date = card.released_date
+        if (
+            name
+            and card_date
+            and (name not in self.card_dates or card_date < self.card_dates[name])
+        ):
+            self.card_dates[name] = card_date
+            # Empty strings for missing data are handled by JavaScript renderer fallback.
+            self.card_data[name] = {"name": name, **card.link()}
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
-        today = date.today()
+        today = self.context.today()
         result = []
 
         for name, cycle in self.supercycles.items():

@@ -1,20 +1,11 @@
 """Aggregators for analyzing card types."""
 
-from pathlib import Path
 from typing import Any
 
-from card_utils import (
-    BASIC_LAND_TYPES,
-    extract_types,
-    get_card_link_data,
-    get_sort_key,
-    is_all_creature_types,
-    is_permanent,
-    is_traditional_card,
-)
-from constants import NON_CREATURE_LAND_SUBTYPES
+from mtg.card import Card, Face
+from mtg.card_utils import BASIC_LAND_TYPES, extract_types, is_permanent
 
-from .base import Aggregator
+from .base import Aggregator, AggregatorContext, card_columns, card_fields
 
 # Card types whose subtypes are creature or land types, and therefore verifiable
 # against the comprehensive rules type lists.
@@ -29,61 +20,52 @@ SKIPPED_TYPES = {"Token", "Emblem", "Card", "Stickers"}
 class MaximalPrintedTypesAggregator(Aggregator):
     """Find cards with maximal printed type combinations."""
 
-    def __init__(
-        self,
-        all_creature_types_file: Path,
-        all_land_types_file: Path,
-        description: str = "",
-    ):
-        super().__init__(
-            "maximal_printed_types",
-            "Maximal Printed Types",
-            description,
-            explanation=(
-                "Cards whose printed types form a maximum set — no other card's printed types"
-                " are a strict superset. Changelings count as having all creature types,"
-                " Planar Nexus counts as having all nonbasic land types, and Grist counts as"
-                " an Insect creature. Cards with creature or"
-                " land subtypes that are not yet in the comprehensive rules (e.g. from newly"
-                " previewed sets) are excluded until the rules are updated."
-            ),
-        )
+    name = "maximal_printed_types"
+    display_name = "Maximal Printed Types"
+    description = "Cards with maximal printed types"
+    explanation = (
+        "Cards whose printed types form a maximum set: no other card's printed types"
+        " are a strict superset. Changelings count as having all creature types,"
+        " Planar Nexus counts as having all nonbasic land types, and Grist counts as"
+        " an Insect creature. Cards with creature or"
+        " land subtypes that are not yet in the comprehensive rules (e.g. from newly"
+        " previewed sets) are excluded until the rules are updated."
+    )
+    traditional_only = True
+    # Row field holding the card's printed type line.
+    types_field = "types"
+    column_defs = [
+        {"field": "types", "headerName": "Types", "width": 300},
+        *card_columns("Name"),
+    ]
+    type_filters = [
+        {"field": "types", "label": "Planes", "keyword": "Plane"},
+        {"field": "types", "label": "Planeswalkers", "keyword": "Planeswalker"},
+    ]
+
+    def __init__(self, context: AggregatorContext | None = None):
+        super().__init__(context)
+        type_lists = self.context.type_lists
+        if not type_lists.loaded:
+            self.warnings.append(
+                "Creature/land types not loaded; run `mtg update-types`."
+                " Unknown subtypes can't be detected."
+            )
         # Maps a type set to the (face, card) pair that produced it.
-        self.maximal_types: dict[frozenset[str], tuple[dict[str, Any], dict[str, Any]]] = {}
+        self.maximal_types: dict[frozenset[str], tuple[Face, Card]] = {}
         self._unknown_subtypes_seen: set[str] = set()
-        self._types_field = "types"
-        self.column_defs = [
-            {"field": "types", "headerName": "Types", "width": 300},
-            {
-                "field": "name",
-                "headerName": "Name",
-                "width": 200,
-                "cellRenderer": "cardLinkRenderer",
-            },
-            {"field": "set", "headerName": "Set", "width": 80},
-            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
-        ]
-        self.type_filters = [
-            {"field": "types", "label": "Planes", "keyword": "Plane"},
-            {"field": "types", "label": "Planeswalkers", "keyword": "Planeswalker"},
-        ]
-        self.all_creature_types = self.load_types(all_creature_types_file)
-        self.all_land_types = self.load_types(all_land_types_file)
+        self.all_creature_types = type_lists.creature
+        self.all_land_types = type_lists.land
+        self.non_creature_land_subtypes = type_lists.non_creature_land_subtypes
         self.nonbasic_land_types = self.all_land_types - BASIC_LAND_TYPES
 
-    def process_card(self, card: dict[str, Any]) -> None:
-        if not is_traditional_card(card):
-            return
+    def process_card(self, card: Card) -> None:
+        for face in card.faces:
+            self.process_single_face(face, card)
 
-        if "card_faces" in card:
-            for face in card["card_faces"]:
-                self.process_single_face(face, card)
-        else:
-            self.process_single_face(card, card)
-
-    def process_single_face(self, face: dict[str, Any], parent_card: dict[str, Any]) -> None:
+    def process_single_face(self, face: Face, parent_card: Card) -> None:
         """Process a single face of a card."""
-        card_types = extract_types(face)
+        card_types = set(face.types)
 
         if card_types & SKIPPED_TYPES:
             return
@@ -95,19 +77,19 @@ class MaximalPrintedTypesAggregator(Aggregator):
                     self._unknown_subtypes_seen.add(subtype)
                     self.warnings.append(
                         f"Skipping cards with subtype '{subtype}'"
-                        f" (e.g. {face.get('name', 'Unknown')}):"
+                        f" (e.g. {face.name or 'Unknown'}):"
                         " not yet in the comprehensive rules type lists"
                     )
             return
 
-        if is_all_creature_types(face):
+        if face.is_all_creature_types:
             card_types |= self.all_creature_types
 
-        if face.get("name") == "Planar Nexus":
+        if face.name == "Planar Nexus":
             card_types |= self.nonbasic_land_types
 
         # Grist is a 1/1 Insect creature in every zone except the battlefield.
-        if face.get("name") == "Grist, the Hunger Tide":
+        if face.name == "Grist, the Hunger Tide":
             card_types |= {"Creature", "Insect"}
 
         card_types = self._modify_types(card_types)
@@ -116,7 +98,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
         if type_key in self.maximal_types:
             _existing_face, existing_card = self.maximal_types[type_key]
-            if get_sort_key(parent_card) < get_sort_key(existing_card):
+            if parent_card.sort_key < existing_card.sort_key:
                 self.maximal_types[type_key] = (face, parent_card)
             return
 
@@ -127,7 +109,7 @@ class MaximalPrintedTypesAggregator(Aggregator):
             del self.maximal_types[key]
         self.maximal_types[type_key] = (face, parent_card)
 
-    def _get_unknown_subtypes(self, face: dict[str, Any], card_types: set[str]) -> set[str]:
+    def _get_unknown_subtypes(self, face: Face, card_types: set[str]) -> set[str]:
         """
         Find creature/land subtypes on a face that aren't in the comprehensive rules yet.
 
@@ -138,15 +120,19 @@ class MaximalPrintedTypesAggregator(Aggregator):
         the Saga in "Enchantment Land — Urza's Saga") are allowed through.
         """
         if not self.all_creature_types or not self.all_land_types:
-            # Type lists failed to load; load_types already warned.
+            # Type lists aren't loaded; __init__ already warned.
             return set()
         if not card_types & SUBTYPE_VERIFIABLE_TYPES:
             return set()
-        type_line = face.get("type_line", "")
-        if "—" not in type_line:
+        if "—" not in face.type_line:
             return set()
-        subtypes = extract_types({"type_line": type_line.split("—", 1)[1]})
-        return subtypes - self.all_creature_types - self.all_land_types - NON_CREATURE_LAND_SUBTYPES
+        subtypes = extract_types({"type_line": face.type_line.split("—", 1)[1]})
+        return (
+            subtypes
+            - self.all_creature_types
+            - self.all_land_types
+            - self.non_creature_land_subtypes
+        )
 
     def _modify_types(self, card_types: set[str]) -> set[str]:
         """Hook for subclasses to modify types before maximality check."""
@@ -154,59 +140,38 @@ class MaximalPrintedTypesAggregator(Aggregator):
 
     def get_sorted_data(self) -> list[dict[str, Any]]:
         return [
-            {
-                self._types_field: card.get("type_line", ""),
-                "name": card.get("name", ""),
-                "set": card.get("set", ""),
-                "releaseDate": card.get("released_at", ""),
-                **get_card_link_data(card, face),
-            }
-            for _key, (face, card) in sorted(
-                self.maximal_types.items(), key=lambda item: get_sort_key(item[1][1])
-            )
+            {self.types_field: card.type_line, **card_fields(card, face)}
+            for face, card in sorted(self.maximal_types.values(), key=lambda pair: pair[1].sort_key)
         ]
 
 
 class MaximalTypesWithEffectsAggregator(MaximalPrintedTypesAggregator):
     """Find cards with maximal types considering global effects."""
 
-    def __init__(
-        self,
-        all_creature_types_file: Path,
-        all_land_types_file: Path,
-        description: str = "",
-    ):
-        super().__init__(all_creature_types_file, all_land_types_file, description)
-        self.name = "maximal_types_with_effects"
-        self.display_name = "Maximal Types with Global Effects"
-        self.description = "Cards with maximal types, considering global effects"
-        self.explanation = (
-            "Cards that reach the maximum number of types when global effects from other cards"
-            " in play are applied (e.g., In Bolas's Clutches grants Legendary, Maskwood Nexus"
-            " grants all creature types, Ashaya makes creatures Forest lands, Omo grants all"
-            " land and creature types). Cards with"
-            " creature or land subtypes that are not yet in the comprehensive rules (e.g. from"
-            " newly previewed sets) are excluded until the rules are updated."
-        )
-        self._types_field = "originalTypes"
+    name = "maximal_types_with_effects"
+    display_name = "Maximal Types with Global Effects"
+    description = "Cards with maximal types, considering global effects"
+    explanation = (
+        "Cards that reach the maximum number of types when global effects from other cards"
+        " in play are applied (e.g., In Bolas's Clutches grants Legendary, Maskwood Nexus"
+        " grants all creature types, Ashaya makes creatures Forest lands, Omo grants all"
+        " land and creature types). Cards with"
+        " creature or land subtypes that are not yet in the comprehensive rules (e.g. from"
+        " newly previewed sets) are excluded until the rules are updated."
+    )
+    types_field = "originalTypes"
+    column_defs = [
+        {"field": "originalTypes", "headerName": "Original Types", "width": 300},
+        *card_columns("Name"),
+    ]
+    type_filters = [
+        {"field": "originalTypes", "label": "Planes", "keyword": "Plane"},
+        {"field": "originalTypes", "label": "Planeswalkers", "keyword": "Planeswalker"},
+    ]
+
+    def __init__(self, context: AggregatorContext | None = None):
+        super().__init__(context)
         self.global_effects = self._define_global_effects()
-        # Maps a type set to the (face, card) pair that produced it.
-        self.maximal_types: dict[frozenset[str], tuple[dict[str, Any], dict[str, Any]]] = {}
-        self.column_defs = [
-            {"field": "originalTypes", "headerName": "Original Types", "width": 300},
-            {
-                "field": "name",
-                "headerName": "Name",
-                "width": 200,
-                "cellRenderer": "cardLinkRenderer",
-            },
-            {"field": "set", "headerName": "Set", "width": 80},
-            {"field": "releaseDate", "headerName": "Release Date", "width": 120},
-        ]
-        self.type_filters = [
-            {"field": "originalTypes", "label": "Planes", "keyword": "Plane"},
-            {"field": "originalTypes", "label": "Planeswalkers", "keyword": "Planeswalker"},
-        ]
 
     def _omo_effect(self, card_types: set[str]) -> set[str]:
         """Omo grants all land types to Lands, all creature types to Creatures."""

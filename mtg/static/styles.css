@@ -1,0 +1,335 @@
+:root {
+  --bg: #ffffff;
+  --bg-card: #f6f8fa;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --link: #0969da;
+  --link-hover: #0550ae;
+  --accent: #0969da;
+  --error-bg: #ffebe9;
+  --error-text: #82071e;
+  --error-border: #ff8182;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --link: #58a6ff;
+    --link-hover: #79c0ff;
+    --accent: #58a6ff;
+    --error-bg: #3d1117;
+    --error-text: #ff7b72;
+    --error-border: #6e3630;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 2rem;
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.nav-select {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--bg-card);
+  color: var(--text);
+  min-width: 200px;
+  margin-bottom: 1.5rem;
+}
+
+#myGrid {
+  height: 600px;
+  width: 100%;
+}
+
+.explanation {
+  background-color: var(--bg-card);
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1.25rem;
+  margin: 1rem 0 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.explanation a {
+  color: var(--link);
+}
+
+.explanation a:hover {
+  color: var(--link-hover);
+}
+
+.explanation h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.explanation p { margin: 0.5rem 0; }
+
+.explanation ul, .explanation ol {
+  margin: 0.5rem 0;
+  padding-left: 2rem;
+}
+
+.explanation code {
+  background-color: var(--border);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85em;
+}
+
+.explanation strong { font-weight: 600; }
+
+.error-message {
+  padding: 10px;
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 6px;
+}
+
+.card-link {
+  color: var(--link);
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.card-link:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.tippy-box { background-color: #333; }
+
+.tippy-box[data-theme~='card'] {
+  background-color: transparent;
+  padding: 0;
+}
+
+.tippy-box[data-theme~='card'] .tippy-content {
+  padding: 0;
+  background: #171717;
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.card-tooltip-image {
+  display: block;
+  max-width: min(488px, 90vw);
+  height: auto;
+  border-radius: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  background: transparent;
+}
+
+.compact-cell {
+  line-height: 1.4;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.filter-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Larger touch targets on devices without hover (phones/tablets) */
+@media (hover: none) and (pointer: coarse) {
+  #myGrid {
+    --ag-row-height: 48px;
+    --ag-header-height: 48px;
+  }
+
+  .filter-toggles label {
+    min-height: 44px;
+  }
+
+  .filter-toggles input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .nav-select {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    font-size: 16px; /* prevents iOS Safari zoom-on-focus */
+    margin-bottom: 1rem;
+  }
+
+  .explanation {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  /* Fill most of the viewport so the grid, not the page, is what scrolls */
+  #myGrid {
+    height: 75dvh;
+    min-height: 420px;
+  }
+
+  /* The paging panel is a single row of controls that overflows
+     narrow screens; let it wrap and tighten its spacing */
+  .ag-paging-panel {
+    height: auto;
+    min-height: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4px;
+    padding: 6px 4px;
+  }
+
+  .ag-paging-panel > * {
+    margin: 0 6px;
+  }
+}
+
+/* Home page */
+
+.home {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.home h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.home h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.muted { color: var(--text-muted); }
+
+.reports-list {
+  list-style-type: none;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.report-item {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  background-color: var(--bg-card);
+  transition: border-color 0.15s;
+}
+
+.report-item:hover {
+  border-color: var(--accent);
+}
+
+.report-item a {
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.report-item a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.report-description {
+  color: var(--text-muted);
+  margin: 0.25rem 0 0 0;
+  font-size: 0.875rem;
+}
+
+.report-rows {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.generation-info {
+  margin-top: 3rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+}
+
+.generation-info p { margin: 0; }
+
+.home-link {
+  color: var(--link);
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-right: 1rem;
+}
+
+.home-link:hover { text-decoration: underline; }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.toolbar .nav-select { margin-bottom: 0; }
+
+/* On the home page the toolbar lines up with the centered report list */
+.is-home .toolbar {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.is-home .home-link { display: none; }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 640px) {
+  .home-link { margin-bottom: 0.25rem; }
+}

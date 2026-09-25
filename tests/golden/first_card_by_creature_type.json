@@ -16,7 +16,7 @@
     "image_uri": "https://img.test/lea/198.jpg"
   },
   {
-    "creatureType": "Elf",
+    "creatureType": "Druid",
     "name": "Llanowar Elves",
     "set": "lea",
     "releaseDate": "1993-08-05",
@@ -24,7 +24,7 @@
     "image_uri": "https://img.test/lea/210.jpg"
   },
   {
-    "creatureType": "Druid",
+    "creatureType": "Elf",
     "name": "Llanowar Elves",
     "set": "lea",
     "releaseDate": "1993-08-05",
@@ -64,7 +64,7 @@
     "image_uri": "https://img.test/mor/143.jpg"
   },
   {
-    "creatureType": "Insect",
+    "creatureType": "Human",
     "name": "Delver of Secrets // Insectile Aberration",
     "set": "isd",
     "releaseDate": "2011-09-30",
@@ -72,7 +72,7 @@
     "image_uri": "https://img.test/isd/51-front.jpg"
   },
   {
-    "creatureType": "Human",
+    "creatureType": "Insect",
     "name": "Delver of Secrets // Insectile Aberration",
     "set": "isd",
     "releaseDate": "2011-09-30",
@@ -104,7 +104,7 @@
     "image_uri": "https://img.test/neo/153.jpg"
   },
   {
-    "creatureType": "Time Lord",
+    "creatureType": "Doctor",
     "name": "The Tenth Doctor",
     "set": "who",
     "releaseDate": "2023-10-13",
@@ -112,7 +112,7 @@
     "image_uri": "https://img.test/who/12.jpg"
   },
   {
-    "creatureType": "Doctor",
+    "creatureType": "Time Lord",
     "name": "The Tenth Doctor",
     "set": "who",
     "releaseDate": "2023-10-13",

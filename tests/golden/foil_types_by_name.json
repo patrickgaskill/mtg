@@ -19,12 +19,5 @@
     "numFoilTypes": 3,
     "scryfall_uri": "https://scryfall.com/card/lea/161/lightning-bolt",
     "image_uri": "https://img.test/lea/161.jpg"
-  },
-  {
-    "name": "Orb of Origin",
-    "foilTypes": "",
-    "numFoilTypes": 0,
-    "scryfall_uri": "https://scryfall.com/card/mb2/600/orb-of-origin",
-    "image_uri": "https://img.test/mb2/600.jpg"
   }
 ]

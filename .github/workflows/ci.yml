@@ -35,5 +35,14 @@ jobs:
       - name: Lint
         run: uv run ruff check .
 
+      - name: Type check
+        run: uv run ty check
+
+      - name: Install Chromium for browser tests
+        run: uv run playwright install --with-deps chromium
+
       - name: Run tests
         run: uv run pytest
+        env:
+          # Fail, rather than skip, the SPA browser tests if Chromium is missing.
+          MTG_REQUIRE_BROWSER: "1"

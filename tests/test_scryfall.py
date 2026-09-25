@@ -1,20 +1,13 @@
-"""Tests for card_aggregator download and data-file handling."""
+"""Tests for Scryfall bulk data download and reading."""
 
 import gzip
 import json
 
 import pytest
 import responses
-import typer
+from requests.exceptions import ConnectionError
 
-from aggregators import CountAggregator
-from card_aggregator import (
-    download,
-    find_latest_default_cards,
-    iter_cards,
-    run_internal,
-    update_types,
-)
+from mtg.scryfall import ScryfallError, download, find_latest_default_cards, iter_cards
 
 
 class TestIterCards:
@@ -34,6 +27,12 @@ class TestIterCards:
 
         cards = list(iter_cards(file_path))
         assert cards == [sample_card]
+
+    def test_reads_plain_jsonl(self, temp_dir, sample_cards_list):
+        file_path = temp_dir / "default-cards-2026-07-29.jsonl"
+        file_path.write_text("".join(json.dumps(card) + "\n" for card in sample_cards_list))
+
+        assert list(iter_cards(file_path)) == sample_cards_list
 
     def test_reads_legacy_json_array(self, temp_dir, sample_cards_list):
         file_path = temp_dir / "default-cards-2026-07-01.json"
@@ -67,9 +66,7 @@ class TestFindLatestDefaultCards:
 
 class TestDownload:
     @responses.activate
-    def test_downloads_jsonl_gz(self, tmp_path, monkeypatch, mock_scryfall_response):
-        monkeypatch.setattr("card_aggregator.DOWNLOADED_DATA_FOLDER", tmp_path)
-
+    def test_downloads_jsonl_gz(self, tmp_path, mock_scryfall_response):
         file_body = gzip.compress(b'{"name": "Lightning Bolt"}\n')
         entry = mock_scryfall_response["data"][0]
         entry["compressed_size"] = len(file_body)
@@ -82,16 +79,14 @@ class TestDownload:
         )
         responses.add(responses.GET, entry["jsonl_download_uri"], body=file_body)
 
-        file_path = download()
+        file_path = download(tmp_path)
 
         assert file_path == tmp_path / "default-cards-2026-07-29.jsonl.gz"
         assert file_path.read_bytes() == file_body
         assert list(iter_cards(file_path)) == [{"name": "Lightning Bolt"}]
 
     @responses.activate
-    def test_size_mismatch_leaves_no_data_file(self, tmp_path, monkeypatch, mock_scryfall_response):
-        monkeypatch.setattr("card_aggregator.DOWNLOADED_DATA_FOLDER", tmp_path)
-
+    def test_size_mismatch_leaves_no_data_file(self, tmp_path, mock_scryfall_response):
         file_body = gzip.compress(b'{"name": "Lightning Bolt"}\n')
         entry = mock_scryfall_response["data"][0]
         entry["compressed_size"] = len(file_body) + 1
@@ -104,8 +99,8 @@ class TestDownload:
         )
         responses.add(responses.GET, entry["jsonl_download_uri"], body=file_body)
 
-        with pytest.raises(typer.Exit):
-            download()
+        with pytest.raises(ScryfallError, match="size mismatch"):
+            download(tmp_path)
 
         assert list(tmp_path.iterdir()) == []
         assert find_latest_default_cards(tmp_path) is None
@@ -118,59 +113,15 @@ class TestDownload:
         assert latest is not None
         assert latest.name == "default-cards-2026-07-28.jsonl.gz"
 
-
-class TestUpdateTypes:
-    def test_creates_download_folder(self, tmp_path, monkeypatch):
-        folder = tmp_path / "downloads"
-        monkeypatch.setattr("card_aggregator.DOWNLOADED_DATA_FOLDER", folder)
-        monkeypatch.setattr(
-            "card_aggregator.fetch_and_parse_types", lambda: ({"Elf", "Human"}, {"Forest"})
+    @responses.activate
+    def test_network_error_explains_itself(self, tmp_path):
+        responses.add(
+            responses.GET,
+            "https://api.scryfall.com/bulk-data",
+            body=ConnectionError("no route"),
         )
 
-        update_types()
-
-        assert (folder / "all_creature_types.txt").read_text() == "Elf\nHuman\n"
-        assert (folder / "all_land_types.txt").read_text() == "Forest\n"
-
-    def test_write_failure_exits_nonzero(self, tmp_path, monkeypatch):
-        blocker = tmp_path / "downloads"
-        blocker.write_text("not a folder")
-        monkeypatch.setattr("card_aggregator.DOWNLOADED_DATA_FOLDER", blocker)
-        monkeypatch.setattr("card_aggregator.fetch_and_parse_types", lambda: ({"Elf"}, {"Forest"}))
-
-        with pytest.raises(typer.Exit) as exc_info:
-            update_types()
-        assert exc_info.value.exit_code == 1
-
-
-class TestRunInternal:
-    def test_writes_each_report_once(self, tmp_path, sample_cards_list, monkeypatch):
-        input_file = tmp_path / "default-cards-2026-07-29.jsonl.gz"
-        with gzip.open(input_file, "wt", encoding="utf-8") as f:
-            for card in sample_cards_list:
-                f.write(json.dumps(card) + "\n")
-
-        calls = []
-        original = CountAggregator.get_sorted_data
-
-        def counting_get_sorted_data(self):
-            calls.append(self.name)
-            return original(self)
-
-        monkeypatch.setattr(CountAggregator, "get_sorted_data", counting_get_sorted_data)
-
-        output = tmp_path / "out"
-        run_internal(
-            input_file=input_file,
-            output_folder=output,
-            serve=False,
-            only=["count_cards_by_name"],
-            exclude=None,
-            dry_run=False,
-        )
-
-        assert calls == ["count_cards_by_name"]
-        rows = json.loads((output / "count_cards_by_name.json").read_text())
-        assert {row["name"] for row in rows} == {card["name"] for card in sample_cards_list}
-        html = (output / "count_cards_by_name.html").read_text()
-        assert '<option value="count_cards_by_name.html" selected>' in html
+        with pytest.raises(ScryfallError) as exc_info:
+            download(tmp_path)
+        assert "Network error" in str(exc_info.value)
+        assert "internet connection" in exc_info.value.hint

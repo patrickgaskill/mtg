@@ -1,6 +1,6 @@
 """Shared constants for aggregators."""
 
-from datetime import datetime
+from datetime import date
 
 # Network timeouts (seconds)
 REQUEST_TIMEOUT = 30
@@ -60,7 +60,7 @@ FOIL_PROMO_TYPES = {
     "textured",
 }
 
-MODERN_FOIL_CUTOFF_DATE = datetime(2003, 7, 28)  # Release date of 8th Edition
+MODERN_FOIL_CUTOFF_DATE = date(2003, 7, 28)  # Release date of 8th Edition
 
 SPECIAL_FOIL_SETS = {
     "mps": "inventions",  # Kaladesh Inventions
@@ -70,69 +70,76 @@ SPECIAL_FOIL_SETS = {
     "dbl": "silverscreen",  # Innistrad Double Feature
 }
 
-# Subtypes that belong to non-creature, non-land card types (CR 205.3g, 205.3h,
-# 205.3k). They can share a type line with creature or land subtypes, e.g.
-# "Artifact Creature — Equipment Lizard" or "Enchantment Land — Urza's Saga",
-# so they must be told apart from creature and land types. Update these lists
-# when the comprehensive rules add a new artifact, enchantment, or spell type.
-ARTIFACT_TYPES = {
-    "Attraction",
-    "Blood",
-    "Bobblehead",
-    "Clue",
-    "Contraption",
-    "Equipment",
-    "Food",
-    "Fortification",
-    "Gold",
-    "Incubator",
-    "Infinity",
-    "Junk",
-    "Lander",
-    "Map",
-    "Mutagen",
-    "Powerstone",
-    "Spacecraft",
-    "Treasure",
-    "Vehicle",
-}
-ENCHANTMENT_TYPES = {
-    "Aura",
-    "Background",
-    "Cartouche",
-    "Case",
-    "Class",
-    "Curse",
-    "Role",
-    "Room",
-    "Rune",
-    "Saga",
-    "Shard",
-    "Shrine",
-}
-SPELL_TYPES = {"Adventure", "Arcane", "Chorus", "Lesson", "Omen", "Trap"}
+# Fallback subtype lists for non-creature, non-land card types (CR 205.3g,
+# 205.3h, 205.3k), used only when `mtg update-types` couldn't extract them from
+# the comprehensive rules. They can share a type line with creature or land
+# subtypes, e.g. "Artifact Creature — Equipment Lizard" or "Enchantment Land —
+# Urza's Saga", so they must be told apart from creature and land types.
+ARTIFACT_TYPES = frozenset(
+    {
+        "Attraction",
+        "Blood",
+        "Bobblehead",
+        "Clue",
+        "Contraption",
+        "Equipment",
+        "Food",
+        "Fortification",
+        "Gold",
+        "Incubator",
+        "Infinity",
+        "Junk",
+        "Lander",
+        "Map",
+        "Mutagen",
+        "Powerstone",
+        "Spacecraft",
+        "Treasure",
+        "Vehicle",
+    }
+)
+ENCHANTMENT_TYPES = frozenset(
+    {
+        "Aura",
+        "Background",
+        "Cartouche",
+        "Case",
+        "Class",
+        "Curse",
+        "Role",
+        "Room",
+        "Rune",
+        "Saga",
+        "Shard",
+        "Shrine",
+    }
+)
+SPELL_TYPES = frozenset({"Adventure", "Arcane", "Chorus", "Lesson", "Omen", "Trap"})
 NON_CREATURE_LAND_SUBTYPES = ARTIFACT_TYPES | ENCHANTMENT_TYPES | SPELL_TYPES
 
-# Land types (CR 205.3i) that can appear alongside creature types on land
-# creatures such as Dryad Arbor ("Land Creature — Forest Dryad").
-LAND_TYPES = {
-    "Cave",
-    "Desert",
-    "Forest",
-    "Gate",
-    "Island",
-    "Lair",
-    "Locus",
-    "Mine",
-    "Mountain",
-    "Plains",
-    "Power-Plant",
-    "Sphere",
-    "Swamp",
-    "Tower",
-    "Town",
-    "Urza's",
-}
+# Fallback land types (CR 205.3i), used when the rules type lists aren't loaded.
+# They can appear alongside creature types on land creatures such as Dryad
+# Arbor ("Land Creature — Forest Dryad").
+LAND_TYPES = frozenset(
+    {
+        "Cave",
+        "Desert",
+        "Forest",
+        "Gate",
+        "Island",
+        "Lair",
+        "Locus",
+        "Mine",
+        "Mountain",
+        "Plains",
+        "Power-Plant",
+        "Sphere",
+        "Swamp",
+        "Tower",
+        "Town",
+        "Urza's",
+    }
+)
 
 # Card types whose subtypes include creature types (CR 205.3m, 308.3).
-CREATURE_SUBTYPE_CARD_TYPES = {"Creature", "Kindred", "Tribal"}
+CREATURE_SUBTYPE_CARD_TYPES = frozenset({"Creature", "Kindred", "Tribal"})

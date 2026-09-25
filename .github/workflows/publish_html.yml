@@ -47,13 +47,15 @@ jobs:
         run: uv run pytest
 
       - name: Download latest card data
-        run: uv run card_aggregator.py download
+        run: uv run mtg download
 
-      - name: Update creature and land types
-        run: uv run card_aggregator.py update-types
+      # If the rules site is down, fall back to the committed data/rules/types.json.
+      - name: Update type lists from the comprehensive rules
+        continue-on-error: true
+        run: uv run mtg update-types
 
-      - name: Run card aggregator
-        run: uv run card_aggregator.py run --output ${{ env.OUTPUT_FOLDER }}
+      - name: Generate reports
+        run: uv run mtg run --output ${{ env.OUTPUT_FOLDER }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v6.0.0

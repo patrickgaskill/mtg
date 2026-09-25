@@ -1,10 +1,10 @@
-"""Tests for type_updater.py functions."""
+"""Tests for rules.py functions."""
 
 import pytest
 import responses
 from requests.exceptions import ConnectionError, RequestException, Timeout
 
-import type_updater
+from mtg import rules
 
 # 50+ creature types to satisfy validation threshold
 SAMPLE_CREATURE_TYPES = (
@@ -24,7 +24,10 @@ def make_rules_text(creature_types=SAMPLE_CREATURE_TYPES, land_types=SAMPLE_LAND
         Some text before...
         All other creature types are one word long: {creature_types}.
         More text...
+        205.3g Artifacts have their own unique set of subtypes; these subtypes are called artifact types. The artifact types are Clue, Equipment, Food, and Vehicle.
+        205.3h Enchantments have their own unique set of subtypes; these subtypes are called enchantment types. The enchantment types are Aura, Saga, and Shrine.
         205.3i Lands have their own unique set of subtypes; these subtypes are called land types. The land types are {land_types}. Of that list, the basic land types are Forest, Island, Mountain, Plains, and Swamp.
+        205.3k Instants and sorceries share their lists of subtypes; these subtypes are called spell types. The spell types are Adventure, Arcane, and Lesson.
         More text...
     """
 
@@ -60,7 +63,8 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        creature_types, land_types = type_updater.fetch_and_parse_types()
+        type_lists = rules.fetch_and_parse_types()
+        creature_types, land_types = type_lists.creature, type_lists.land
 
         # Check creature types (Time Lord is always included)
         assert "Time Lord" in creature_types
@@ -87,7 +91,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Network error while fetching rules page"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_timeout_on_rules_page(self):
@@ -99,7 +103,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Network error while fetching rules page"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_http_error_on_rules_page(self):
@@ -111,7 +115,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="HTTP error while fetching rules page"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_no_txt_links_found(self):
@@ -133,7 +137,7 @@ class TestFetchAndParseTypes:
         with pytest.raises(
             ValueError, match="Couldn't find the link to the comprehensive rules text file"
         ):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_retry_with_multiple_txt_links(self):
@@ -168,7 +172,8 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        creature_types, land_types = type_updater.fetch_and_parse_types()
+        type_lists = rules.fetch_and_parse_types()
+        creature_types, land_types = type_lists.creature, type_lists.land
 
         assert "Advisor" in creature_types
         assert "Desert" in land_types
@@ -204,7 +209,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Failed to download comprehensive rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_creature_types_not_found(self):
@@ -236,7 +241,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Couldn't find creature types in the rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_land_types_not_found(self):
@@ -268,7 +273,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Couldn't find land types in the rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_relative_url_handling(self):
@@ -294,7 +299,8 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        creature_types, land_types = type_updater.fetch_and_parse_types()
+        type_lists = rules.fetch_and_parse_types()
+        creature_types, land_types = type_lists.creature, type_lists.land
 
         assert "Advisor" in creature_types
         assert "Desert" in land_types
@@ -327,7 +333,8 @@ class TestFetchAndParseTypes:
             status=200,
         )
 
-        creature_types, land_types = type_updater.fetch_and_parse_types()
+        type_lists = rules.fetch_and_parse_types()
+        creature_types, land_types = type_lists.creature, type_lists.land
 
         # Check that curly quotes were normalized to straight quotes
         assert "Urza's" in creature_types
@@ -343,7 +350,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Request error while fetching rules page"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_parsing_error_on_rules_page(self):
@@ -361,7 +368,7 @@ class TestFetchAndParseTypes:
         with pytest.raises(
             ValueError, match="Couldn't find the link to the comprehensive rules text file"
         ):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_network_error_on_txt_download(self):
@@ -387,7 +394,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Failed to download comprehensive rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_timeout_on_txt_download(self):
@@ -413,7 +420,7 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Failed to download comprehensive rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
 
     @responses.activate
     def test_request_exception_on_txt_download(self):
@@ -439,4 +446,37 @@ class TestFetchAndParseTypes:
         )
 
         with pytest.raises(ValueError, match="Failed to download comprehensive rules"):
-            type_updater.fetch_and_parse_types()
+            rules.fetch_and_parse_types()
+
+
+class TestParseTypes:
+    def test_extracts_all_subtype_lists(self):
+        type_lists = rules.parse_types(make_rules_text())
+
+        assert "Time Lord" in type_lists.creature
+        assert "Urza's" in type_lists.land
+        assert "Power-Plant" in type_lists.land
+        assert type_lists.artifact == {"Clue", "Equipment", "Food", "Vehicle"}
+        assert type_lists.enchantment == {"Aura", "Saga", "Shrine"}
+        assert type_lists.spell == {"Adventure", "Arcane", "Lesson"}
+
+    def test_missing_optional_lists_fall_back_to_defaults(self):
+        text = "\n".join(line for line in make_rules_text().splitlines() if "205.3g" not in line)
+
+        type_lists = rules.parse_types(text)
+
+        assert type_lists.artifact == rules.ARTIFACT_TYPES
+        assert type_lists.enchantment == {"Aura", "Saga", "Shrine"}
+
+
+class TestTypeListsStorage:
+    def test_round_trip(self, tmp_path):
+        original = rules.parse_types(make_rules_text())
+        path = tmp_path / "rules" / "types.json"
+
+        original.save(path)
+
+        assert rules.TypeLists.load(path) == original
+
+    def test_empty_lists_are_not_loaded(self):
+        assert not rules.TypeLists().loaded

@@ -2,7 +2,10 @@ import re
 from datetime import date
 from typing import Any
 
-from constants import (
+from mtg.constants import (
+    CREATURE_SUBTYPE_CARD_TYPES,
+    LAND_TYPES,
+    NON_CREATURE_LAND_SUBTYPES,
     NON_TRADITIONAL_BORDERS,
     NON_TRADITIONAL_LAYOUTS,
     NON_TRADITIONAL_PROMO_TYPES,
@@ -28,6 +31,46 @@ def extract_types(card: dict[str, Any]) -> set[str]:
     return {word.replace("Time-Lord", "Time Lord") for word in words}
 
 
+def extract_creature_subtypes(
+    type_line: str,
+    non_creature_subtypes: frozenset[str] = NON_CREATURE_LAND_SUBTYPES,
+    land_types: frozenset[str] = LAND_TYPES,
+) -> set[str]:
+    """
+    Extract creature subtypes from a type line.
+
+    Returns the creature subtypes of Creature and Kindred (Tribal) faces, or an
+    empty set if no face has any. Artifact, enchantment, spell, and land
+    subtypes sharing the type line (e.g. "Artifact Creature — Equipment Lizard")
+    are dropped. Handles "Time Lord" as a single type and multi-faced cards,
+    whose type line lists each face separated by " // ".
+    """
+    subtypes = set()
+
+    for face in type_line.split(" // "):
+        if "—" not in face:
+            continue
+
+        supertypes_and_types, subtype_str = face.split("—", 1)
+        card_types = set(supertypes_and_types.split())
+
+        if not card_types & CREATURE_SUBTYPE_CARD_TYPES:
+            continue
+
+        excluded = non_creature_subtypes
+        if "Land" in card_types:
+            excluded = excluded | land_types
+
+        # Handle "Time Lord" as a single type
+        subtype_str = subtype_str.replace("Time Lord", "Time-Lord")
+        for part in subtype_str.split():
+            subtype = part.replace("Time-Lord", "Time Lord")
+            if subtype not in excluded:
+                subtypes.add(subtype)
+
+    return subtypes
+
+
 def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
     """
     Generate a sort key for a card.
@@ -49,19 +92,6 @@ def get_sort_key(card: dict[str, Any]) -> tuple[date, str, int, str]:
         parsed_number = 0
 
     return release_date, card.get("set", ""), parsed_number, collector_number
-
-
-def is_all_creature_types(card: dict[str, Any]) -> bool:
-    """
-    Check if a card has all creature types.
-
-    Args:
-        card (dict[str, Any]): A dictionary representing a card.
-
-    Returns:
-        bool: True if the card has all creature types, False otherwise.
-    """
-    return card.get("name") == "Mistform Ultimus" or "Changeling" in card.get("keywords", [])
 
 
 def is_permanent(card: dict[str, Any]) -> bool:
@@ -206,19 +236,3 @@ def get_card_image_uri(card: dict[str, Any], size: str = "normal") -> str:
         return image_uris.get(size, "")
 
     return ""
-
-
-def get_card_link_data(card: dict[str, Any], face: dict[str, Any] | None = None) -> dict[str, str]:
-    """
-    Extract Scryfall URI and image URI from a card for use in report links.
-
-    If a specific card face is provided, its image is preferred over the
-    card-level default (which falls back to the first face).
-    """
-    face_image_uri = ""
-    if face is not None:
-        face_image_uri = (face.get("image_uris") or {}).get("normal", "")
-    return {
-        "scryfall_uri": card.get("scryfall_uri", ""),
-        "image_uri": face_image_uri or get_card_image_uri(card),
-    }
