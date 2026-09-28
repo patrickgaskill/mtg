@@ -160,12 +160,13 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     name = "token_only_creature_types"
     display_name = "Token-Only Creature Types"
-    description = "Creature types that only token cards have in their type line"
+    description = "Creature types that only printed token cards have in their type line"
     explanation = (
-        "Creature types that only token cards have in their type line, never a regular"
-        " card (e.g., Pentavite, Germ, Servo). Pentavus creates Pentavite tokens, but no"
-        " card is itself a Pentavite. A type whose token was never printed as a token card"
-        " is listed under Rules-Only Creature Types instead."
+        "Creature types that only printed token cards have in their type line, never a"
+        " regular card (e.g., Pentavite, Germ, Servo). Pentavus creates Pentavite tokens,"
+        " but no regular card is itself a Pentavite. Tokens without an official printed"
+        " token card don't count, so a type seen only on those is listed under Rules-Only"
+        " Creature Types instead."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("Example Token")]
 
@@ -199,12 +200,12 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
 
     name = "rules_only_creature_types"
     display_name = "Rules-Only Creature Types"
-    description = "Creature types in the rules that no card has in its type line"
+    description = "Creature types in the rules that no printed card has in its type line"
     explanation = (
-        "Creature types listed in the comprehensive rules that no card, not even a token"
-        " card, has in its type line (e.g., Camarid, Tetravite, Caribou). Some are named in"
-        " card text, usually as a token that a card creates but that was never printed;"
-        " First Text Mention shows the earliest such card."
+        "Creature types listed in the comprehensive rules that no printed card, including"
+        " printed token cards, has in its type line (e.g., Camarid, Tetravite, Caribou)."
+        " Some still exist in games as tokens that cards create but that have no official"
+        " printed token card; First Text Mention shows the earliest card naming the type."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("First Text Mention")]
 
