@@ -160,13 +160,14 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     name = "token_only_creature_types"
     display_name = "Token-Only Creature Types"
-    description = "Creature types that only printed token cards have in their type line"
+    description = "Creature types that only printed token cards have"
     explanation = (
-        "Creature types that only printed token cards have in their type line, never a"
+        "Creature types in the type line of at least one printed token card but no"
         " regular card (e.g., Pentavite, Germ, Servo). Pentavus creates Pentavite tokens,"
-        " but no regular card is itself a Pentavite. Tokens without an official printed"
-        " token card don't count, so a type seen only on those is listed under Rules-Only"
-        " Creature Types instead."
+        " but no regular card is itself a Pentavite. Regular cards exclude Un-set,"
+        " silver and gold bordered, memorabilia, and playtest cards, so a type seen only"
+        " on those and on tokens still counts. Tokens with no official printed token card"
+        " don't count; types seen only that way are under Rules-Only Creature Types."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("Example Token")]
 
@@ -200,10 +201,11 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
 
     name = "rules_only_creature_types"
     display_name = "Rules-Only Creature Types"
-    description = "Creature types in the rules that no printed card has in its type line"
+    description = "Creature types in the rules that no printed card has"
     explanation = (
-        "Creature types listed in the comprehensive rules that no printed card, including"
-        " printed token cards, has in its type line (e.g., Camarid, Tetravite, Caribou)."
+        "Creature types listed in the comprehensive rules that no card on Scryfall has in"
+        " its type line, counting printed token cards, Un-set, and memorabilia cards"
+        " (e.g., Camarid, Tetravite, Caribou)."
         " Some still exist in games as tokens that cards create but that have no official"
         " printed token card; First Text Mention shows the earliest card naming the type."
     )

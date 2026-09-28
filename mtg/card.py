@@ -20,7 +20,7 @@ from mtg.card_utils import (
     get_sort_key,
     is_traditional_card,
 )
-from mtg.constants import LAND_TYPES, NON_CREATURE_LAND_SUBTYPES
+from mtg.constants import LAND_TYPES, NON_CREATURE_LAND_SUBTYPES, TOKEN_LAYOUTS
 
 MISTFORM_ULTIMUS = "Mistform Ultimus"
 
@@ -102,7 +102,7 @@ class Card:
 
     @property
     def is_token(self) -> bool:
-        return self.layout == "token"
+        return self.layout in TOKEN_LAYOUTS
 
     def link(self, face: Face | None = None) -> dict[str, str]:
         """Scryfall link and image for report rows, preferring the face's own image."""
