@@ -162,18 +162,22 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
     display_name = "Token-Only Creature Types"
     description = "Creature types that only printed token cards have"
     explanation = (
-        "Creature types in the type line of at least one printed token card but no"
-        " regular card (e.g., Pentavite, Germ, Servo). Pentavus creates Pentavite tokens,"
-        " but no regular card is itself a Pentavite. Regular cards exclude Un-set,"
-        " silver and gold bordered, memorabilia, and playtest cards, so a type seen only"
-        " on those and on tokens still counts. Tokens with no official printed token card"
-        " don't count; types seen only that way are under Rules-Only Creature Types."
+        "Creature types from the comprehensive rules that are in the type line of at least "
+        "one printed token card but no regular card (e.g., Pentavite, Germ, Servo). Pentavus "
+        "creates Pentavite tokens, but no regular card is itself a Pentavite. Regular cards "
+        "exclude Un-set, silver and gold bordered, memorabilia, and playtest cards, so a type"
+        " seen only on those and on tokens still counts. Tokens with no official printed "
+        "token card don't count; types seen only that way are under Rules-Only Creature "
+        "Types."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("Example Token")]
 
     def __init__(self, context=None):
         super().__init__(context)
         self.card_types: set[str] = set()
+        self.rules_types = self.context.type_lists.creature
+        if not self.rules_types:
+            self.warnings.append("Creature types not loaded; run `mtg update-types`")
 
     def process_card(self, card: Card) -> None:
         if card.is_all_creature_types:
@@ -191,7 +195,12 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     def sorted_items(self):
         return sorted(
-            (item for item in self.best.items() if item[0] not in self.card_types),
+            (
+                item
+                for item in self.best.items()
+                if item[0] not in self.card_types
+                and (not self.rules_types or item[0] in self.rules_types)
+            ),
             key=lambda item: item[0],
         )
 
