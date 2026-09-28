@@ -160,17 +160,24 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     name = "token_only_creature_types"
     display_name = "Token-Only Creature Types"
-    description = "Creature types that only exist on printed token cards"
+    description = "Creature types that only printed token cards have"
     explanation = (
-        "Creature types that have only appeared on printed token cards, never on a"
-        " non-token card (e.g., Pentavite, Germ, Servo). Only tokens printed as physical"
-        " token cards count; tokens that exist solely as in-game objects do not."
+        "Creature types from the comprehensive rules that are in the type line of at least "
+        "one printed token card but no regular card (e.g., Pentavite, Germ, Servo). Pentavus "
+        "creates Pentavite tokens, but no regular card is itself a Pentavite. Regular cards "
+        "exclude Un-set, silver and gold bordered, memorabilia, and playtest cards, so a type"
+        " seen only on those and on tokens still counts. Tokens with no official printed "
+        "token card don't count; types seen only that way are under Rules-Only Creature "
+        "Types."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("Example Token")]
 
     def __init__(self, context=None):
         super().__init__(context)
         self.card_types: set[str] = set()
+        self.rules_types = self.context.type_lists.creature
+        if not self.rules_types:
+            self.warnings.append("Creature types not loaded; run `mtg update-types`")
 
     def process_card(self, card: Card) -> None:
         if card.is_all_creature_types:
@@ -188,7 +195,12 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     def sorted_items(self):
         return sorted(
-            (item for item in self.best.items() if item[0] not in self.card_types),
+            (
+                item
+                for item in self.best.items()
+                if item[0] not in self.card_types
+                and (not self.rules_types or item[0] in self.rules_types)
+            ),
             key=lambda item: item[0],
         )
 
@@ -198,12 +210,13 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
 
     name = "rules_only_creature_types"
     display_name = "Rules-Only Creature Types"
-    description = "Creature types in the rules but never on any card"
+    description = "Creature types in the rules that no printed card has"
     explanation = (
-        "Creature types defined in the comprehensive rules that have never appeared on"
-        " any card, not even on a printed token card (e.g., Camarid, Tetravite, Caribou)."
-        " A type whose token exists only as an in-game object, never as a printed token"
-        " card, still qualifies."
+        "Creature types listed in the comprehensive rules that no card on Scryfall has in"
+        " its type line, counting printed token cards, Un-set, and memorabilia cards"
+        " (e.g., Camarid, Tetravite, Caribou)."
+        " Some still exist in games as tokens that cards create but that have no official"
+        " printed token card; First Text Mention shows the earliest card naming the type."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("First Text Mention")]
 

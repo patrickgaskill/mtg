@@ -66,6 +66,23 @@ class TestTokenOnlyCreatureTypes:
         feed(aggregator, make_card(type_line="Kindred Sorcery — Faerie"))
         assert aggregator.get_sorted_data() == []
 
+    def test_only_types_in_the_rules(self):
+        aggregator = TokenOnlyCreatureTypesAggregator(type_context(["Germ"]))
+        feed(aggregator, make_card(type_line="Token Creature — Germ Gnome", layout="token"))
+        assert [row["creatureType"] for row in aggregator.get_sorted_data()] == ["Germ"]
+
+    def test_double_faced_token_counts_as_token(self):
+        aggregator = TokenOnlyCreatureTypesAggregator()
+        feed(
+            aggregator,
+            make_card(
+                type_line="Token Creature — Human // Token Creature — Zombie",
+                layout="double_faced_token",
+            ),
+        )
+        rows = aggregator.get_sorted_data()
+        assert [row["creatureType"] for row in rows] == ["Human", "Zombie"]
+
 
 class TestRulesOnlyCreatureTypes:
     @pytest.fixture

@@ -85,6 +85,11 @@ class TestDerivedFields:
         assert token.is_token
         assert not token.is_traditional
 
+    def test_double_faced_token_is_token(self):
+        token = make(layout="double_faced_token", type_line="Token Creature — Germ")
+        assert token.is_token
+        assert not token.is_traditional
+
     def test_creature_subtypes_use_given_subtype_lists(self):
         card = Card.from_scryfall(
             {"type_line": "Artifact Creature — Gizmo Robot"},
