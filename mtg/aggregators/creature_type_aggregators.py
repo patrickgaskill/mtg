@@ -160,11 +160,11 @@ class TokenOnlyCreatureTypesAggregator(FirstCardByKeyAggregator):
 
     name = "token_only_creature_types"
     display_name = "Token-Only Creature Types"
-    description = "Creature types that only exist on printed token cards"
+    description = "Creature types found on token cards but no regular card"
     explanation = (
-        "Creature types that have only appeared on printed token cards, never on a"
-        " non-token card (e.g., Pentavite, Germ, Servo). Only tokens printed as physical"
-        " token cards count; tokens that exist solely as in-game objects do not."
+        "Creature types that appear on at least one token card but on no regular card"
+        " (e.g., Pentavite, Germ, Servo). A type that cards create as tokens but that was"
+        " never printed on a token card is listed under Rules-Only Creature Types instead."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("Example Token")]
 
@@ -198,12 +198,12 @@ class RulesOnlyCreatureTypesAggregator(Aggregator):
 
     name = "rules_only_creature_types"
     display_name = "Rules-Only Creature Types"
-    description = "Creature types in the rules but never on any card"
+    description = "Creature types in the rules that no card or token card has"
     explanation = (
-        "Creature types defined in the comprehensive rules that have never appeared on"
-        " any card, not even on a printed token card (e.g., Camarid, Tetravite, Caribou)."
-        " A type whose token exists only as an in-game object, never as a printed token"
-        " card, still qualifies."
+        "Creature types listed in the comprehensive rules that no card or token card has"
+        " in its type line (e.g., Camarid, Tetravite, Caribou). Some are still named in"
+        " card text, usually as a token that a card creates but that was never printed;"
+        " First Text Mention shows the earliest such card."
     )
     column_defs = [CREATURE_TYPE_COLUMN, *card_columns("First Text Mention")]
 
