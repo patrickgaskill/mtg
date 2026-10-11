@@ -11,6 +11,7 @@ from pathlib import Path
 import pytest
 
 from mtg.aggregators import AggregatorContext, create_aggregators
+from mtg.aggregators.supercycle_aggregators import SupercycleTimeAggregator
 from mtg.aggregators.type_aggregators import MaximalPrintedTypesAggregator
 from mtg.card import Card
 from mtg.pipeline import build_reports, load_type_lists, process_cards
@@ -76,3 +77,15 @@ def test_known_subtypes_are_never_reported_unknown(raw_cards, type_lists):
     known = type_lists.non_creature_land_subtypes | type_lists.creature | type_lists.land
     flagged = [w for w in aggregator.warnings if any(f"'{t}'" in w for t in known)]
     assert flagged == []
+
+
+def test_supercycle_rules_match_their_listed_cards(raw_cards):
+    # `mtg make-sample` includes every listed supercycle card, so this checks each
+    # rule against real printings. A failure means the rule needs loosening.
+    context = AggregatorContext(supercycles_file=ROOT / "data" / "manual" / "supercycles.yaml")
+    aggregator = SupercycleTimeAggregator(context)
+
+    process_cards(raw_cards, [aggregator], aggregator.context.type_lists, max_errors=1)
+
+    assert aggregator.warnings == []
+    assert aggregator.unmatched_members() == []

@@ -79,6 +79,12 @@ uv run mtg serve [FOLDER] [--port 8000]
 ```
 Serves a generated site (default: the latest in `data/output/`) on localhost and opens it in your browser.
 
+**🔎 Supercycle Candidates**
+```bash
+uv run mtg supercycle-candidates [--markdown FILE]
+```
+Lists cards that fit an unfinished supercycle's `match` rule in `data/manual/supercycles.yaml` but aren't listed yet, and listed cards a rule fails to match. Add each real member to the cycle's `cards` and anything else to the rule's `exclude`.
+
 **🚀 Complete Workflow**
 ```bash
 uv run mtg all [OPTIONS]
@@ -176,6 +182,7 @@ This repository is set up with GitHub Actions to automatically update the data a
 3. Updates the creature and land type lists
 4. Generates all reports
 5. Publishes the reports to GitHub Pages
+6. Opens or updates a "Possible new supercycle members" issue when `mtg supercycle-candidates` finds any, and closes it once none are left
 
 ## Development
 

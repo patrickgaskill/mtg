@@ -75,6 +75,7 @@ class Card:
     set_type: str
     layout: str
     border_color: str
+    rarity: str
     collector_number: str
     released_at: str
     released_date: date | None
@@ -143,6 +144,7 @@ class Card:
             set_type=data.get("set_type") or "",
             layout=data.get("layout") or "",
             border_color=data.get("border_color") or "",
+            rarity=data.get("rarity") or "",
             collector_number=data.get("collector_number") or "",
             released_at=released_at,
             released_date=date.fromisoformat(released_at) if released_at else None,
