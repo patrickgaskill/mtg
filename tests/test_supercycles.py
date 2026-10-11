@@ -247,3 +247,8 @@ def test_project_supercycles_file_loads():
 
     unfinished_without_rules = [c.name for c in cycles if not c.finished and c.match is None]
     assert unfinished_without_rules == []
+    # Exclusions and listed cards must be real names, e.g. no YAML-escaped apostrophes.
+    names = {n for c in cycles for n in c.cards} | {
+        n for c in cycles if c.match for n in c.match.exclude
+    }
+    assert not [n for n in names if "''" in n]
