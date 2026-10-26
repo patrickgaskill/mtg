@@ -77,7 +77,7 @@ supercycles:
       type: '^Legendary Land$'
       oracle: '(?s)\{T\}: Add \{C\}\..*\{\d\}\{[WUBRG]\}, \{T\}:'
       exclude:
-        - Hall of Heliod's Generosity
+        - Hall of Heliod''s Generosity
         - Keldon Necropolis
         - Shivan Gorge
     cards:
