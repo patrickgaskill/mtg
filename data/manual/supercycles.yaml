@@ -73,13 +73,6 @@ supercycles:
 
   - name: Legendary Lands II
     finished: false # Needs a green land to complete
-    match:
-      type: '^Legendary Land$'
-      oracle: '(?s)\{T\}: Add \{C\}\..*\{\d\}\{[WUBRG]\}, \{T\}:'
-      exclude:
-        - Hall of Heliod''s Generosity
-        - Keldon Necropolis
-        - Shivan Gorge
     cards:
       - Kor Haven
       - Academy Ruins
@@ -88,9 +81,6 @@ supercycles:
 
   - name: Topdeck Lands
     finished: false # Lands that put cards from graveyard on top of library
-    match:
-      type: '^Legendary Land'
-      oracle: 'from your graveyard on top of your library'
     cards:
       - Hall of Heliod's Generosity # White - enchantments
       - Academy Ruins # Blue - artifacts
@@ -98,9 +88,6 @@ supercycles:
 
   - name: Recruiters
     finished: false # Creatures that tutor for creatures with restrictions
-    match:
-      type: 'Creature'
-      oracle: 'enters, (you may )?search your library for an? [^.]*card with (power|toughness|mana value) 2 or less'
     cards:
       - Imperial Recruiter # Red creatures with power ≤ 2
       - Recruiter of the Guard # White creatures with power ≤ 2
@@ -108,11 +95,6 @@ supercycles:
 
   - name: Commander Suspend Cards
     finished: false # Suspend spells from Commander products
-    match:
-      type: '^Sorcery$'
-      keywords: [Suspend]
-      rarity: [rare]
-      oracle: 'Exile [^.]+ with three time counters on it\.'
     cards:
       - Inspiring Refrain
       - Charnel Serenade
@@ -121,9 +103,6 @@ supercycles:
 
   - name: Copy Enchantments
     finished: false # Enchantments that copy other permanent types
-    match:
-      name: '^Copy \w+$'
-      type: '^Enchantment$'
     cards:
       - Copy Artifact
       - Copy Land
@@ -131,8 +110,6 @@ supercycles:
 
   - name: Subgames
     finished: false # Cards that create subgames
-    match:
-      oracle: 'subgame'
     cards:
       - Enter the Dungeon
       - Shahrazad
@@ -141,8 +118,6 @@ supercycles:
 
   - name: Arch-Charms
     finished: false # Charms with "Arch-" prefix
-    match:
-      name: '^Arch\w*''s Charm$'
     cards:
       - Archmage's Charm
       - Archdruid's Charm
@@ -167,10 +142,7 @@ supercycles:
       - Verdant Force
 
   - name: Player Types
-    # Un-set characters representing player psychographics; finished once every slot is listed
-    slots: [Timmy, Johnny, Spike, Vorthos, Melvin]
-    match:
-      name: '^(Timmy|Johnny|Spike|Vorthos|Melvin), '
+    finished: false # Un-set characters representing player psychographics
     cards:
       - Johnny, Combo Player
       - Spike, Tournament Grinder
@@ -196,9 +168,6 @@ supercycles:
 
   - name: Elder Titans
     finished: false # More two-color titans may still be printed
-    match:
-      type: 'Elder Giant'
-      oracle: 'sacrifice it unless it escaped'
     cards:
       - Phlage, Titan of Fire's Fury # Red/White
       - Kroxa, Titan of Death's Hunger # Black/Red
@@ -206,12 +175,6 @@ supercycles:
 
   - name: Tripled Creatures
     finished: false # Creatures that are three of the same thing
-    match:
-      type: '^Creature'
-      mana_cost: '^\{([WUBRG])\}\{\1\}\{\1\}$'
-      power: 3
-      toughness: 3
-      rarity: [uncommon]
     cards:
       - Healer's Flock # Three healers
       - Mogg Mob # Three goblins
@@ -219,9 +182,6 @@ supercycles:
 
   - name: Nemeses
     finished: false # Creatures with "Nemesis" in name
-    match:
-      name: 'Nemesis$'
-      oracle: 'choose (a player|an opponent)'
     cards:
       - True-Name Nemesis
       - Sewer Nemesis
@@ -229,9 +189,6 @@ supercycles:
 
   - name: Tarkir Turtles
     finished: false # Turtles from Tarkir with -shell suffix
-    match:
-      name: '^[A-Z][a-z]+ing [A-Z][a-z]+shell$'
-      type: 'Turtle'
     cards:
       - Ambling Stormshell
       - Wandering Tombshell
@@ -248,18 +205,12 @@ supercycles:
       - Metallic Sliver
 
   - name: Infinity Stones
-    # Marvel crossover stones; finished once every slot is listed
-    slots: [Soul, Mind, Power, Space, Time, Reality]
-    match:
-      type: 'Infinity Stone'
+    finished: false # Marvel crossover stones
     cards:
       - The Soul Stone
 
   - name: Elder Dragons
     finished: false # Original Elder Dragons plus modern versions
-    match:
-      type: '^Legendary Creature — Elder Dragon'
-      oracle: 'At the beginning of your upkeep, sacrifice [^.]+ unless you pay'
     cards:
       - Arcades Sabboth
       - Chromium
@@ -338,9 +289,6 @@ supercycles:
 
   - name: Young Spellcasters
     finished: false # Young spellcasters imitating famous planeswalkers
-    match:
-      name: '^Young '
-      type: 'Creature — .*\b(Wizard|Shaman|Warlock|Cleric|Druid)\b'
     cards:
       - Young Necromancer
       - Young Pyromancer
@@ -355,11 +303,6 @@ supercycles:
 
   - name: Phyrexian Monsters
     finished: false # 5/5 Phyrexian Horrors with four colored pips
-    match:
-      type: 'Phyrexian Horror'
-      mana_cost: '^\{([WUBRG])\}\{\1\}\{\1\}\{\1\}$'
-      power: 5
-      toughness: 5
     cards:
       - Phyrexian Vindicator
       - Phyrexian Obliterator
@@ -376,10 +319,6 @@ supercycles:
 
   - name: Destinies
     finished: false # Auras granting creature types and returning when creature dies
-    match:
-      name: 'Destiny$'
-      type: 'Aura'
-      oracle: 'When enchanted creature dies, [^\n]*[Rr]eturn [^\n]* to its owner''s hand'
     cards:
       - Angelic Destiny
       - Draconic Destiny
@@ -429,9 +368,6 @@ supercycles:
 
   - name: Charming Creatures
     finished: false # Human creatures with modal enter abilities from Eldraine
-    match:
-      name: '^Charming '
-      type: 'Creature — Human'
     cards:
       - Charming Prince
       - Charming Scoundrel
@@ -505,9 +441,6 @@ supercycles:
 
   - name: Thirsts
     finished: false # Blue instants drawing three cards, discarding two
-    match:
-      name: '^Thirst for \w+$'
-      type: '^Instant$'
     cards:
       - Thirst for Knowledge
       - Thirst for Meaning
@@ -516,21 +449,13 @@ supercycles:
 
   - name: Poxes
     finished: false # All-black-pip sorceries with symmetric life/discard/sacrifice effects
-    match:
-      name: '(?i)pox'
-      type: '^Sorcery$'
-      mana_cost: '^(\{B\})+$'
     cards:
       - Pox
       - Smallpox
       - Pox Plague
 
   - name: Tarot Major Arcana
-    # Legendary creatures referencing tarot major arcana; finished once every slot is listed
-    slots: [Fool, Magician, High Priestess, Empress, Emperor, Hierophant, Lovers, Chariot, Strength, Hermit, Wheel of Fortune, Justice, Hanged Man, Death, Temperance, Devil, Tower, Star, Moon, Sun, Judgement, World]
-    match:
-      type: '^Legendary'
-      name: ', (the )?(Fool|Magician|High Priestess|Empress|Emperor|Hierophant|Lovers|Chariot|Strength|Hermit|Wheel of Fortune|Justice|Hanged Man|Death|Temperance|Devil|Tower|Star|Moon|Sun|Judge?ment|World)$'
+    finished: false # Legendary creatures referencing tarot major arcana
     cards:
       - Flubs, the Fool
       - Homer, the Hermit
@@ -538,10 +463,6 @@ supercycles:
 
   - name: Craterhoof Finishers
     finished: false # Mythic creatures that pump your team by X and grant evasion on enter
-    match:
-      type: '^(?!Legendary).*Creature'
-      rarity: [mythic]
-      oracle: 'enters, creatures you control gain \w+ and get \+X/\+[X0] until end of turn, where X is the number of'
     cards:
       - Craterhoof Behemoth # Green - trample, X is creatures you control
       - Moonshaker Cavalry # White - flying, X is creatures you control

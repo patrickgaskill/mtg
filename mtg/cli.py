@@ -15,13 +15,11 @@ from loguru import logger
 
 from mtg import scryfall
 from mtg.aggregators import AGGREGATOR_CLASSES, AggregatorContext, create_aggregators
-from mtg.aggregators.supercycle_aggregators import SupercycleTimeAggregator
 from mtg.config import Paths
 from mtg.pipeline import TooManyErrors, build_reports, load_type_lists, process_cards
 from mtg.rules import fetch_and_parse_types
-from mtg.sample import SAMPLE_NAMES, build_sample, write_sample
+from mtg.sample import build_sample, write_sample
 from mtg.site import write_site
-from mtg.supercycles import load_supercycles, member_names
 
 app = typer.Typer(
     name="mtg",
@@ -259,82 +257,9 @@ def make_sample(
         if input_file is None:
             logger.error("No 'default-cards' file found. Please run the download command.")
             raise typer.Exit(1)
-    names = set(SAMPLE_NAMES)
-    if get_paths().supercycles_file.exists():
-        # Lets tests check every supercycle rule against its listed cards.
-        names |= member_names(load_supercycles(get_paths().supercycles_file))
-    cards = build_sample(scryfall.iter_cards(input_file), names)
+    cards = build_sample(scryfall.iter_cards(input_file))
     write_sample(cards, output)
     logger.info("Wrote {} cards from {} to {}", len(cards), input_file.name, output)
-
-
-@app.command()
-def supercycle_candidates(
-    input_file: Annotated[
-        Path | None,
-        typer.Option(help="Path to Scryfall bulk data file (default: latest downloaded)"),
-    ] = None,
-    markdown: Annotated[
-        Path | None,
-        typer.Option(help="Also write the findings as Markdown here (empty file if none)"),
-    ] = None,
-):
-    """List cards that fit a supercycle's rule but aren't listed yet"""
-    paths = get_paths()
-    if input_file is None:
-        input_file = scryfall.find_latest_default_cards(paths.downloads)
-        if input_file is None:
-            logger.error("No 'default-cards' file found. Please run the download command.")
-            raise typer.Exit(1)
-    type_lists = load_type_lists(paths.types_file)
-    aggregator = SupercycleTimeAggregator(
-        AggregatorContext(type_lists=type_lists, supercycles_file=paths.supercycles_file)
-    )
-    if aggregator.warnings:
-        for warning in aggregator.warnings:
-            logger.error(warning)
-        raise typer.Exit(1)
-    process_cards(scryfall.iter_cards(input_file), [aggregator], type_lists)
-
-    candidates = aggregator.candidate_rows()
-    unmatched = aggregator.unmatched_members()
-    for row in candidates:
-        logger.info(
-            "{}: {} ({}, {})", row["supercycle"], row["name"], row["set"], row["releaseDate"]
-        )
-    for cycle_name, card in unmatched:
-        logger.warning("{}: rule doesn't match listed card {}", cycle_name, card)
-    logger.info("{} candidate(s), {} listed card(s) unmatched", len(candidates), len(unmatched))
-
-    if markdown is not None:
-        markdown.write_text(candidates_markdown(candidates, unmatched), encoding="utf-8")
-
-
-def candidates_markdown(candidates: list[dict[str, str]], unmatched: list[tuple[str, str]]) -> str:
-    """Findings for a GitHub issue body, or "" when there are none."""
-    if not candidates and not unmatched:
-        return ""
-    lines = []
-    if candidates:
-        lines += [
-            "These cards fit a supercycle's `match` rule in `data/manual/supercycles.yaml`"
-            " but aren't listed. Add each real member to the cycle's `cards`, and add the"
-            " rest to its rule's `exclude`.",
-            "",
-            "| Supercycle | Card | Set | Released |",
-            "| --- | --- | --- | --- |",
-        ]
-        lines += [
-            f"| {row['supercycle']} | [{row['name']}]({row['scryfall_uri']}) "
-            f"| {row['set']} | {row['releaseDate']} |"
-            for row in candidates
-        ]
-    if unmatched:
-        if lines:
-            lines.append("")
-        lines += ["These listed cards don't fit their cycle's rule; the rule needs fixing:", ""]
-        lines += [f"- {cycle_name}: {card}" for cycle_name, card in unmatched]
-    return "\n".join(lines) + "\n"
 
 
 @app.command(name="all")

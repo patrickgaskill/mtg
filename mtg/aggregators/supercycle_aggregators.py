@@ -1,6 +1,7 @@
 """Aggregators for supercycle completion times."""
 
 import calendar
+import json
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -8,7 +9,6 @@ from typing import Any
 import yaml
 
 from mtg.card import Card
-from mtg.supercycles import Supercycle, load_supercycles
 
 from .base import Aggregator
 
@@ -73,25 +73,28 @@ class SupercycleTimeAggregator(Aggregator):
     def __init__(self, context=None):
         super().__init__(context)
         supercycles_file = self.context.supercycles_file
-        self.supercycles = self.load_supercycles(supercycles_file) if supercycles_file else []
+        self.supercycles = self.load_supercycles(supercycles_file) if supercycles_file else {}
         if supercycles_file is None:
             self.warnings.append("No supercycles file configured")
         self.card_dates: dict[str, date] = {}
         self.card_data: dict[str, dict[str, Any]] = {}
-        self.ruled_cycles = [cycle for cycle in self.supercycles if cycle.match]
-        # Per cycle, the earliest printing of each card its rule suggests adding.
-        self.candidates: dict[str, dict[str, Card]] = {}
-        # Listed cards that some printing of fits their cycle's rule.
-        self.matched_members: set[tuple[str, str]] = set()
 
-    def load_supercycles(self, file_path: Path) -> list[Supercycle]:
+    def load_supercycles(self, file_path: Path) -> dict[str, dict[str, Any]]:
+        """Load supercycles from YAML or JSON file."""
         try:
-            return load_supercycles(file_path)
+            with file_path.open("r", encoding="utf-8") as f:
+                if file_path.suffix.lower() == ".yaml" or file_path.suffix.lower() == ".yml":
+                    data = yaml.safe_load(f)
+                else:
+                    # Fallback to JSON for backward compatibility
+                    data = json.load(f)
+                return {cycle["name"]: cycle for cycle in data["supercycles"]}
         except OSError as e:
             self.warnings.append(f"Error: Failed to load supercycles from {file_path}: {e}")
-        except (yaml.YAMLError, ValueError) as e:
+            return {}
+        except (yaml.YAMLError, json.JSONDecodeError) as e:
             self.warnings.append(f"Error: Failed to parse supercycles file {file_path}: {e}")
-        return []
+            return {}
 
     def process_card(self, card: Card) -> None:
         name = card.name
@@ -105,71 +108,27 @@ class SupercycleTimeAggregator(Aggregator):
             # Empty strings for missing data are handled by JavaScript renderer fallback.
             self.card_data[name] = {"name": name, **card.link()}
 
-        for cycle in self.ruled_cycles:
-            if cycle.is_candidate(card):
-                found = self.candidates.setdefault(cycle.name, {})
-                if name not in found or card.sort_key < found[name].sort_key:
-                    found[name] = card
-            elif name in cycle.cards and cycle.match and cycle.match.matches(card):
-                self.matched_members.add((cycle.name, name))
-
-    def candidate_rows(self) -> list[dict[str, str]]:
-        """New-member candidates, by cycle (in file order) and then by release."""
-        rows = []
-        for cycle in self.ruled_cycles:
-            for card in sorted(
-                self.candidates.get(cycle.name, {}).values(), key=lambda c: c.sort_key
-            ):
-                rows.append(
-                    {
-                        "supercycle": cycle.name,
-                        "name": card.name,
-                        "set": card.set,
-                        "releaseDate": card.released_at,
-                        "scryfall_uri": card.scryfall_uri,
-                    }
-                )
-        return rows
-
-    def unmatched_members(self) -> list[tuple[str, str]]:
-        """Listed cards (that were seen) no printing of fits their cycle's rule."""
-        return [
-            (cycle.name, card)
-            for cycle in self.ruled_cycles
-            for card in cycle.cards
-            if card in self.card_dates and (cycle.name, card) not in self.matched_members
-        ]
-
     def get_sorted_data(self) -> list[dict[str, Any]]:
         today = self.context.today()
         result = []
 
-        for row in self.candidate_rows():
-            self.warnings.append(
-                f"Supercycle '{row['supercycle']}' may have a new member: "
-                f"{row['name']} ({row['set']}, {row['releaseDate']})"
-            )
-        for cycle_name, card in self.unmatched_members():
-            self.warnings.append(
-                f"Supercycle '{cycle_name}' rule doesn't match its listed card '{card}'"
-            )
-
-        for cycle in self.supercycles:
-            name = cycle.name
-            card_dates = [self.card_dates[card] for card in cycle.cards if card in self.card_dates]
+        for name, cycle in self.supercycles.items():
+            card_dates = [
+                self.card_dates.get(card) for card in cycle["cards"] if card in self.card_dates
+            ]
             if not card_dates:
                 continue
 
             earliest_date = min(card_dates)
-            latest_date = max(card_dates) if cycle.finished else today
+            latest_date = max(card_dates) if cycle["finished"] else today
 
             total_days = (latest_date - earliest_date).days
-            status = "Finished" if cycle.finished else "Unfinished"
+            status = "Finished" if cycle["finished"] else "Unfinished"
             formatted_time = format_time_difference(earliest_date, latest_date)
 
             # Collect card objects with Scryfall data for tooltips
             card_objects = []
-            for card_name in cycle.cards:
+            for card_name in cycle["cards"]:
                 if card_name in self.card_data:
                     card_objects.append(self.card_data[card_name])
                 else:
@@ -187,11 +146,13 @@ class SupercycleTimeAggregator(Aggregator):
                 {
                     "supercycle": name,
                     "status": status,
-                    "cards": ", ".join(cycle.cards),
+                    "cards": ", ".join(cycle["cards"]),
                     "cardObjects": card_objects,
                     "time": formatted_time,
                     "startDate": earliest_date.strftime("%B %d, %Y"),
-                    "endDate": latest_date.strftime("%B %d, %Y") if cycle.finished else "Ongoing",
+                    "endDate": latest_date.strftime("%B %d, %Y")
+                    if cycle["finished"]
+                    else "Ongoing",
                     "days": total_days,  # Store for sorting
                 }
             )

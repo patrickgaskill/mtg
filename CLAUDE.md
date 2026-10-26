@@ -29,7 +29,6 @@ mtg/
 │   ├── pipeline.py          # Builds Cards, feeds aggregators, collects Reports
 │   ├── site.py              # Writes manifest.json, report JSON, static app, redirects
 │   ├── sample.py            # Cuts the real-card test sample from bulk data
-│   ├── supercycles.py       # supercycles.yaml loader and `match` rules for spotting new members
 │   ├── static/              # The SPA: index.html, app.js, styles.css (no build step)
 │   └── aggregators/
 │       ├── base.py          # Aggregator, FirstCardByKeyAggregator, AggregatorContext
@@ -120,18 +119,6 @@ Constants in `constants.py` define what counts as "traditional" cards:
 
 `Card.is_traditional` applies them; set `traditional_only = True` rather than checking by hand.
 
-### Supercycles
-
-`data/manual/supercycles.yaml` lists each supercycle's cards. Unfinished cycles also carry a
-`match` rule (regexes on name/type/oracle/mana cost, plus keywords, rarity, power/toughness,
-and an `exclude` list; see `mtg/supercycles.py`). Cards that fit a rule but aren't listed are
-candidates: the daily publish runs `mtg supercycle-candidates` and keeps one GitHub issue
-("Possible new supercycle members") up to date. A person confirms each one, adding it to `cards`
-or to the rule's `exclude`. Closed sets (Player Types, Infinity Stones, Tarot) use `slots`
-instead of `finished`: they finish once every slot word appears in a listed card's name.
-`mtg make-sample` includes every listed card, so `test_real_sample.py` checks each rule matches
-its own cards.
-
 ### Type Handling
 
 - Type lists come from the comprehensive rules via `mtg update-types` into `data/rules/types.json`
@@ -154,7 +141,6 @@ uv run mtg update-types    # Refresh data/rules/types.json from the comprehensiv
 uv run mtg run [--serve]   # Process cards and generate the site
 uv run mtg serve           # Serve the latest generated site
 uv run mtg make-sample     # Cut tests/fixtures/scryfall_sample.jsonl.gz from the latest bulk data
-uv run mtg supercycle-candidates  # Cards that fit a supercycle rule but aren't listed yet
 uv run mtg all             # Full workflow: download → types → run → serve
 uv run mtg -v run          # -v for debug logging, -q for warnings only, --data-dir to relocate data
 ```

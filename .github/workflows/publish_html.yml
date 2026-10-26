@@ -17,7 +17,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  issues: write
 
 env:
   OUTPUT_FOLDER: ./flattened_output
@@ -73,27 +72,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4.0.5
-
-      # Cards that fit a supercycle's rule but aren't listed go into one open issue,
-      # updated each run and closed once nothing is left to review.
-      - name: Check for new supercycle members
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TITLE: Possible new supercycle members
-        run: |
-          uv run mtg supercycle-candidates --markdown supercycle_candidates.md
-          number=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number,title \
-            --jq "map(select(.title == env.TITLE)) | .[0].number // empty")
-          if [ -s supercycle_candidates.md ]; then
-            if [ -n "$number" ]; then
-              gh issue edit "$number" --body-file supercycle_candidates.md
-            else
-              gh issue create --title "$TITLE" --body-file supercycle_candidates.md
-            fi
-          elif [ -n "$number" ]; then
-            gh issue close "$number" --comment "No candidates left."
-          fi
 
       - name: Archive card data
         uses: actions/upload-artifact@v7.0.0
