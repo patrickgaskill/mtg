@@ -208,6 +208,7 @@ supercycles:
     finished: false # Marvel crossover stones
     cards:
       - The Soul Stone
+      - The Mind Stone
 
   - name: Elder Dragons
     finished: false # Original Elder Dragons plus modern versions
