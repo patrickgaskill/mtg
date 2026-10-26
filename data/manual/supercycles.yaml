@@ -36,13 +36,14 @@ supercycles:
       - Magus of the Order
 
   - name: Omnath
-    finished: true # Completed with all 5 colors
+    finished: true # All 5 colors, plus the colorless echo from Reality Fracture Commander
     cards:
       - Omnath, Locus of Mana
       - Omnath, Locus of Rage
       - Omnath, Locus of the Roil
       - Omnath, Locus of Creation
       - Omnath, Locus of All
+      - Omnath, Locus of the Void
 
   - name: Kodamas
     finished: true # Directional tree spirits
@@ -208,6 +209,7 @@ supercycles:
     finished: false # Marvel crossover stones
     cards:
       - The Soul Stone
+      - The Mind Stone
 
   - name: Elder Dragons
     finished: false # Original Elder Dragons plus modern versions
@@ -302,11 +304,12 @@ supercycles:
   #     - Charming Scoundrel
 
   - name: Phyrexian Monsters
-    finished: false # 5/5 Phyrexian Horrors with four colored pips
+    finished: false # Enrage horrors with four colored pips; needs blue
     cards:
       - Phyrexian Vindicator
       - Phyrexian Obliterator
       - Phyrexian Harvester
+      - Hexhaven Invigorator
 
   # - name: Common Relentless Cards
   #   finished: true # Commons allowing unlimited deck copies
