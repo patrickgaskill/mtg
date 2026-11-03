@@ -465,8 +465,14 @@ supercycles:
       - Massimo, the Magician
 
   - name: Craterhoof Finishers
-    finished: false # Mythic creatures that pump your team by X and grant evasion on enter
+    finished: false # Mythic creatures that pump your team by X and grant evasion on enter; needs blue and black
     cards:
       - Craterhoof Behemoth # Green - trample, X is creatures you control
       - Moonshaker Cavalry # White - flying, X is creatures you control
       - Craterclaw Colossus # Red - trample, X is artifacts you control
+
+  - name: Ur-Avatars
+    finished: false # Eminence Avatar commanders for a creature type; a 4 or 5 color Sphinx version may follow
+    cards:
+      - The Ur-Dragon # WUBRG Dragons, Commander 2017
+      - The Ur-Sphinx # WUB Sphinxes, Reality Fracture Commander
